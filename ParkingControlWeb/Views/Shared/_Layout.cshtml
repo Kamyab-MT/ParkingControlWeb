@@ -1,44 +1,61 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ParkingControlWeb</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ParkingControlWeb.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
 </head>
 <body>
+
     <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary" aria-label="Fifth navbar example">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">مدیریت پارکینگ وب</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div id="navbarsExample05" class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-success text-white" aria-current="page" asp-controller="Account" asp-action="Login">ورود به حساب کاربری</a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+@* 
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ParkingControlWeb</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">مدیریت پارکینگ وب</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
                     </ul>
                 </div>
             </div>
-        </nav>
+        </nav> *@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_Notification.cshtml" />
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - ParkingControlWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 1402 - مدیریت پارکینگ وب 
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

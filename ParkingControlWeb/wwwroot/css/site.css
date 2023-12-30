@@ -2,6 +2,10 @@ html {
   font-size: 14px;
 }
 
+.form-all {
+    direction: rtl;
+}
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -19,4 +23,5 @@ html {
 
 body {
   margin-bottom: 60px;
+  font-family: 'Yekan Bakh FaNum'
 }

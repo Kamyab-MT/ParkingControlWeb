@@ -1,15 +1,15 @@
-﻿using ParkingControlWeb.Data.Enum;
+﻿using Microsoft.AspNetCore.Identity;
+using ParkingControlWeb.Data.Enum;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ParkingControlWeb.Models
 {
-    public class User
+    public class User : IdentityUser
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string PhoneNumber { get; set; }
-        public Role? Role { get; set; }
         public int Ballance { get; set; }
         public DateTime RegisterDate {  get; set; }
         [ForeignKey("Info")]
