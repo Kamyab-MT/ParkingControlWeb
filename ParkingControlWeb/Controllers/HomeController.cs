@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ParkingControlWeb.Models;
 using System.Diagnostics;
 
@@ -15,6 +15,7 @@ namespace ParkingControlWeb.Controllers
 
         public IActionResult Index()
         {
+            TempData["Success"] = "با موفقیت وارد شدید !";
             return View();
         }
 
