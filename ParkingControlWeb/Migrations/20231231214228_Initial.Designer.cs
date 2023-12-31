@@ -12,8 +12,8 @@ using ParkingControlWeb.Data;
 namespace ParkingControlWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231230225434_AddIdentity")]
-    partial class AddIdentity
+    [Migration("20231231214228_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -256,9 +256,6 @@ namespace ParkingControlWeb.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("Ballance")
-                        .HasColumnType("int");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -291,7 +288,6 @@ namespace ParkingControlWeb.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")

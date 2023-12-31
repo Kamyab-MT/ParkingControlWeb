@@ -19,6 +19,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
+if (args.Length == 1 && args[0] == "seeddata")
+{
+	await Seed.SeedUsersAndRolesAsync(app);
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

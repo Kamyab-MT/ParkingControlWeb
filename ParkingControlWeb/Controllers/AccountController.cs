@@ -51,7 +51,7 @@ namespace ParkingControlWeb.Controllers
                     var result = _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
                     if (result.Result == Microsoft.AspNetCore.Identity.SignInResult.Success)
                     {
-						TempData["success"] = "با موفقیت وارد شدید";
+						TempData["Success"] = "با موفقیت وارد شدید";
 						return RedirectToAction("Index", "Home");
 					}
 

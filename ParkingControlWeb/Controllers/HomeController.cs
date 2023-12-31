@@ -15,7 +15,6 @@ namespace ParkingControlWeb.Controllers
 
         public IActionResult Index()
         {
-            TempData["Success"] = "با موفقیت وارد شدید !";
             return View();
         }
 

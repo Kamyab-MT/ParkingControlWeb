@@ -9,7 +9,9 @@
 
 @if (TempData["Error"] != null)
 {
-	<script type="text/javascript" src="https://unpkg.com/toaster-js/umd.js"></script>
-	<link rel="stylesheet" href="https://unpkg.com/toaster-js/default.css" />
-
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+	<script type="text/javascript">
+		toastr.error('@TempData["Error"]');
+	</script>
 }

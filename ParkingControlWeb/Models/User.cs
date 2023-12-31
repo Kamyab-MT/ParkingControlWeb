@@ -9,8 +9,7 @@ namespace ParkingControlWeb.Models
     {
         [Key]
         public string Id { get; set; }
-        public string PhoneNumber { get; set; }
-        public int Ballance { get; set; }
+        public string? PhoneNumber { get; set; }
         public DateTime RegisterDate {  get; set; }
         [ForeignKey("Info")]
         public int InfoId { get; set; }
