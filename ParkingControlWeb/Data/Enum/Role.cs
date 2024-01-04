@@ -1,6 +1,8 @@
-﻿namespace ParkingControlWeb.Data.Enum
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ParkingControlWeb.Data.Enum
 {
-    public class Role
+    public class Role : IdentityRole
     {
         public const string GlobalAdmin = "GlobalAdmin";
         public const string SystemAdmin = "SystemAdmin";

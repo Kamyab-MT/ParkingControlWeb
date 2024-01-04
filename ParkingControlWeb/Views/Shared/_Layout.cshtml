@@ -24,7 +24,14 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                         <li class="nav-item">
-                            <a class="nav-link btn btn-success text-white" aria-current="page" asp-controller="Account" asp-action="Login">ورود به حساب کاربری</a>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a class="nav-link btn btn-danger text-white" aria-current="page" asp-controller="Account" asp-action="Login">خروج از حساب کاربری</a>
+                            }
+                            else
+                            {
+                                <a class="nav-link btn btn-success text-white" aria-current="page" asp-controller="Account" asp-action="Login">ورود به حساب کاربری</a>
+                            }
                         </li>
 
                     </ul>

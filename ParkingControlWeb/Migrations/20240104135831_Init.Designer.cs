@@ -12,8 +12,8 @@ using ParkingControlWeb.Data;
 namespace ParkingControlWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231231214228_Initial")]
-    partial class Initial
+    [Migration("20240104135831_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,7 +168,6 @@ namespace ParkingControlWeb.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PlateNumber")
@@ -187,11 +186,8 @@ namespace ParkingControlWeb.Migrations
 
             modelBuilder.Entity("ParkingControlWeb.Models.Info", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -216,11 +212,8 @@ namespace ParkingControlWeb.Migrations
 
             modelBuilder.Entity("ParkingControlWeb.Models.Parking", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -267,8 +260,8 @@ namespace ParkingControlWeb.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("InfoId")
-                        .HasColumnType("int");
+                    b.Property<string>("InfoId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -376,9 +369,7 @@ namespace ParkingControlWeb.Migrations
                 {
                     b.HasOne("ParkingControlWeb.Models.User", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
                 });
@@ -387,9 +378,7 @@ namespace ParkingControlWeb.Migrations
                 {
                     b.HasOne("ParkingControlWeb.Models.Info", "Info")
                         .WithMany()
-                        .HasForeignKey("InfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InfoId");
 
                     b.Navigation("Info");
                 });
