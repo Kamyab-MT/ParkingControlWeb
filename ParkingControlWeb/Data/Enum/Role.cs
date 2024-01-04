@@ -4,9 +4,9 @@ namespace ParkingControlWeb.Data.Enum
 {
     public class Role : IdentityRole
     {
-        public const string GlobalAdmin = "GlobalAdmin";
-        public const string SystemAdmin = "SystemAdmin";
-        public const string Expert = "Expert";
-        public const string Driver = "Driver";
+        public static readonly string GlobalAdmin = "GlobalAdmin";
+        public static readonly string SystemAdmin = "SystemAdmin";
+        public static readonly string Expert = "Expert";
+        public static readonly string Driver = "Driver";
     }
 }

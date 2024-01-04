@@ -8,7 +8,17 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ParkingControlWeb.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <style>
+
+        ::selection
+        {
+            background-color: #004887;
+            color : white;
+        }
+
+    </style>
 </head>
 <body>
 
@@ -21,18 +31,21 @@
                 </button>
 
                 <div id="navbarsExample05" class="collapse navbar-collapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-2">
 
                         @if (User.Identity.IsAuthenticated)
                         {
+
+                            @if (User.IsInRole("GlobalAdmin") || User.IsInRole("SystemAdmin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link btn btn-success text-white" aria-current="page" asp-controller="Dashboard" asp-action="Index">داشبورد</a>
+                                </li>
+                            }
+
                             <li class="nav-item">
                                 <a class="nav-link btn btn-danger text-white" aria-current="page" asp-controller="Account" asp-action="LogOut">خروج از حساب کاربری</a>
                             </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link btn btn-success text-white" aria-current="page" asp-controller="Account" asp-action="Register">ساخت حساب کاربری</a>
-                            </li>
-
                         }
                         else
                         {

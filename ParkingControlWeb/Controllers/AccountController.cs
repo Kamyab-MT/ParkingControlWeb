@@ -13,12 +13,16 @@ namespace ParkingControlWeb.Controllers
         readonly UserManager<IdentityUser> _userManager;
         readonly SignInManager<IdentityUser> _signInManager;
         readonly ApplicationDbContext _context;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ApplicationDbContext context)
+        Role role = new Role();
+
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Index()
@@ -53,7 +57,7 @@ namespace ParkingControlWeb.Controllers
                     if (result.Result == Microsoft.AspNetCore.Identity.SignInResult.Success)
                     {
 						TempData["Success"] = "با موفقیت وارد شدید";
-						return RedirectToAction("Index", "Home");
+						return RedirectToAction("Index", "Dashboard");
 					}
 
 					TempData["Error"] = "ورود به حساب انجام نشد، لطفا مجدد تلاش کنید";
@@ -66,52 +70,6 @@ namespace ParkingControlWeb.Controllers
 
             TempData["Error"] = "شماره همراه وارد شده در سیستم وجود ندارد";
             return View(loginViewModel);
-        }
-
-        public async Task<IActionResult> Register()
-        {
-            RegisterViewModel model = new RegisterViewModel();
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
-        {
-
-            if (!ModelState.IsValid)
-            {
-                TempData["Error"] = "ورود ها نامعتبر هستند";
-                return View(registerViewModel);
-            }
-
-            IdentityUser response = await _userManager.FindByNameAsync(registerViewModel.UserName);
-
-            if (response == null) // it does not exist
-            {
-                IdentityUser newUser = new IdentityUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName };
-
-                string Role = "Driver";
-
-
-                var result = await _userManager.CreateAsync(newUser, registerViewModel.Password);
-
-                if (result.Succeeded) // user created successfully
-                {
-                    await _userManager.AddToRoleAsync(newUser, Role);
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    TempData["Error"] = "ساخت کاربر جدید با خطا رو به رو شد";
-                    return View(registerViewModel);
-                }
-            }
-            else // already exist
-            {
-                TempData["Error"] = "شماره وارد شده قبلا در سیستم ثبت شده است";
-                return View(registerViewModel);
-            }
-
         }
 
         public async Task<IActionResult> LogOut()
