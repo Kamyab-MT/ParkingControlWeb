@@ -23,16 +23,23 @@
                 <div id="navbarsExample05" class="collapse navbar-collapse">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                        <li class="nav-item">
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <a class="nav-link btn btn-danger text-white" aria-current="page" asp-controller="Account" asp-action="Login">خروج از حساب کاربری</a>
-                            }
-                            else
-                            {
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-danger text-white" aria-current="page" asp-controller="Account" asp-action="LogOut">خروج از حساب کاربری</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-success text-white" aria-current="page" asp-controller="Account" asp-action="Register">ساخت حساب کاربری</a>
+                            </li>
+
+                        }
+                        else
+                        {
+                            <li class="nav-item">
                                 <a class="nav-link btn btn-success text-white" aria-current="page" asp-controller="Account" asp-action="Login">ورود به حساب کاربری</a>
-                            }
-                        </li>
+                            </li>
+                        }
 
                     </ul>
                 </div>

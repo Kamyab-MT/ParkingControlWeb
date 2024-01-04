@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ParkingControlWeb.Data;
+using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels;
 
@@ -63,7 +64,7 @@ namespace ParkingControlWeb.Controllers
                 return View(loginViewModel);
             }
 
-            TempData["Error"] = "اطلاعات وارد شده نادرست است، لطفا مجدد تلاش کنید";
+            TempData["Error"] = "شماره همراه وارد شده در سیستم وجود ندارد";
             return View(loginViewModel);
         }
 
@@ -88,11 +89,15 @@ namespace ParkingControlWeb.Controllers
             if (response == null) // it does not exist
             {
                 IdentityUser newUser = new IdentityUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName };
+
+                string Role = "Driver";
+
+
                 var result = await _userManager.CreateAsync(newUser, registerViewModel.Password);
 
                 if (result.Succeeded) // user created successfully
                 {
-                    await _signInManager.SignInAsync(newUser, true);
+                    await _userManager.AddToRoleAsync(newUser, Role);
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -107,6 +112,14 @@ namespace ParkingControlWeb.Controllers
                 return View(registerViewModel);
             }
 
+        }
+
+        public async Task<IActionResult> LogOut()
+        {
+            await _signInManager.SignOutAsync();
+            TempData["Success"] = "با موفقیت از حساب کاربری خود خارج شدید";
+
+            return RedirectToAction("Index", "Home");
         }
 
     }

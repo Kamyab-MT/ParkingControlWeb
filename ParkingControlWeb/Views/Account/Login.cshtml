@@ -16,10 +16,15 @@
                 left: auto;
             }
         </style>
+
+
     </head>
 
     <body>
 
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
         <div class="modal-dialog">
             <div class="modal-content rounded-4 shadow">
                 <div class="modal-header p-5 pb-4 border-bottom-0">
@@ -47,8 +52,7 @@
 
 
     </body>
-</html>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+
+
+</html>
