@@ -25,7 +25,14 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary" aria-label="Fifth navbar example">
             <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">مدیریت پارکینگ وب</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="navbar-brand" asp-controller="Dashboard" asp-action="Index">مدیریت پارکینگ وب</a>
+                }
+                else
+                {
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">مدیریت پارکینگ وب</a>
+                }
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -73,12 +80,35 @@
             </div>
         </nav> *@
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            <partial name="_Notification.cshtml" />
-            @RenderBody()
-        </main>
-    </div>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="row">
+            <div class="col-2">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <partial name="_Sidebar.cshtml" />
+                }
+            </div>
+            <div class="col-10">
+                <div class="container">
+                    <main role="main" class="pb-3">
+                        <partial name="_Notification.cshtml" />
+                        @RenderBody()
+                    </main>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container">
+            <main role="main" class="pb-3">
+                <partial name="_Notification.cshtml" />
+                @RenderBody()
+            </main>
+        </div>
+    }
 
     <footer class="border-top footer text-muted">
         <div class="container">
