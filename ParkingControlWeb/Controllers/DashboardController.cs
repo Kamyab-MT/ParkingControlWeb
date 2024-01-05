@@ -43,10 +43,21 @@ namespace ParkingControlWeb.Controllers
                 var usersList = await _userManager.GetUsersInRoleAsync(role);
                 var limitedList = usersList.Where(t => t.SuperiorUserId == _httpContextAccessor.HttpContext.User.GetUserId());
 
-                List<Info> infos = new List<Info>();
+                List<InfoViewModel> infos = new List<InfoViewModel>();
+                PersianCalendar persianCalendar = new PersianCalendar();
+
                 foreach (var user in limitedList)
                 {
-                    infos.Add(await _infoRepository.GetById(user.InfoId));
+                    var info = await _infoRepository.GetById(user.InfoId);
+
+                    InfoViewModel infoVM = new InfoViewModel()
+                    {
+                        FullName = info.FullName
+                    };
+
+                    infoVM.RegisterDate = string.Format("{0}/{1}/{2}", persianCalendar.GetYear((DateTime)info.RegisterDate), persianCalendar.GetMonth((DateTime)info.RegisterDate), persianCalendar.GetDayOfMonth((DateTime)info.RegisterDate));
+
+                    infos.Add(infoVM);
                 }
 
                 UsersListViewModel usersListView = new UsersListViewModel()
