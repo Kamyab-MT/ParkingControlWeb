@@ -7,5 +7,6 @@ namespace ParkingControlWeb.ViewModels
     {
         public string Role { get; set; }
         public List<AppUser> Users { get; set; }
+        public List<Info> Infos { get; set; }
     }
 }

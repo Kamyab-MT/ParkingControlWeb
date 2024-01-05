@@ -42,10 +42,18 @@ namespace ParkingControlWeb.Controllers
                 string role = _httpContextAccessor.HttpContext.User.IsInRole("GlobalAdmin") ? "SystemAdmin" : "Expert";
                 var usersList = await _userManager.GetUsersInRoleAsync(role);
                 var limitedList = usersList.Where(t => t.SuperiorUserId == _httpContextAccessor.HttpContext.User.GetUserId());
+
+                List<Info> infos = new List<Info>();
+                foreach (var user in limitedList)
+                {
+                    infos.Add(await _infoRepository.GetById(user.InfoId));
+                }
+
                 UsersListViewModel usersListView = new UsersListViewModel()
                 {
                     Role = role,
-                    Users = limitedList.ToList()
+                    Users = limitedList.ToList(),
+                    Infos = infos
                 };
 
                 return View(usersListView);
@@ -56,8 +64,8 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> Register()
         {
-            if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert) || !User.Identity.IsAuthenticated)
-                return RedirectToAction("Index", "Home");
+            //if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert) || !User.Identity.IsAuthenticated)
+            //    return RedirectToAction("Index", "Home");
 
             RegisterViewModel model = new RegisterViewModel();
             return View(model);
@@ -69,9 +77,11 @@ namespace ParkingControlWeb.Controllers
 
             if (!ModelState.IsValid)
             {
-                //TempData["Error"] = "ورودی ها نامعتبر هستند";
-                var list = ModelState.Values.SelectMany(v => v.Errors).ToList();
-                TempData["Error"] = JsonConvert.SerializeObject(list);
+                TempData["Error"] = "ورودی ها نامعتبر هستند";
+
+                //var list = ModelState.Values.SelectMany(v => v.Errors).ToList();
+                //TempData["Error"] = JsonConvert.SerializeObject(list);
+
                 return View(registerViewModel);
             }
 
@@ -79,6 +89,8 @@ namespace ParkingControlWeb.Controllers
 
             if (response == null) // it does not exist
             {
+                string infoId = Guid.NewGuid().ToString();
+
                 AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName , SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId() };
 
                 string selectedRole = _httpContextAccessor.HttpContext.User.IsInRole(Role.GlobalAdmin) ? Role.SystemAdmin : Role.Expert;
@@ -88,8 +100,11 @@ namespace ParkingControlWeb.Controllers
                 if (result.Succeeded) // user created successfully
                 {
                     await _userManager.AddToRoleAsync(newUser, selectedRole);
+
+
                     Info info = new Info()
                     {
+                        Id = infoId,
                         FullName = registerViewModel.FullName,
                         Address = registerViewModel.Address,
                         NationalCode = registerViewModel.NationalCode,
@@ -99,6 +114,12 @@ namespace ParkingControlWeb.Controllers
                     };
 
                     _infoRepository.Add(info);
+
+                    newUser.InfoId = infoId;
+
+                    await _userManager.UpdateAsync(newUser);
+
+                    TempData["Success"] = "کاربر جدید با موفقیت ساخته شد";
 
                     return RedirectToAction("Index", "Dashboard");
                 }
@@ -121,6 +142,51 @@ namespace ParkingControlWeb.Controllers
 
             return View();
         }
+
+
+
+
+        //___________________ Create GLobal Admin User
+        /*
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "ورودی ها نامعتبر هستند";
+                return View(registerViewModel);
+            }
+
+            IdentityUser response = await _userManager.FindByNameAsync(registerViewModel.UserName);
+
+            if (response == null) // it does not exist
+            {
+                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName, SuperiorUserId = "None" };
+
+                string selectedRole = "GlobalAdmin";
+
+                var result = await _userManager.CreateAsync(newUser, registerViewModel.Password);
+
+                if (result.Succeeded) // user created successfully
+                {
+                    await _userManager.AddToRoleAsync(newUser, selectedRole);
+                    return RedirectToAction("Index", "Dashboard");
+                }
+                else
+                {
+                    TempData["Error"] = "ساخت کاربر جدید با خطا رو به رو شد";
+                    return View(registerViewModel);
+                }
+            }
+            else // already exist
+            {
+                TempData["Error"] = "شماره وارد شده قبلا در سیستم ثبت شده است";
+                return View(registerViewModel);
+            }
+
+        }
+        */
 
     }
 }
