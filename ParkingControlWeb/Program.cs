@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
+using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Models;
+using ParkingControlWeb.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IInfo, InfoRepository>();
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

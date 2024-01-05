@@ -1,28 +1,35 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
+using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels;
+using System.Globalization;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace ParkingControlWeb.Controllers
 {
     public class DashboardController : Controller
     {
 
-        readonly UserManager<IdentityUser> _userManager;
-        readonly SignInManager<IdentityUser> _signInManager;
+        readonly UserManager<AppUser> _userManager;
+        readonly SignInManager<AppUser> _signInManager;
         readonly ApplicationDbContext _context;
         readonly IHttpContextAccessor _httpContextAccessor;
+        readonly IInfo _infoRepository;
 
         Role role = new Role();
 
-        public DashboardController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
+        public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _infoRepository = infoRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -34,11 +41,11 @@ namespace ParkingControlWeb.Controllers
             {
                 string role = _httpContextAccessor.HttpContext.User.IsInRole("GlobalAdmin") ? "SystemAdmin" : "Expert";
                 var usersList = await _userManager.GetUsersInRoleAsync(role);
-
+                var limitedList = usersList.Where(t => t.SuperiorUserId == _httpContextAccessor.HttpContext.User.GetUserId());
                 UsersListViewModel usersListView = new UsersListViewModel()
                 {
                     Role = role,
-                    Users = usersList.ToList()
+                    Users = limitedList.ToList()
                 };
 
                 return View(usersListView);
@@ -59,9 +66,12 @@ namespace ParkingControlWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
+
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "ورود ها نامعتبر هستند";
+                //TempData["Error"] = "ورودی ها نامعتبر هستند";
+                var list = ModelState.Values.SelectMany(v => v.Errors).ToList();
+                TempData["Error"] = JsonConvert.SerializeObject(list);
                 return View(registerViewModel);
             }
 
@@ -78,6 +88,18 @@ namespace ParkingControlWeb.Controllers
                 if (result.Succeeded) // user created successfully
                 {
                     await _userManager.AddToRoleAsync(newUser, selectedRole);
+                    Info info = new Info()
+                    {
+                        FullName = registerViewModel.FullName,
+                        Address = registerViewModel.Address,
+                        NationalCode = registerViewModel.NationalCode,
+                        LandlineTel = registerViewModel.LandlineTel,
+                        UserId = newUser.Id,
+                        RegisterDate = DateTime.Now
+                    };
+
+                    _infoRepository.Add(info);
+
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else

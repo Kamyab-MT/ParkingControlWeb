@@ -19,8 +19,8 @@ namespace ParkingControlWeb.Data
             base.OnModelCreating(builder);
         }
 
-        //public DbSet<Info> Info { get; set; }
-        //public DbSet<Parking> Parkings { get; set; }
-        //public DbSet<Car> Cars { get; set; }
+        public DbSet<Info> Info { get; set; }
+        public DbSet<Parking> Parkings { get; set; }
+        public DbSet<Car> Cars { get; set; }
     }
 }

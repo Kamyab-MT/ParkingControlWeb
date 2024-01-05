@@ -10,14 +10,14 @@ namespace ParkingControlWeb.Controllers
 	public class AccountController : Controller
     {
 
-        readonly UserManager<IdentityUser> _userManager;
-        readonly SignInManager<IdentityUser> _signInManager;
+        readonly UserManager<AppUser> _userManager;
+        readonly SignInManager<AppUser> _signInManager;
         readonly ApplicationDbContext _context;
         readonly IHttpContextAccessor _httpContextAccessor;
 
         Role role = new Role();
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -41,7 +41,7 @@ namespace ParkingControlWeb.Controllers
         {
             if (!ModelState.IsValid) return View(loginViewModel);
 
-            IdentityUser user = await _userManager.FindByNameAsync(loginViewModel.UserName); // first we need to check that the user actually exist
+            var user = await _userManager.FindByNameAsync(loginViewModel.UserName); // first we need to check that the user actually exist
             
             if (user != null)
             {

@@ -7,44 +7,105 @@
 }
 
 <html>
-    <head>
-        <style>
+<head>
+    <style>
 
-            .form-floating > label {
-                right: 0;
-                left: auto;
-            }
-        </style>
-    </head>
+        .form-floating > label {
+        right: 0;
+        left: auto;
+        }
+    </style>
+</head>
 
-    <body>
+<body>
 
-        <div class="modal-dialog">
-            <div class="modal-content rounded-4 shadow">
-                <div class="modal-header p-5 pb-4 border-bottom-0">
-                    <h1 class="fw-bold mb-0 fs-2">ساخت حساب کاربری</h1>
+    <div class="container-fluid mt-5">
+        <div class="modal-content rounded-5 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+                
+                @{
+                    string text = "";
+                }
+                @if (User.IsInRole("GlobalAdmin"))
+                {
+                    text = "صاحب پارکینگ";
+                }
+                else
+                {
+                    text = "کارشناس";
+                }
+
+                <h1 class="fw-bold mb-0 fs-2">
+                    ساخت حساب کاربری (@text)
+                </h1>
 
                 </div>
 
                 <div class="modal-body p-5 pt-0">
+
                     <form asp-action="Register">
-                        <div class="form-floating mb-3 justify-content-star3t">
-                            <input asp-for="UserName" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
-                            <label asp-for="UserName" for="floatingInput" class="ms-0"></label>
-                            <span asp-validation-for="UserName" class="text-danger"></span>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="UserName" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
+                                    <label asp-for="UserName" for="floatingInput" class="ms-0"></label>
+                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Password" type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password">
+                                    <label asp-for="Password" for="floatingPassword"></label>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input asp-for="RepeatPassword" type="password" class="form-control rounded-3" id="floatingPasswordRep" placeholder="Password">
+                                    <label asp-for="RepeatPassword" for="floatingPasswordRep"></label>
+                                    <span asp-validation-for="RepeatPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="FullName" type="text" class="form-control rounded-3" id="floatingInput5" placeholder="نام و نام خانوادگی">
+                                <label asp-for="FullName" for="floatingInput5" class="ms-0"></label>
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="NationalCode" type="text" class="form-control rounded-3" id="floatingInput7" placeholder="کد ملی">
+                                <label asp-for="NationalCode" for="floatingInput7" class="ms-0"></label>
+                                    <span asp-validation-for="NationalCode" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="LandlineTel" type="text" class="form-control rounded-3" id="floatingInput8" placeholder="تلفن ثابت">
+                                    <label asp-for="LandlineTel" for="floatingInput8" class="ms-0"></label>
+                                    <span asp-validation-for="LandlineTel" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="Address" type="text" class="form-control rounded-3" id="floatingInput9" placeholder="آدرس">
+                                <label asp-for="Address" for="floatingInput9" class="ms-0"></label>
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+
+                            </div>
                         </div>
-                        <div class="form-floating mb-3">
-                            <input asp-for="Password" type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password">
-                            <label asp-for="Password" for="floatingPassword"></label>
-                            <span asp-validation-for="Password" class="text-danger"></span>
+
+                        <div class="row">
+
+                            <div class="col-6">
+                                <button class="mb-2 btn btn-lg rounded-3 btn-primary form-control" type="submit">ثبت نام</button>
+                            </div>
+
+                            <div class="col-6">
+                            <a asp-asp-controller="Dashboard" asp-action="Index" class="mb-2 btn btn-lg rounded-3 btn-secondary form-control">بازگشت به داشبورد</a>
+                            </div>
                         </div>
-                        <div class="form-floating mb-3">
-                            <input asp-for="RepeatPassword" type="password" class="form-control rounded-3" id="floatingPasswordRep" placeholder="Password">
-                        <label asp-for="RepeatPassword" for="floatingPasswordRep"></label>
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">ثبت نام</button>
                         <hr class="my-4">
+
                     </form>
                 </div>
             </div>

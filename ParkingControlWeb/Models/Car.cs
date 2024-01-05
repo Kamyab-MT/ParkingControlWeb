@@ -13,6 +13,6 @@ namespace ParkingControlWeb.Models
         public int VisitCount { get; set; }
         [ForeignKey("Owner")]
         public string? OwnerId { get; set; }
-        public IdentityUser? Owner { get; set; }
+        public AppUser? Owner { get; set; }
     }
 }
