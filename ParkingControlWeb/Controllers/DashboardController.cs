@@ -82,7 +82,7 @@ namespace ParkingControlWeb.Controllers
             return View(model);
         }
 
-        /*
+        
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
@@ -148,10 +148,10 @@ namespace ParkingControlWeb.Controllers
             }
 
         }
-        */
+        
         public IActionResult Edit(string id)
         {
-
+            
             return View();
         }
 
@@ -159,7 +159,7 @@ namespace ParkingControlWeb.Controllers
 
 
         //___________________ Create GLobal Admin User
-        
+        /*
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
@@ -198,7 +198,7 @@ namespace ParkingControlWeb.Controllers
             }
 
         }
-        
+        */
 
     }
 }

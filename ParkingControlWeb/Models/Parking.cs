@@ -8,6 +8,7 @@ namespace ParkingControlWeb.Models
     {
         [Key]
         public string? Id { get; set; }
+        public string? Name { get; set; }
         [ForeignKey("Owner")]
         public string? OwnerId;
         public AppUser Owner;

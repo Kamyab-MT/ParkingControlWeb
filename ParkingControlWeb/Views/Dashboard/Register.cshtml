@@ -14,7 +14,14 @@
         right: 0;
         left: auto;
         }
+
+        .dropdown-toggle::after {
+            display: none;
+        }
     </style>
+
+    <script language="javascript" src="~/js/city.js"></script>
+
 </head>
 
 <body>
@@ -46,7 +53,7 @@
                     <form asp-action="Register">
 
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-4">
                                 <div class="form-floating mb-3 justify-content-star3t form-group">
                                     <input asp-for="UserName" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
                                     <label asp-for="UserName" for="floatingInput" class="ms-0"></label>
@@ -65,7 +72,8 @@
                                     <span asp-validation-for="RepeatPassword" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-6">
+
+                            <div class="col-4">
 
                                 <div class="form-floating mb-3 justify-content-star3t form-group">
                                     <input asp-for="FullName" type="text" class="form-control rounded-3" id="floatingInput5" placeholder="نام و نام خانوادگی">
@@ -92,6 +100,57 @@
                                 </div>
 
                             </div>
+
+                            <div class="col-4">
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="ParkingName" type="text" class="form-control rounded-3" id="floatingInput10" placeholder="نام پارکینگ">
+                                    <label asp-for="ParkingName" for="floatingInput10" class="ms-0"></label>
+                                    <span asp-validation-for="ParkingName" class="text-danger"></span>
+                                </div>
+
+                            <div class="form-group mb-3">
+
+                                <label asp-for="State"></label>
+                                <select class="province form-select justify-content-star3t form-group" asp-for="State">
+                                </select>
+                                <span asp-validation-for="State" class="text-danger"></span>
+                                
+                            </div>
+
+                            <div class="form-group mb-3">
+
+                                <label asp-for="City"></label>
+                                <select class="city form-select form-group" asp-for="City"></select>
+                                <span asp-validation-for="City" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="ParkingAddress" type="text" class="form-control rounded-3" id="floatingInput10" placeholder="آدرس">
+                                <label asp-for="ParkingAddress" for="floatingInput10" class="ms-0"></label>
+                                <span asp-validation-for="ParkingAddress" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="EntranceRate" type="number" class="form-control rounded-3" id="floatingInput11" placeholder="نرخ ورودی">
+                                <label asp-for="EntranceRate" for="floatingInput11" class="ms-0"></label>
+                                <span asp-validation-for="EntranceRate" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                            <input asp-for="HourlyRate" type="number" class="form-control rounded-3" id="floatingInput12" placeholder="نرخ ساعتی">
+                                <label asp-for="HourlyRate" for="floatingInput12" class="ms-0"></label>
+                                <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="DailyRate" type="number" class="form-control rounded-3" id="floatingInput13" placeholder="نرخ روزانه">
+                                <label asp-for="DailyRate" for="floatingInput13" class="ms-0"></label>
+                                <span asp-validation-for="DailyRate" class="text-danger"></span>
+                            </div>
+
+                            </div>
                         </div>
 
                         <div class="row">
@@ -113,7 +172,6 @@
 
 
     </body>
-
     @section Scripts {
         <partial name="_ValidationScriptsPartial" />
     }
