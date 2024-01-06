@@ -82,6 +82,7 @@ namespace ParkingControlWeb.Controllers
             return View(model);
         }
 
+        /*
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
@@ -147,7 +148,7 @@ namespace ParkingControlWeb.Controllers
             }
 
         }
-
+        */
         public IActionResult Edit(string id)
         {
 
@@ -158,7 +159,7 @@ namespace ParkingControlWeb.Controllers
 
 
         //___________________ Create GLobal Admin User
-        /*
+        
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
@@ -175,7 +176,7 @@ namespace ParkingControlWeb.Controllers
             {
                 AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName, SuperiorUserId = "None" };
 
-                string selectedRole = "GlobalAdmin";
+                string selectedRole = "Driver";
 
                 var result = await _userManager.CreateAsync(newUser, registerViewModel.Password);
 
@@ -197,7 +198,7 @@ namespace ParkingControlWeb.Controllers
             }
 
         }
-        */
+        
 
     }
 }
