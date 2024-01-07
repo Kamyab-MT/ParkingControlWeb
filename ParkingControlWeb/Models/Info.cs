@@ -15,8 +15,5 @@ namespace ParkingControlWeb.Models
         public string? LandlineTel { get; set; }
         public string? Address { get; set; }
         public DateTime? RegisterDate { get; set; }
-        [ForeignKey("Parking")]
-        public string? ParkingId { get; set; }
-        public Parking? Parking { get; set; }
     }
 }

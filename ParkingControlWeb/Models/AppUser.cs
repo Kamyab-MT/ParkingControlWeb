@@ -9,5 +9,8 @@ namespace ParkingControlWeb.Models
         [ForeignKey("Info")]
         public string? InfoId { get; set; }
         public Info? Info { get; set; }
+        [ForeignKey("Parking")]
+        public string? ParkingId { get; set; }
+        public Parking? Parking { get; set; }
     }
 }

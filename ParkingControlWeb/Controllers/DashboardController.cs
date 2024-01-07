@@ -21,7 +21,6 @@ namespace ParkingControlWeb.Controllers
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly IInfo _infoRepository;
         readonly IParking _parkingRepository;
-
         Role role = new Role();
 
         public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository)
@@ -136,8 +135,8 @@ namespace ParkingControlWeb.Controllers
                     else
                     {
                         AppUser superiorUser = await _userManager.FindByIdAsync(newUser.SuperiorUserId);
-                        Parking parking = await _parkingRepository.GetById(superiorUser.Info.ParkingId);
-                        newUser.Info.ParkingId = parking.Id;
+                        Parking parking = await _parkingRepository.GetById(superiorUser.ParkingId);
+                        newUser.ParkingId = parking.Id;
                     }
 
                     Info info = new Info()
@@ -183,12 +182,25 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> Delete(string id)
         {
-            Info info = await _infoRepository.GetById(id);
+            AppUser user = await _userManager.FindByIdAsync(id);
+
+            Info info = await _infoRepository.GetById(user.InfoId);
             _infoRepository.Delete(info);
+
+            var roles = await _userManager.GetRolesAsync(user);
+            
+            if (roles[0] == "SystemAdmin")
+            {
+                Parking parking = await _parkingRepository.GetById(user.ParkingId);
+                if(parking != null)
+                    _parkingRepository.Delete(parking);
+            }
+
+            await _userManager.RemoveFromRolesAsync(user, roles);
+            await _userManager.DeleteAsync(user);
 
             return RedirectToAction("Index", "Dashboard");
         }
-
 
 
 
