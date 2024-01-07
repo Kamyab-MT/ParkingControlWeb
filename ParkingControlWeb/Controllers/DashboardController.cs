@@ -20,16 +20,18 @@ namespace ParkingControlWeb.Controllers
         readonly ApplicationDbContext _context;
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly IInfo _infoRepository;
+        readonly IParking _parkingRepository;
 
         Role role = new Role();
 
-        public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository)
+        public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _infoRepository = infoRepository;
+            _parkingRepository = parkingRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -75,8 +77,8 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> Register()
         {
-            //if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert) || !User.Identity.IsAuthenticated)
-            //    return RedirectToAction("Index", "Home");
+            if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert) || !User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "Home");
 
             RegisterViewModel model = new RegisterViewModel();
             return View(model);
@@ -113,6 +115,30 @@ namespace ParkingControlWeb.Controllers
                 {
                     await _userManager.AddToRoleAsync(newUser, selectedRole);
 
+                    if(await _userManager.IsInRoleAsync(newUser, Role.SystemAdmin))
+                    {
+
+                        Parking parking = new Parking()
+                        {
+                            Address = registerViewModel.ParkingAddress,
+                            City = registerViewModel.City,
+                            State = registerViewModel.State,
+                            Name = registerViewModel.ParkingName,
+                            DailyRate = registerViewModel.DailyRate,
+                            EntranceRate = registerViewModel.EntranceRate,
+                            HourlyRate = registerViewModel.HourlyRate,
+                            OwnerId = newUser.Id
+                        };
+
+                        _parkingRepository.Add(parking);
+
+                    }
+                    else
+                    {
+                        AppUser superiorUser = await _userManager.FindByIdAsync(newUser.SuperiorUserId);
+                        Parking parking = await _parkingRepository.GetById(superiorUser.Info.ParkingId);
+                        newUser.Info.ParkingId = parking.Id;
+                    }
 
                     Info info = new Info()
                     {
@@ -153,6 +179,14 @@ namespace ParkingControlWeb.Controllers
         {
             
             return View();
+        }
+
+        public async Task<IActionResult> Delete(string id)
+        {
+            Info info = await _infoRepository.GetById(id);
+            _infoRepository.Delete(info);
+
+            return RedirectToAction("Index", "Dashboard");
         }
 
 

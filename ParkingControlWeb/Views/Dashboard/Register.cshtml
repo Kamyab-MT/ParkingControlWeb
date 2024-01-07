@@ -45,15 +45,21 @@
                 <h1 class="fw-bold mb-0 fs-2">
                     ساخت حساب کاربری (@text)
                 </h1>
-
                 </div>
+                <hr/>
 
                 <div class="modal-body p-5 pt-0">
 
                     <form asp-action="Register">
 
                         <div class="row">
-                            <div class="col-4">
+
+                        @{
+                            int colSize = User.IsInRole("GlobalAdmin") ? 4 : 6;
+                        }
+                            <div class="col-@colSize">
+
+                                <h3 class="text-dark mb-3">مشخصات حساب</h3>
                                 <div class="form-floating mb-3 justify-content-star3t form-group">
                                     <input asp-for="UserName" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
                                     <label asp-for="UserName" for="floatingInput" class="ms-0"></label>
@@ -71,10 +77,12 @@
                                     <label asp-for="RepeatPassword" for="floatingPasswordRep"></label>
                                     <span asp-validation-for="RepeatPassword" class="text-danger"></span>
                                 </div>
+
                             </div>
 
-                            <div class="col-4">
+                            <div class="col-@colSize">
 
+                                <h3 class="text-dark mb-3">مشخصات شخصی</h3>
                                 <div class="form-floating mb-3 justify-content-star3t form-group">
                                     <input asp-for="FullName" type="text" class="form-control rounded-3" id="floatingInput5" placeholder="نام و نام خانوادگی">
                                 <label asp-for="FullName" for="floatingInput5" class="ms-0"></label>
@@ -101,29 +109,27 @@
 
                             </div>
 
-                            <div class="col-4">
+                        @if (User.IsInRole("GlobalAdmin"))
+                        {
+                            <div class="col-@colSize">
 
+                                <h3 class="text-dark mb-3">مشخصات پارکینگ</h3>
                                 <div class="form-floating mb-3 justify-content-star3t form-group">
                                     <input asp-for="ParkingName" type="text" class="form-control rounded-3" id="floatingInput10" placeholder="نام پارکینگ">
                                     <label asp-for="ParkingName" for="floatingInput10" class="ms-0"></label>
                                     <span asp-validation-for="ParkingName" class="text-danger"></span>
                                 </div>
 
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-4">
 
                                 <label asp-for="State"></label>
-                                <select class="province form-select justify-content-star3t form-group" asp-for="State">
+                                <select class="province form-select justify-content-star3t" asp-for="State">
                                 </select>
                                 <span asp-validation-for="State" class="text-danger"></span>
-                                
-                            </div>
 
-                            <div class="form-group mb-3">
-
-                                <label asp-for="City"></label>
-                                <select class="city form-select form-group" asp-for="City"></select>
+                                <label asp-for="City" style="display:block;"></label>
+                                <select class="city form-select" asp-for="City"></select>
                                 <span asp-validation-for="City" class="text-danger"></span>
-
                             </div>
 
                             <div class="form-floating mb-3 justify-content-star3t form-group">
@@ -151,7 +157,8 @@
                             </div>
 
                             </div>
-                        </div>
+                        }
+
 
                         <div class="row">
 
