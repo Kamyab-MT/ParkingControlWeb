@@ -104,7 +104,7 @@ namespace ParkingControlWeb.Controllers
             {
                 string infoId = Guid.NewGuid().ToString();
 
-                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName , SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId() };
+                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName , SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId() , Active = 1 };
 
                 string selectedRole = _httpContextAccessor.HttpContext.User.IsInRole(Role.GlobalAdmin) ? Role.SystemAdmin : Role.Expert;
 
@@ -178,6 +178,21 @@ namespace ParkingControlWeb.Controllers
         {
             
             return View();
+        }
+
+        public async Task<IActionResult> Active(string id)
+        {
+            AppUser user = await _userManager.FindByIdAsync(id);
+
+            user.Active = user.Active == 0 ? 1 : 0;
+
+            string txt = user.Active == 1 ? "فعال": "غیر فعال";
+            if (_context.SaveChanges() > 0)
+                TempData["Success"] = string.Format("{0} کردن کاربر با موفقیت انجام شد", txt);
+            else
+                TempData["Error"] = string.Format("{0} کردن کاربر با موفقیت انجام شد", txt);
+
+            return RedirectToAction("Index", "Dashboard");
         }
 
         public async Task<IActionResult> Delete(string id)

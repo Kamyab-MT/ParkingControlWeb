@@ -5,6 +5,7 @@ namespace ParkingControlWeb.Models
 {
     public class AppUser : IdentityUser
     {
+        public int Active { get; set; }
         public string? SuperiorUserId { get; set; }
         [ForeignKey("Info")]
         public string? InfoId { get; set; }
