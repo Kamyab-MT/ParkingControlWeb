@@ -1,5 +1,165 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using ParkingControlWeb.ViewModels
+
+@model EditViewModel
+
 @{
+    ViewData["Title"] = "ویرایش حساب کاربری";
 }
+
+<html>
+<head>
+    <style>
+
+        .form-floating > label {
+            right: 0;
+            left: auto;
+        }
+
+        .dropdown-toggle::after {
+            display: none;
+        }
+    </style>
+
+    <script language="javascript" src="~/js/city.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container-fluid mt-5">
+        <div class="modal-content rounded-5 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+
+                <h1 class="fw-bold mb-0 fs-2">
+                    ویرایش حساب کاربری (@Model.FullName)
+                </h1>
+            </div>
+            <hr />
+
+            <div class="modal-body p-5 pt-0">
+
+                <form asp-action="Edit">
+
+                    <input type="hidden" asp-for="InfoId" value="@Model.InfoId" />
+                    <input type="hidden" asp-for="ParkingId" value="@Model.ParkingId" />
+
+                    <div class="row">
+
+                        @{
+                            int colSize = User.IsInRole("GlobalAdmin") ? 4 : 6;
+                        }
+                        <div class="col-@colSize">
+
+                            <h3 class="text-dark mb-3">مشخصات حساب</h3>
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="UserName" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
+                                <label asp-for="UserName" for="floatingInput" class="ms-0"></label>
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="col-@colSize">
+
+                            <h3 class="text-dark mb-3">مشخصات شخصی</h3>
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="FullName" type="text" class="form-control rounded-3" id="floatingInput5" placeholder="نام و نام خانوادگی">
+                                <label asp-for="FullName" for="floatingInput5" class="ms-0"></label>
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="NationalCode" type="text" class="form-control rounded-3" id="floatingInput7" placeholder="کد ملی">
+                                <label asp-for="NationalCode" for="floatingInput7" class="ms-0"></label>
+                                <span asp-validation-for="NationalCode" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="LandlineTel" type="text" class="form-control rounded-3" id="floatingInput8" placeholder="تلفن ثابت">
+                                <label asp-for="LandlineTel" for="floatingInput8" class="ms-0"></label>
+                                <span asp-validation-for="LandlineTel" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="Address" type="text" class="form-control rounded-3" id="floatingInput9" placeholder="آدرس">
+                                <label asp-for="Address" for="floatingInput9" class="ms-0"></label>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+                        @if (User.IsInRole("GlobalAdmin"))
+                        {
+                            <div class="col-@colSize">
+
+                                <h3 class="text-dark mb-3">مشخصات پارکینگ</h3>
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="ParkingName" type="text" class="form-control rounded-3" id="floatingInput10" placeholder="نام پارکینگ">
+                                    <label asp-for="ParkingName" for="floatingInput10" class="ms-0"></label>
+                                    <span asp-validation-for="ParkingName" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group mb-4">
+
+                                    <label asp-for="State"></label>
+                                    <select class="province form-select justify-content-star3t" asp-for="State">
+                                    </select>
+                                    <span asp-validation-for="State" class="text-danger"></span>
+
+                                    <label asp-for="City" style="display:block;"></label>
+                                    <select class="city form-select" asp-for="City"></select>
+                                    <span asp-validation-for="City" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="ParkingAddress" type="text" class="form-control rounded-3" id="floatingInput10" placeholder="آدرس">
+                                    <label asp-for="ParkingAddress" for="floatingInput10" class="ms-0"></label>
+                                    <span asp-validation-for="ParkingAddress" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="EntranceRate" type="number" class="form-control rounded-3" id="floatingInput11" placeholder="نرخ ورودی">
+                                    <label asp-for="EntranceRate" for="floatingInput11" class="ms-0"></label>
+                                    <span asp-validation-for="EntranceRate" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="HourlyRate" type="number" class="form-control rounded-3" id="floatingInput12" placeholder="نرخ ساعتی">
+                                    <label asp-for="HourlyRate" for="floatingInput12" class="ms-0"></label>
+                                    <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="DailyRate" type="number" class="form-control rounded-3" id="floatingInput13" placeholder="نرخ روزانه">
+                                    <label asp-for="DailyRate" for="floatingInput13" class="ms-0"></label>
+                                    <span asp-validation-for="DailyRate" class="text-danger"></span>
+                                </div>
+
+                            </div>
+                        }
+
+
+                        <div class="row">
+
+                            <div class="col-6">
+                                <button class="mb-2 btn btn-lg rounded-3 btn-primary form-control" type="submit">ویرایش</button>
+                            </div>
+
+                            <div class="col-6">
+                                <a asp-asp-controller="Dashboard" asp-action="Index" class="mb-2 btn btn-lg rounded-3 btn-secondary form-control">بازگشت به داشبورد</a>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+</html>
+

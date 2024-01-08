@@ -7,6 +7,7 @@ using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels;
 using System.Globalization;
+using System.Net;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
@@ -21,6 +22,7 @@ namespace ParkingControlWeb.Controllers
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly IInfo _infoRepository;
         readonly IParking _parkingRepository;
+        
         Role role = new Role();
 
         public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository)
@@ -35,10 +37,15 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            if(!User.Identity.IsAuthenticated)
-                return RedirectToAction("Index", "Home");
 
-            if(!_httpContextAccessor.HttpContext.User.IsInRole("Driver") && !_httpContextAccessor.HttpContext.User.IsInRole("Expert"))
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
+
+            if (!_httpContextAccessor.HttpContext.User.IsInRole("Driver") && !_httpContextAccessor.HttpContext.User.IsInRole("Expert"))
             {
                 string role = _httpContextAccessor.HttpContext.User.IsInRole("GlobalAdmin") ? "SystemAdmin" : "Expert";
                 var usersList = await _userManager.GetUsersInRoleAsync(role);
@@ -47,28 +54,34 @@ namespace ParkingControlWeb.Controllers
                 List<InfoViewModel> infos = new List<InfoViewModel>();
                 PersianCalendar persianCalendar = new PersianCalendar();
 
-                foreach (var user in limitedList)
+                if(limitedList.ToList().Count > 0)
                 {
-                    var info = await _infoRepository.GetById(user.InfoId);
 
-                    InfoViewModel infoVM = new InfoViewModel()
+                    foreach (var user in limitedList)
                     {
-                        FullName = info.FullName
+                        var info = await _infoRepository.GetById(user.InfoId);
+
+                        InfoViewModel infoVM = new InfoViewModel()
+                        {
+                            FullName = info.FullName
+                        };
+
+                        infoVM.RegisterDate = string.Format("{0}/{1}/{2}", persianCalendar.GetYear((DateTime)info.RegisterDate), persianCalendar.GetMonth((DateTime)info.RegisterDate), persianCalendar.GetDayOfMonth((DateTime)info.RegisterDate));
+
+                        infos.Add(infoVM);
+                    }
+
+                    UsersListViewModel usersListView = new UsersListViewModel()
+                    {
+                        Role = role,
+                        Users = limitedList.ToList(),
+                        Infos = infos
                     };
+                    
+                    return View(usersListView);
 
-                    infoVM.RegisterDate = string.Format("{0}/{1}/{2}", persianCalendar.GetYear((DateTime)info.RegisterDate), persianCalendar.GetMonth((DateTime)info.RegisterDate), persianCalendar.GetDayOfMonth((DateTime)info.RegisterDate));
-
-                    infos.Add(infoVM);
                 }
-
-                UsersListViewModel usersListView = new UsersListViewModel()
-                {
-                    Role = role,
-                    Users = limitedList.ToList(),
-                    Infos = infos
-                };
-
-                return View(usersListView);
+                
             }
 
             return View(null);
@@ -76,7 +89,15 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> Register()
         {
-            if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert) || !User.Identity.IsAuthenticated)
+
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
+
+            if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert))
                 return RedirectToAction("Index", "Home");
 
             RegisterViewModel model = new RegisterViewModel();
@@ -90,10 +111,8 @@ namespace ParkingControlWeb.Controllers
 
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "ورودی ها نامعتبر هستند";
-
-                //var list = ModelState.Values.SelectMany(v => v.Errors).ToList();
-                //TempData["Error"] = JsonConvert.SerializeObject(list);
+                //TempData["Error"] = "ورودی ها نامعتبر هستند";
+                TempData["Error"] = (ModelState.Values.SelectMany(v => v.Errors).ToList()[0].ErrorMessage);
 
                 return View(registerViewModel);
             }
@@ -103,8 +122,9 @@ namespace ParkingControlWeb.Controllers
             if (response == null) // it does not exist
             {
                 string infoId = Guid.NewGuid().ToString();
+                string parkingId = Guid.NewGuid().ToString();
 
-                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName , SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId() , Active = 1 };
+                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName , SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId() , Active = 1, ParkingId = parkingId };
 
                 string selectedRole = _httpContextAccessor.HttpContext.User.IsInRole(Role.GlobalAdmin) ? Role.SystemAdmin : Role.Expert;
 
@@ -119,6 +139,7 @@ namespace ParkingControlWeb.Controllers
 
                         Parking parking = new Parking()
                         {
+                            Id = parkingId,
                             Address = registerViewModel.ParkingAddress,
                             City = registerViewModel.City,
                             State = registerViewModel.State,
@@ -173,15 +194,95 @@ namespace ParkingControlWeb.Controllers
             }
 
         }
-        
-        public IActionResult Edit(string id)
+
+        public async Task<IActionResult> Edit(string id)
         {
-            
-            return View();
+
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
+            var user = await _userManager.FindByIdAsync(id);
+            var info = await _infoRepository.GetById(user.InfoId);
+            var parking = await _parkingRepository.GetById(user.ParkingId);
+
+            EditViewModel editVM = new EditViewModel()
+            {
+                UserName = user.UserName,
+                FullName = info.FullName,
+                NationalCode = info.NationalCode,
+                LandlineTel = info.LandlineTel,
+                Address = info.Address,
+                ParkingName = parking.Name,
+                State = parking.State,
+                City = parking.City,
+                ParkingAddress = parking.Address,
+                EntranceRate = parking.EntranceRate,
+                HourlyRate = parking.HourlyRate,
+                DailyRate = parking.DailyRate,
+                InfoId = user.InfoId,
+                ParkingId = user.ParkingId
+            };
+
+            return View(editVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditViewModel editViewModel)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "ورودی ها نامعتبر هستند";
+                //TempData["Error"] = (ModelState.Values.SelectMany(v => v.Errors).ToList()[1].ErrorMessage);
+                return View(editViewModel);
+            }
+
+            var user = await _userManager.FindByNameAsync(editViewModel.UserName);
+            var info = await _infoRepository.GetById(user.InfoId);
+            var parking = await _parkingRepository.GetById(user.ParkingId);
+
+            info.FullName = editViewModel.FullName;
+            info.Address = editViewModel.Address;
+            info.LandlineTel = editViewModel.LandlineTel;
+            info.NationalCode = editViewModel.NationalCode;
+
+            parking.Address = editViewModel.ParkingAddress;
+            parking.City = editViewModel.City;
+            parking.State = editViewModel.State;
+            parking.Name = editViewModel.ParkingName;
+            parking.DailyRate = editViewModel.DailyRate;
+            parking.EntranceRate = editViewModel.EntranceRate;
+            parking.HourlyRate = editViewModel.HourlyRate;
+
+            if(_infoRepository.Update(info) && _parkingRepository.Update(parking))
+            {
+                user.UserName = editViewModel.UserName;
+
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    TempData["Success"] = "ویرایش حساب کاربری با موفقیت انجام شد";
+                    return RedirectToAction("Index", "Dashboard");
+                }
+            }
+
+            TempData["Error"] = "ویرایش حساب کاربری با خطا رو به رو شد";
+            return View(editViewModel);
         }
 
         public async Task<IActionResult> Active(string id)
         {
+
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
             AppUser user = await _userManager.FindByIdAsync(id);
 
             user.Active = user.Active == 0 ? 1 : 0;
@@ -197,6 +298,13 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> Delete(string id)
         {
+
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
             AppUser user = await _userManager.FindByIdAsync(id);
 
             Info info = await _infoRepository.GetById(user.InfoId);
@@ -217,6 +325,28 @@ namespace ParkingControlWeb.Controllers
             return RedirectToAction("Index", "Dashboard");
         }
 
+        public async Task<IActionResult> SessionCheck()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                TempData["Error"] = "از حساب خود خارج شدید، لطفا مجدد وارد شوید";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return null;
+        }
+
+        public async Task<IActionResult> ActivityCheck()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Active == 0)
+            {
+                TempData["Error"] = "این حساب غیر فعال شده است";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return null;
+        }
 
 
         //___________________ Create GLobal Admin User

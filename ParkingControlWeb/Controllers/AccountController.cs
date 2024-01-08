@@ -32,6 +32,8 @@ namespace ParkingControlWeb.Controllers
         
         public IActionResult Login()
         {
+            if (User != null && User.Identity.IsAuthenticated) return RedirectToAction("Index", "Dashboard");
+
             LoginViewModel loginVM = new LoginViewModel();
 			return View(loginVM);
         }
@@ -46,6 +48,11 @@ namespace ParkingControlWeb.Controllers
             if (user != null)
             {
                 //User has been found
+                if(user.Active == 0)
+                {
+                    TempData["Error"] = "این حساب غیر فعال شده است";
+                    return View();
+                }
 
                 bool passwordCheck = await _userManager.CheckPasswordAsync(user, loginViewModel.Password);
 

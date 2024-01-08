@@ -11,12 +11,10 @@
             <div class="mt-5">
 
 
-                @if(Model != null)
-                {
                     <div class="row">
 
                         <div class="col-6">
-                            @if (Model.Role == "SystemAdmin")
+                            @if (User.IsInRole("SystemAdmin"))
                             {
                                 <h3>لیست صاحبین پارکینگ</h3>
                             }
@@ -44,24 +42,26 @@
                         </thead>
                         <tbody>
 
+                    @if(Model != null)
+                    {
                         @for (int i = 0; i < Model.Users.Count; i++)
-                            {
-                                <tr>
-                                    <th>@(i+1)</th>
-                                    <td>@Model.Infos[i].FullName</td>
-                                    <td>@Model.Users[i].UserName</td>
-                                    <td>@Model.Infos[i].RegisterDate</td>
-                                    <td>
-                                        <div class="row">
+                        {
+                            <tr>
+                                <th>@(i + 1)</th>
+                                <td>@Model.Infos[i].FullName</td>
+                                <td>@Model.Users[i].UserName</td>
+                                <td>@Model.Infos[i].RegisterDate</td>
+                                <td>
+                                    <div class="row">
 
-                                            <div class="col-6">
-                                                <a class="btn btn-primary form-control asp-controller="Dashboard" asp-action="Delete" asp-route-id="@Model.Users[i].Id">تغییر دادن</a>
-                                            </div>
-                                            
-                                        @if(Model.Users[i].Active == 1)
+                                        <div class="col-6">
+                                            <a class="btn btn-primary form-control asp-controller="Dashboard" asp-action="Edit" asp-route-id="@Model.Users[i].Id">ویرایش</a>
+                                        </div>
+
+                                        @if (Model.Users[i].Active == 1)
                                         {
                                             <div class="col-6">
-                                                    <a class="btn btn-danger form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id">غیر فعال کردن حساب</a>
+                                                <a class="btn btn-danger form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id">غیر فعال کردن حساب</a>
                                             </div>
                                         }
                                         else
@@ -70,15 +70,15 @@
                                                 <a class="btn btn-success form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id">فعال کردن حساب</a>
                                             </div>
                                         }
-                                        </div>   
-                                    </td>
-                                </tr>
-                            }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
 
+                    }
+                    
                         </tbody>
                     </table>
-
-                }
             </div>
 
     </div>

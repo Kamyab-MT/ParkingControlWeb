@@ -1,14 +1,11 @@
-﻿<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: auto; height: 100vh; position:fixed;">
+﻿@using ParkingControlWeb.Data.Interface
+@inject IParking _parkingRep
+
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: auto; height: 100vh; position:fixed;">
     <a class="d-flex align-items-center link-dark text-decoration-none" style="user-select: none;">
         <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-        @if (!User.IsInRole("Driver"))
-        {
-            <h3 class="fs-4 me-0">نام پارکینگ</h3>
-        }
-        else
-        {
-            <h3 class="fs-4 me-0">ناحیه کاربری</h3>
-        }
+        <h3 class="fs-4 me-0">ناحیه کاربری</h3>
+
     </a>
     <hr>
     @if (!User.IsInRole("Driver"))
