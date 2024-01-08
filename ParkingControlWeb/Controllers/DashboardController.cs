@@ -111,10 +111,22 @@ namespace ParkingControlWeb.Controllers
 
             if (!ModelState.IsValid)
             {
-                //TempData["Error"] = "ورودی ها نامعتبر هستند";
-                TempData["Error"] = (ModelState.Values.SelectMany(v => v.Errors).ToList()[0].ErrorMessage);
 
-                return View(registerViewModel);
+                if (User.IsInRole(Role.GlobalAdmin))
+                {
+                    TempData["Error"] = "ورودی ها نامعتبر هستند";
+                    //TempData["Error"] = (ModelState.Values.SelectMany(v => v.Errors).ToList()[2].ErrorMessage);
+
+                    return View(registerViewModel);
+                }
+                else // SystemAdmin
+                {
+                    if(ModelState.Values.SelectMany(v => v.Errors).ToList().Count > 7)
+                    {
+                        TempData["Error"] = "ورودی ها نامعتبر هستند";
+                        return View(registerViewModel);
+                    }
+                }
             }
 
             IdentityUser response = await _userManager.FindByNameAsync(registerViewModel.UserName);
@@ -122,7 +134,15 @@ namespace ParkingControlWeb.Controllers
             if (response == null) // it does not exist
             {
                 string infoId = Guid.NewGuid().ToString();
-                string parkingId = Guid.NewGuid().ToString();
+                string parkingId = "";
+
+                if(User.IsInRole(Role.GlobalAdmin))
+                    parkingId = Guid.NewGuid().ToString();
+                else
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    parkingId = user.ParkingId;
+                }
 
                 AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName , SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId() , Active = 1, ParkingId = parkingId };
 
