@@ -17,7 +17,7 @@ namespace ParkingControlWeb.Controllers
         {
             if(User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Dashboard");
+                return RedirectToAction("UsersList", "Dashboard");
             }
 
             return View();

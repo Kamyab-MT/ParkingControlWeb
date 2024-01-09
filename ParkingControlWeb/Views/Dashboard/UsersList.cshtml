@@ -14,7 +14,7 @@
                     <div class="row">
 
                         <div class="col-6">
-                            @if (User.IsInRole("SystemAdmin"))
+                            @if (User.IsInRole("GlobalAdmin"))
                             {
                                 <h3>لیست صاحبین پارکینگ</h3>
                             }
@@ -23,12 +23,12 @@
                                 <h3>لیست کارشناس ها</h3>
                             }
                         </div>
+
                         <div class="col-6 text-start">
-                        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Register">اضافه کردن <i class="bi bi-plus-circle"></i></a>
+                            <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Register">اضافه کردن <i class="bi bi-plus-circle"></i></a>
                         </div>
 
                     </div>
-
 
                 <table class="table">
                         <thead>

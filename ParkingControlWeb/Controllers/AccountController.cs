@@ -64,10 +64,16 @@ namespace ParkingControlWeb.Controllers
                     if (result.Result == Microsoft.AspNetCore.Identity.SignInResult.Success)
                     {
 						TempData["Success"] = "با موفقیت وارد شدید";
-						return RedirectToAction("Index", "Dashboard");
-					}
 
-					TempData["Error"] = "ورود به حساب انجام نشد، لطفا مجدد تلاش کنید";
+                        if(User.IsInRole("Driver"))
+                            return RedirectToAction("Charge", "Dashboard");
+                        else if (User.IsInRole("GlobalAdmin"))
+                            return RedirectToAction("UsersList", "Dashboard");
+                        else
+                            return RedirectToAction("Records", "Dashboard");
+                    }
+
+                    TempData["Error"] = "ورود به حساب انجام نشد، لطفا مجدد تلاش کنید";
                     return View(loginViewModel);
                 }
 

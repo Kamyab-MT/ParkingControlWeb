@@ -35,7 +35,22 @@ namespace ParkingControlWeb.Controllers
             _parkingRepository = parkingRepository;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("Driver"))
+                    return RedirectToAction("Charge", "Dashboard");
+                else if(User.IsInRole("GlobalAdmin"))
+                    return RedirectToAction("UsersList", "Dashboard");
+                else
+                    return RedirectToAction("Records", "Dashboard");
+            }
+            else
+                return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> UsersList()
         {
 
             var Session = await SessionCheck();
@@ -199,7 +214,7 @@ namespace ParkingControlWeb.Controllers
 
                     TempData["Success"] = "کاربر جدید با موفقیت ساخته شد";
 
-                    return RedirectToAction("Index", "Dashboard");
+                    return RedirectToAction("UsersList", "Dashboard");
                 }
                 else
                 {
@@ -286,7 +301,7 @@ namespace ParkingControlWeb.Controllers
                 if (result.Succeeded)
                 {
                     TempData["Success"] = "ویرایش حساب کاربری با موفقیت انجام شد";
-                    return RedirectToAction("Index", "Dashboard");
+                    return RedirectToAction("UsersList", "Dashboard");
                 }
             }
 
@@ -313,7 +328,22 @@ namespace ParkingControlWeb.Controllers
             else
                 TempData["Error"] = string.Format("{0} کردن کاربر با موفقیت انجام شد", txt);
 
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("UsersList", "Dashboard");
+        }
+
+        public IActionResult Records()
+        {
+            return View();
+        }
+
+        public IActionResult Reporting()
+        {
+            return View();
+        }
+
+        public IActionResult Charge()
+        {
+            return View();
         }
 
         public async Task<IActionResult> Delete(string id)
@@ -342,7 +372,7 @@ namespace ParkingControlWeb.Controllers
             await _userManager.RemoveFromRolesAsync(user, roles);
             await _userManager.DeleteAsync(user);
 
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("UsersList", "Dashboard");
         }
 
         public async Task<IActionResult> SessionCheck()
