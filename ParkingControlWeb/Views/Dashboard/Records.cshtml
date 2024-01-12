@@ -1,9 +1,27 @@
-﻿@{
+﻿@using ParkingControlWeb.ViewModels;
+
+@model AddRecordViewModel
+
+@{
     ViewData["Title"] = "ورود و خروج ها";
 }
 
 <html>
+    <head>
 
+        <style>
+
+            .form-floating > label {
+                right: 0;
+                left: auto;
+            }
+
+            .dropdown-toggle::after {
+                display: none;
+            }
+        </style>
+    </head>
+    
     <body>
         <div class="container-fluid">
 
@@ -17,30 +35,72 @@
                     </div>
                 </div>
 
-                <div class="overflow-scroll" style="max-height:70vh;">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>عنوان</th>
-                            <th>نام</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (int i = 0; i < 40; i++)
-                        {
+                <div class="overflow-scroll" style="max-height:60vh;">
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
-                                <td>@i</td>
-                                <td>@(i + 10)</td>
+                                <th>شماره همراه</th>
+                                <th>مدل ماشین</th>
+                                <th>شماره پلاک</th>
+                                <th>زمان ورود</th>
+                                <th>مدت زمان گذشته</th>
+                                <th>وضعیت</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < 40; i++)
+                            {
+                                <tr>
+                                    <td>09939827916</td>
+                                    <td>سیترئون زانتیا</td>
+                                    <td>23521-ب</td>
+                                    <td>1402/12/4</td>
+                                    <td>2 ساعت</td>
+                                    <td>
+                                        <a class="btn btn-success">بستن</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
 
                 <hr />
 
-
             </div>
+
+            <div class="mt-5">
+                <form asp-action="AddRecord">
+
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="PhoneNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
+                                <label asp-for="PhoneNumber" for="floatingInput" class="ms-0"></label>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="CarModel" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
+                                <label asp-for="CarModel" for="floatingInput" class="ms-0"></label>
+                                <span asp-validation-for="CarModel" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                                <input asp-for="PlateNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
+                                <label asp-for="PlateNumber" for="floatingInput" class="ms-0"></label>
+                                <span asp-validation-for="PlateNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <a class="btn btn-success form-control ">ثبت رکورد</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </body>
 </html>

@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels;
 using System.Globalization;
-using System.Net;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -22,7 +18,7 @@ namespace ParkingControlWeb.Controllers
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly IInfo _infoRepository;
         readonly IParking _parkingRepository;
-        
+
         Role role = new Role();
 
         public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository)
@@ -41,7 +37,7 @@ namespace ParkingControlWeb.Controllers
             {
                 if (User.IsInRole("Driver"))
                     return RedirectToAction("Charge", "Dashboard");
-                else if(User.IsInRole("GlobalAdmin"))
+                else if (User.IsInRole("GlobalAdmin"))
                     return RedirectToAction("UsersList", "Dashboard");
                 else
                     return RedirectToAction("Records", "Dashboard");
@@ -69,7 +65,7 @@ namespace ParkingControlWeb.Controllers
                 List<InfoViewModel> infos = new List<InfoViewModel>();
                 PersianCalendar persianCalendar = new PersianCalendar();
 
-                if(limitedList.ToList().Count > 0)
+                if (limitedList.ToList().Count > 0)
                 {
 
                     foreach (var user in limitedList)
@@ -92,11 +88,11 @@ namespace ParkingControlWeb.Controllers
                         Users = limitedList.ToList(),
                         Infos = infos
                     };
-                    
+
                     return View(usersListView);
 
                 }
-                
+
             }
 
             return View(null);
@@ -119,7 +115,7 @@ namespace ParkingControlWeb.Controllers
             return View(model);
         }
 
-        
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
@@ -136,7 +132,7 @@ namespace ParkingControlWeb.Controllers
                 }
                 else // SystemAdmin
                 {
-                    if(ModelState.Values.SelectMany(v => v.Errors).ToList().Count > 7)
+                    if (ModelState.Values.SelectMany(v => v.Errors).ToList().Count > 7)
                     {
                         TempData["Error"] = "ورودی ها نامعتبر هستند";
                         return View(registerViewModel);
@@ -151,7 +147,7 @@ namespace ParkingControlWeb.Controllers
                 string infoId = Guid.NewGuid().ToString();
                 string parkingId = "";
 
-                if(User.IsInRole(Role.GlobalAdmin))
+                if (User.IsInRole(Role.GlobalAdmin))
                     parkingId = Guid.NewGuid().ToString();
                 else
                 {
@@ -159,7 +155,7 @@ namespace ParkingControlWeb.Controllers
                     parkingId = user.ParkingId;
                 }
 
-                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName , SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId() , Active = 1, ParkingId = parkingId };
+                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName, SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId(), Active = 1, ParkingId = parkingId };
 
                 string selectedRole = _httpContextAccessor.HttpContext.User.IsInRole(Role.GlobalAdmin) ? Role.SystemAdmin : Role.Expert;
 
@@ -169,7 +165,7 @@ namespace ParkingControlWeb.Controllers
                 {
                     await _userManager.AddToRoleAsync(newUser, selectedRole);
 
-                    if(await _userManager.IsInRoleAsync(newUser, Role.SystemAdmin))
+                    if (await _userManager.IsInRoleAsync(newUser, Role.SystemAdmin))
                     {
 
                         Parking parking = new Parking()
@@ -292,7 +288,7 @@ namespace ParkingControlWeb.Controllers
             parking.EntranceRate = editViewModel.EntranceRate;
             parking.HourlyRate = editViewModel.HourlyRate;
 
-            if(_infoRepository.Update(info) && _parkingRepository.Update(parking))
+            if (_infoRepository.Update(info) && _parkingRepository.Update(parking))
             {
                 user.UserName = editViewModel.UserName;
 
@@ -322,7 +318,7 @@ namespace ParkingControlWeb.Controllers
 
             user.Active = user.Active == 0 ? 1 : 0;
 
-            string txt = user.Active == 1 ? "فعال": "غیر فعال";
+            string txt = user.Active == 1 ? "فعال" : "غیر فعال";
             if (_context.SaveChanges() > 0)
                 TempData["Success"] = string.Format("{0} کردن کاربر با موفقیت انجام شد", txt);
             else
@@ -361,11 +357,11 @@ namespace ParkingControlWeb.Controllers
             _infoRepository.Delete(info);
 
             var roles = await _userManager.GetRolesAsync(user);
-            
+
             if (roles[0] == "SystemAdmin")
             {
                 Parking parking = await _parkingRepository.GetById(user.ParkingId);
-                if(parking != null)
+                if (parking != null)
                     _parkingRepository.Delete(parking);
             }
 
@@ -398,6 +394,10 @@ namespace ParkingControlWeb.Controllers
             return null;
         }
 
+        public IActionResult RecordsHistory()
+        {
+            return View();
+        }
 
         //___________________ Create GLobal Admin User
         /*

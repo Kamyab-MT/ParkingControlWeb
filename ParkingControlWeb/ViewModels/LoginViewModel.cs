@@ -2,10 +2,10 @@
 
 namespace ParkingControlWeb.ViewModels
 {
-	public class LoginViewModel
-	{
+    public class LoginViewModel
+    {
         [Required(ErrorMessage = "ورود شماره همراه الزامی است")]
-        [Display(Name ="شماره همراه")]
+        [Display(Name = "شماره همراه")]
         [DataType(DataType.PhoneNumber)]
         public string UserName { get; set; }
         [Required(ErrorMessage = "ورود رمز عبور الزامی است")]

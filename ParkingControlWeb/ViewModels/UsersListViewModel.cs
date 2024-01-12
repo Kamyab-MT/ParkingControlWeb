@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using ParkingControlWeb.Models;
+﻿using ParkingControlWeb.Models;
 
 namespace ParkingControlWeb.ViewModels
 {

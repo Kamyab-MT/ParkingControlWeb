@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "تاریخچه ورود و خروج ها";
+}
+
+<html>
+
+    <head>
+
+    </head>
+
+    <body>
+    <div class="container-fluid">
+
+        <div class="mt-5">
+
+
+            <div class="row">
+
+                <div class="col-6">
+                    <h3>رکورد های جاری</h3>
+                </div>
+            </div>
+
+            <div class="overflow-scroll" style="max-height:60vh;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>شماره همراه</th>
+                            <th>مدل ماشین</th>
+                            <th>شماره پلاک</th>
+                            <th>زمان ورود</th>
+                            <th>مدت زمان گذشته</th>
+                            <th>وضعیت</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            <tr>
+                                <td>09939827916</td>
+                                <td>سیترئون زانتیا</td>
+                                <td>23521-ب</td>
+                                <td>1402/12/4</td>
+                                <td>2 ساعت</td>
+                                <td>
+                                    <a class="btn btn-success">بستن</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <hr />
+
+        </div>
+        </div>
+    </body>
+
+</html>

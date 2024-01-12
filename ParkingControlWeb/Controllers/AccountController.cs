@@ -7,7 +7,7 @@ using ParkingControlWeb.ViewModels;
 
 namespace ParkingControlWeb.Controllers
 {
-	public class AccountController : Controller
+    public class AccountController : Controller
     {
 
         readonly UserManager<AppUser> _userManager;
@@ -27,15 +27,15 @@ namespace ParkingControlWeb.Controllers
 
         public IActionResult Index()
         {
-            return View("Error", new ErrorViewModel() { RequestId = "ER-1"});
+            return View("Error", new ErrorViewModel() { RequestId = "ER-1" });
         }
-        
+
         public IActionResult Login()
         {
             if (User != null && User.Identity.IsAuthenticated) return RedirectToAction("Index", "Dashboard");
 
             LoginViewModel loginVM = new LoginViewModel();
-			return View(loginVM);
+            return View(loginVM);
         }
 
         [HttpPost]
@@ -44,11 +44,11 @@ namespace ParkingControlWeb.Controllers
             if (!ModelState.IsValid) return View(loginViewModel);
 
             var user = await _userManager.FindByNameAsync(loginViewModel.UserName); // first we need to check that the user actually exist
-            
+
             if (user != null)
             {
                 //User has been found
-                if(user.Active == 0)
+                if (user.Active == 0)
                 {
                     TempData["Error"] = "این حساب غیر فعال شده است";
                     return View();
@@ -63,9 +63,9 @@ namespace ParkingControlWeb.Controllers
                     var result = _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, true);
                     if (result.Result == Microsoft.AspNetCore.Identity.SignInResult.Success)
                     {
-						TempData["Success"] = "با موفقیت وارد شدید";
+                        TempData["Success"] = "با موفقیت وارد شدید";
 
-                        if(User.IsInRole("Driver"))
+                        if (User.IsInRole("Driver"))
                             return RedirectToAction("Charge", "Dashboard");
                         else if (User.IsInRole("GlobalAdmin"))
                             return RedirectToAction("UsersList", "Dashboard");

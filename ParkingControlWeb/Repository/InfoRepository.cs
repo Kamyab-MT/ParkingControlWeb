@@ -36,6 +36,6 @@ namespace ParkingControlWeb.Repository
         public async Task<Info> GetById(string id) => await _dbContext.Info.FirstOrDefaultAsync(s => s.Id == id);
 
         public bool Save() => _dbContext.SaveChanges() > 0 ? true : false;
-        
+
     }
 }

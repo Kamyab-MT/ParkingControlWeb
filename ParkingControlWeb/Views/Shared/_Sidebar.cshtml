@@ -30,8 +30,15 @@
 
                         <li>
                             <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Records">
-                                ورود و خروج ها
+                                ورود و خروج های جاری
                                 <i class="bi bi-car-front-fill"></i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="RecordsHistory">
+                                تاریخچه ورود و خروج ها
+                                <i class="bi bi-calendar-week"></i>
                             </a>
                         </li>
 
@@ -53,13 +60,50 @@
 
                         <li>
                             <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Records">
-                                ورود و خروج ها
+                                ورود و خروج های جاری
                                 <i class="bi bi-car-front-fill"></i>
                             </a>
                         </li>
 
                         <li>
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="RecordsHistory">
+                                تاریخچه ورود و خروج ها
+                                <i class="bi bi-calendar-week"></i>
+                            </a>
+                        </li>
+
+                        <li>
                             <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
+                                گزارش گیری
+                                <i class="bi bi-clipboard-data"></i>
+                            </a>
+                        </li>
+                    }
+                    else if(action == "Records")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
+                                لیست کارشناس ها
+                                <i class="bi bi-people-fill"></i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Records">
+                                ورود و خروج های جاری
+                                <i class="bi bi-car-front-fill"></i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="RecordsHistory">
+                                تاریخچه ورود و خروج ها
+                                <i class="bi bi-calendar-week"></i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
                                 گزارش گیری
                                 <i class="bi bi-clipboard-data"></i>
                             </a>
@@ -75,9 +119,16 @@
                         </li>
 
                         <li>
-                            <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Records">
-                                ورود و خروج ها
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Records">
+                                ورود و خروج های جاری
                                 <i class="bi bi-car-front-fill"></i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="RecordsHistory">
+                                تاریخچه ورود و خروج ها
+                                <i class="bi bi-calendar-week"></i>
                             </a>
                         </li>
 

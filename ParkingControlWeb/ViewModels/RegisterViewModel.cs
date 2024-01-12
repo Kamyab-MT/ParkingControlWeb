@@ -1,5 +1,4 @@
-﻿using ParkingControlWeb.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ParkingControlWeb.ViewModels
 {
@@ -8,7 +7,7 @@ namespace ParkingControlWeb.ViewModels
 
         [Required(ErrorMessage = "ورود شماره همراه الزامی است")]
         [Display(Name = "شماره همراه")]
-        public string UserName{ get; set; }
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "ورود رمز عبور الزامی است")]
         [DataType(DataType.Password)]
@@ -64,7 +63,7 @@ namespace ParkingControlWeb.ViewModels
 
         [DataType(DataType.Currency)]
         [Display(Name = "نرخ ورودی")]
-        [Range(minimum:1000, maximum:10000000, ErrorMessage = "رقم وارد شده باید بین 1000 تومان الی 10 میلیون تومان باشد")]
+        [Range(minimum: 1000, maximum: 10000000, ErrorMessage = "رقم وارد شده باید بین 1000 تومان الی 10 میلیون تومان باشد")]
         [Required(ErrorMessage = "نرخ ورودی را وارد کنید")]
         public int EntranceRate { get; set; }
 

@@ -1,7 +1,4 @@
-﻿using ParkingControlWeb.Models;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ParkingControlWeb.ViewModels
+﻿namespace ParkingControlWeb.ViewModels
 {
     public class InfoViewModel
     {
