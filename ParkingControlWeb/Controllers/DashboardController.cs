@@ -394,6 +394,12 @@ namespace ParkingControlWeb.Controllers
             return null;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddRecord(AddRecordViewModel addRecordViewModel)
+        {
+            return RedirectToAction("Records", "Dashboard");
+        }
+
         public IActionResult RecordsHistory()
         {
             return View();
