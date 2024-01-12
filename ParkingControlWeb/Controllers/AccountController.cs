@@ -60,7 +60,7 @@ namespace ParkingControlWeb.Controllers
                 {
                     //Password is correct
 
-                    var result = _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
+                    var result = _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, true);
                     if (result.Result == Microsoft.AspNetCore.Identity.SignInResult.Success)
                     {
 						TempData["Success"] = "با موفقیت وارد شدید";
