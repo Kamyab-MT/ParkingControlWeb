@@ -1,5 +1,46 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "ورود و خروج ها";
 }
+
+<html>
+
+    <body>
+        <div class="container-fluid">
+
+            <div class="mt-5">
+
+
+                <div class="row">
+
+                    <div class="col-6">
+                        <h3>رکورد های جاری</h3>
+                    </div>
+                </div>
+
+                <div class="overflow-scroll" style="max-height:70vh;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>عنوان</th>
+                            <th>نام</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < 40; i++)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@(i + 10)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                </div>
+
+                <hr />
+
+
+            </div>
+        </div>
+    </body>
+</html>

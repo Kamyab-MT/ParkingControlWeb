@@ -17,10 +17,14 @@
                             @if (User.IsInRole("GlobalAdmin"))
                             {
                                 <h3>لیست صاحبین پارکینگ</h3>
+                                ViewData["Title"] = "لیست صاحبین پارکینگ";
+
                             }
                             else
                             {
                                 <h3>لیست کارشناس ها</h3>
+                                ViewData["Title"] = "لیست کارشناس ها";
+
                             }
                         </div>
 
@@ -81,7 +85,7 @@
                     </table>
             </div>
 
-    </div>
+        </div>
 
 	</body>
 
