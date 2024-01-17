@@ -13,7 +13,6 @@ namespace ParkingControlWeb.Controllers
     {
 
         readonly UserManager<AppUser> _userManager;
-        readonly SignInManager<AppUser> _signInManager;
         readonly ApplicationDbContext _context;
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly IInfo _infoRepository;
@@ -21,10 +20,9 @@ namespace ParkingControlWeb.Controllers
 
         Role role = new Role();
 
-        public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository)
+        public DashboardController(UserManager<AppUser> userManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _infoRepository = infoRepository;
@@ -241,6 +239,7 @@ namespace ParkingControlWeb.Controllers
 
             EditViewModel editVM = new EditViewModel()
             {
+                Id = info.UserId,
                 UserName = user.UserName,
                 FullName = info.FullName,
                 NationalCode = info.NationalCode,
@@ -266,9 +265,12 @@ namespace ParkingControlWeb.Controllers
 
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "ورودی ها نامعتبر هستند";
-                //TempData["Error"] = (ModelState.Values.SelectMany(v => v.Errors).ToList()[1].ErrorMessage);
-                return View(editViewModel);
+                if (ModelState.Values.SelectMany(v => v.Errors).ToList().Count != 7)
+                {
+                    TempData["Error"] = "ورودی ها نامعتبر هستند";
+                    //TempData["Error"] = (ModelState.Values.SelectMany(v => v.Errors).ToList().Count);
+                    return View(editViewModel);
+                }
             }
 
             var user = await _userManager.FindByNameAsync(editViewModel.UserName);

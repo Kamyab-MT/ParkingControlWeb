@@ -15,6 +15,10 @@ namespace ParkingControlWeb.Models
         public string UserId { get; set; }
         public AppUser User { get; set; }
 
+        [ForeignKey("Car")]
+        public string CarId { get; set; }
+        public Car Car { get; set; }
+
         [ForeignKey("Parking")]
         public string ParkingId { get; set; }
         public Parking Pakring { get; set; }

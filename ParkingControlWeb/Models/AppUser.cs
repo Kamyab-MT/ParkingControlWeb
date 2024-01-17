@@ -13,5 +13,6 @@ namespace ParkingControlWeb.Models
         [ForeignKey("Parking")]
         public string? ParkingId { get; set; }
         public Parking? Parking { get; set; }
+        public DateTime SubscriptionExpiry { get; set; }
     }
 }

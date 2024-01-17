@@ -4,6 +4,8 @@ namespace ParkingControlWeb.ViewModels
 {
     public class EditViewModel
     {
+        public string Id { get; set; }
+
         [Required(ErrorMessage = "ورود شماره همراه الزامی است")]
         [Display(Name = "شماره همراه")]
         public string UserName { get; set; }

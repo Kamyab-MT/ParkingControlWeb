@@ -40,26 +40,48 @@
                         <thead>
                             <tr>
                                 <th>شماره همراه</th>
-                                <th>مدل ماشین</th>
                                 <th>شماره پلاک</th>
                                 <th>زمان ورود</th>
                                 <th>مدت زمان گذشته</th>
-                                <th>وضعیت</th>
+                                <th>هزینه تا به الان</th>
+                                <th>اکشن</th>
                             </tr>
                         </thead>
                         <tbody>
                             @for (int i = 0; i < 40; i++)
                             {
-                                <tr>
+                            <tr class="accordion-toggle" data-toggle="collapse" data-target="#collapseOne" >
                                     <td>09939827916</td>
-                                    <td>سیترئون زانتیا</td>
                                     <td>23521-ب</td>
                                     <td>1402/12/4</td>
                                     <td>2 ساعت</td>
+                                    <td>200.000 تومان</td>
                                     <td>
-                                        <a class="btn btn-success">بستن</a>
+                                        @if (false)
+                                        {
+                                            <a class="btn btn-warning">توقف</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-success">ادامه دادن</a>
+                                            <a class="btn btn-info" onclick="expandView(@i)">شارژ کردن حساب</a>
+
+                                            if (false)
+                                            {
+                                                <span tabindex="0" data-toggle="tooltip" data-placement="top" title="موجودی کاربر کافی نمی‌باشد">
+                                                    <a class="btn btn-danger disabled">خروج</a>
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-danger">خروج</a>
+                                            }
+                                        }
+
+
                                     </td>
-                                </tr>
+                            </tr>
+
                             }
                         </tbody>
                     </table>
@@ -82,13 +104,6 @@
                         </div>
                         <div class="col-3">
                             <div class="form-floating mb-3 justify-content-star3t form-group">
-                                <input asp-for="CarModel" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
-                                <label asp-for="CarModel" for="floatingInput" class="ms-0"></label>
-                                <span asp-validation-for="CarModel" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <div class="form-floating mb-3 justify-content-star3t form-group">
                                 <input asp-for="PlateNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
                                 <label asp-for="PlateNumber" for="floatingInput" class="ms-0"></label>
                                 <span asp-validation-for="PlateNumber" class="text-danger"></span>
@@ -103,6 +118,7 @@
 
         </div>
     </body>
+
 
     @section Scripts {
         <partial name="_ValidationScriptsPartial" />

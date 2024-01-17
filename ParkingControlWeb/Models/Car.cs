@@ -7,7 +7,6 @@ namespace ParkingControlWeb.Models
     {
         [Key]
         public string? Id { get; set; }
-        public string? Model { get; set; }
         public string? PlateNumber { get; set; }
         public int VisitCount { get; set; }
         [ForeignKey("Owner")]
