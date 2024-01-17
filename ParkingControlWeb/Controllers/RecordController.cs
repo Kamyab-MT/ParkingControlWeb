@@ -19,6 +19,7 @@ namespace ParkingControlWeb.Controllers
 
         public IActionResult Index()
         {
+
             return View();
         }
 
@@ -29,8 +30,15 @@ namespace ParkingControlWeb.Controllers
         }
 
         [HttpPost]
-        public Task<IActionResult> AddNewRecord(Record record)
+        public async Task<IActionResult> AddNewRecord(Record record)
         {
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "ورودی ها نامعتبر هستند";
+                return View(record);
+            }
+
+
             return null;
         }
     }

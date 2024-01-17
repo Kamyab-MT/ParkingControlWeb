@@ -1,4 +1,5 @@
-﻿using ParkingControlWeb.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Models;
 
@@ -14,19 +15,18 @@ namespace ParkingControlWeb.Repository
             _dbContext = dbContext;
         }
 
-        public Task<Record> AddToParking(Parking parking)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<IEnumerable<Record>> GetAllFromParking(Parking parking) => _dbContext.Records.ToList();
 
-        public Task<Record> GetAllFromParking(Parking parking)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<IEnumerable<Record>> GetAllActiveFromParking(Parking parking) => await _dbContext.Records.Where(s => (s.Status == 0 && s.ParkingId == parking.Id)).ToListAsync();
 
-        public Task<Record> GetFromParking(Parking parking, string userId)
+        public async Task<IEnumerable<Record>> GetAllCompletedFromParking(Parking parking) => await _dbContext.Records.Where(s => (s.Status == 1 && s.ParkingId == parking.Id)).ToListAsync();
+
+        public async Task<Record> GetFromParking(Parking parking, string userId) => await _dbContext.Records.FirstOrDefaultAsync(s => (s.UserId == userId && s.ParkingId == parking.Id));
+
+        public bool Add(Record record)
         {
-            throw new NotImplementedException();
+            _dbContext.Records.Add(record);
+            return Save();
         }
 
         public bool Save() => _dbContext.SaveChanges() > 0 ? true : false;

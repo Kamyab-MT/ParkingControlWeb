@@ -82,7 +82,6 @@ namespace ParkingControlWeb.Controllers
 
                     UsersListViewModel usersListView = new UsersListViewModel()
                     {
-                        Role = role,
                         Users = limitedList.ToList(),
                         Infos = infos
                     };

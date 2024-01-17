@@ -4,9 +4,11 @@ namespace ParkingControlWeb.Data.Interface
 {
     public interface IRecord
     {
-        public Task<Record> GetAllFromParking(Parking parking);
-        public Task<Record> AddToParking(Parking parking);
+        public Task<IEnumerable<Record>> GetAllFromParking(Parking parking);
+        public Task<IEnumerable<Record>> GetAllActiveFromParking(Parking parking);
+        public Task<IEnumerable<Record>> GetAllCompletedFromParking(Parking parking);
         public Task<Record> GetFromParking(Parking parking, string userId);
+        public bool Add(Record record);
         public bool Save();
     }
 }
