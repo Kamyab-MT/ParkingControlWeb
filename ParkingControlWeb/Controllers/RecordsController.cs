@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
+using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
 using ParkingControlWeb.ViewModels.Wrappers;
 
@@ -12,11 +14,13 @@ namespace ParkingControlWeb.Controllers
     {
 
         readonly ApplicationDbContext _dbContext;
+        readonly UserManager<AppUser> _userManager;
         readonly IRecord _recordRepository;
 
-        public RecordsController(ApplicationDbContext dbContext, IRecord recordRepository)
+        public RecordsController(ApplicationDbContext dbContext, UserManager<AppUser> userManager, IRecord recordRepository)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
             _recordRepository = recordRepository;
         }
 
@@ -52,7 +56,7 @@ namespace ParkingControlWeb.Controllers
 
         public IActionResult AddNewRecord()
         {
-            Record record = new Record();
+            AddRecordViewModel record = new AddRecordViewModel();
             return View(record);
         }
 
@@ -65,6 +69,17 @@ namespace ParkingControlWeb.Controllers
                 return View(record);
             }
 
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+
+            record.Id = Guid.NewGuid().ToString();
+            record.ParkingId = user.ParkingId;
+            record.EntranceTime = DateTime.Now;
+            record.Status = 0;
+            
+            record.UserId = ""; //TODO
+            record.CarId = ""; // TODO
+
+            _recordRepository.Add(record);
 
             return null;
         }
