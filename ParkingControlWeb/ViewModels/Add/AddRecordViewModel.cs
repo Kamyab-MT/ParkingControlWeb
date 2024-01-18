@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace ParkingControlWeb.ViewModels
+namespace ParkingControlWeb.ViewModels.Add
 {
     public class AddRecordViewModel
     {

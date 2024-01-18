@@ -1,25 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ParkingControlWeb.ViewModels
+namespace ParkingControlWeb.ViewModels.Edit
 {
-    public class RegisterViewModel
+    public class EditViewModel
     {
+        public string Id { get; set; }
 
         [Required(ErrorMessage = "ورود شماره همراه الزامی است")]
         [Display(Name = "شماره همراه")]
         public string UserName { get; set; }
-
-        [Required(ErrorMessage = "ورود رمز عبور الزامی است")]
-        [DataType(DataType.Password)]
-        [Display(Name = "رمز عبور")]
-        [MinLength(5, ErrorMessage = "رمز عبور باید حداقل دارای 5 کاراکتر باشد")]
-        public string Password { get; set; }
-
-        [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "رمز عبور ها با یکدیگر همخوانی ندارند")]
-        [Display(Name = "تکرار رمز عبور")]
-        [Required(ErrorMessage = "تکرار رمز عبور را وارد کنید")]
-        public string RepeatPassword { get; set; }
 
         [DataType(DataType.Text)]
         [Display(Name = "نام و نام خانوادگی")]
@@ -79,6 +68,8 @@ namespace ParkingControlWeb.ViewModels
         [Required(ErrorMessage = "نرخ روزانه را وارد کنید")]
         public int DailyRate { get; set; }
 
-
+        public DateTime RegisterTime { get; set; }
+        public string InfoId { get; set; }
+        public string ParkingId { get; set; }
     }
 }

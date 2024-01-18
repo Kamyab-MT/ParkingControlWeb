@@ -1,5 +1,4 @@
-﻿
-<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width : 15vw; max-width: 15vw; height: 100vh; position:fixed;">
+﻿<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width : 15vw; max-width: 15vw; height: 100vh; position:fixed;">
     <a class="d-flex align-items-center link-dark text-decoration-none" style="user-select: none;">
         <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
         <h3 class="fs-4 me-0">ناحیه کاربری</h3>
@@ -9,9 +8,11 @@
     <ul class="nav nav-pills flex-column mb-auto">
 
     @{
-        var action = ViewContext.RouteData.Values["Action"].ToString();
+            var action = ViewContext.RouteData.Values["Action"].ToString();
+            var controller = ViewContext.RouteData.Values["Controller"].ToString();
     }
-
+    
+    <p>@controller/@action</p>
     @if (!User.IsInRole("Driver"))
     {
         @if (!User.IsInRole("GlobalAdmin"))
@@ -29,14 +30,14 @@
                         </li>
 
                         <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Records">
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="Index">
                                 ورود و خروج های جاری
                                 <i class="bi bi-car-front-fill"></i>
                             </a>
                         </li>
 
                         <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="RecordsHistory">
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
                                 تاریخچه ورود و خروج ها
                                 <i class="bi bi-calendar-week"></i>
                             </a>
@@ -59,14 +60,14 @@
                         </li>
 
                         <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Records">
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="Index">
                                 ورود و خروج های جاری
                                 <i class="bi bi-car-front-fill"></i>
                             </a>
                         </li>
 
                         <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="RecordsHistory">
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
                                 تاریخچه ورود و خروج ها
                                 <i class="bi bi-calendar-week"></i>
                             </a>
@@ -79,7 +80,7 @@
                             </a>
                         </li>
                     }
-                    else if(action == "Records")
+                    else if(action == "Index")
                     {
                         <li class="nav-item">
                             <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
@@ -89,14 +90,14 @@
                         </li>
 
                         <li>
-                            <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Records">
+                            <a class="nav-link active disabled" aria-current="page" asp-controller="Records" asp-action="Index">
                                 ورود و خروج های جاری
                                 <i class="bi bi-car-front-fill"></i>
                             </a>
                         </li>
 
                         <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="RecordsHistory">
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
                                 تاریخچه ورود و خروج ها
                                 <i class="bi bi-calendar-week"></i>
                             </a>
@@ -119,14 +120,14 @@
                         </li>
 
                         <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Records">
+                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="Index">
                                 ورود و خروج های جاری
                                 <i class="bi bi-car-front-fill"></i>
                             </a>
                         </li>
 
                         <li>
-                            <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="RecordsHistory">
+                            <a class="nav-link active disabled" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
                                 تاریخچه ورود و خروج ها
                                 <i class="bi bi-calendar-week"></i>
                             </a>
@@ -142,41 +143,41 @@
                 }
 
             }
+        else
+        {
+            @if(action == "UsersList")
+            {
+                <li class="nav-item">
+                    <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
+                        لیست صاحبین پارکینگ
+                        <i class="bi bi-people-fill"></i>
+                    </a>
+                </li>
+
+                <li>
+                    <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
+                        گزارش گیری
+                        <i class="bi bi-clipboard-data"></i>
+                    </a>
+                </li>
+            }
             else
             {
-                @if(action == "UsersList")
-                {
-                    <li class="nav-item">
-                        <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                            لیست صاحبین پارکینگ
-                            <i class="bi bi-people-fill"></i>
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
+                        لیست صاحبین پارکینگ
+                        <i class="bi bi-people-fill"></i>
+                    </a>
+                </li>
 
-                    <li>
-                        <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
-                            گزارش گیری
-                            <i class="bi bi-clipboard-data"></i>
-                        </a>
-                    </li>
-                }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                            لیست صاحبین پارکینگ
-                            <i class="bi bi-people-fill"></i>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
-                            گزارش گیری
-                            <i class="bi bi-clipboard-data"></i>
-                        </a>
-                    </li>
-                }
+                <li>
+                    <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
+                        گزارش گیری
+                        <i class="bi bi-clipboard-data"></i>
+                    </a>
+                </li>
             }
+        }
         }
         else
         {

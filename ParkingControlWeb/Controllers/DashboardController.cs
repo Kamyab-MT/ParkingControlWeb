@@ -5,6 +5,8 @@ using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels;
+using ParkingControlWeb.ViewModels.Account;
+using ParkingControlWeb.ViewModels.Edit;
 using System.Globalization;
 
 namespace ParkingControlWeb.Controllers
@@ -38,7 +40,7 @@ namespace ParkingControlWeb.Controllers
                 else if (User.IsInRole("GlobalAdmin"))
                     return RedirectToAction("UsersList", "Dashboard");
                 else
-                    return RedirectToAction("Records", "Dashboard");
+                    return RedirectToAction("Index", "Records");
             }
             else
                 return RedirectToAction("Index", "Home");
@@ -75,7 +77,7 @@ namespace ParkingControlWeb.Controllers
                             FullName = info.FullName
                         };
 
-                        infoVM.RegisterDate = string.Format("{0}/{1}/{2}", persianCalendar.GetYear((DateTime)info.RegisterDate), persianCalendar.GetMonth((DateTime)info.RegisterDate), persianCalendar.GetDayOfMonth((DateTime)info.RegisterDate));
+                        infoVM.RegisterDate = string.Format("{3}:{4} - {0}/{1}/{2}", persianCalendar.GetYear((DateTime)info.RegisterDate), persianCalendar.GetMonth((DateTime)info.RegisterDate), persianCalendar.GetDayOfMonth((DateTime)info.RegisterDate), persianCalendar.GetHour((DateTime)info.RegisterDate), persianCalendar.GetMinute((DateTime)info.RegisterDate));
 
                         infos.Add(infoVM);
                     }
@@ -306,6 +308,11 @@ namespace ParkingControlWeb.Controllers
             return View(editViewModel);
         }
 
+        public IActionResult Reporting()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Active(string id)
         {
 
@@ -326,21 +333,6 @@ namespace ParkingControlWeb.Controllers
                 TempData["Error"] = string.Format("{0} کردن کاربر با موفقیت انجام شد", txt);
 
             return RedirectToAction("UsersList", "Dashboard");
-        }
-
-        public IActionResult Records()
-        {
-            return View();
-        }
-
-        public IActionResult Reporting()
-        {
-            return View();
-        }
-
-        public IActionResult Charge()
-        {
-            return View();
         }
 
         public async Task<IActionResult> Delete(string id)
@@ -395,13 +387,7 @@ namespace ParkingControlWeb.Controllers
             return null;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddRecord(AddRecordViewModel addRecordViewModel)
-        {
-            return RedirectToAction("Records", "Dashboard");
-        }
-
-        public IActionResult RecordsHistory()
+        public IActionResult Charge()
         {
             return View();
         }

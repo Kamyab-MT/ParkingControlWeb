@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Models;
-using ParkingControlWeb.ViewModels;
+using ParkingControlWeb.ViewModels.Account;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -70,7 +70,7 @@ namespace ParkingControlWeb.Controllers
                         else if (User.IsInRole("GlobalAdmin"))
                             return RedirectToAction("UsersList", "Dashboard");
                         else
-                            return RedirectToAction("Records", "Dashboard");
+                            return RedirectToAction("Index", "Records");
                     }
 
                     TempData["Error"] = "ورود به حساب انجام نشد، لطفا مجدد تلاش کنید";

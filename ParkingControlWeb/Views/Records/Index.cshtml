@@ -1,9 +1,9 @@
-﻿@using ParkingControlWeb.ViewModels;
+﻿@using ParkingControlWeb.ViewModels.Wrappers;
 
-@model AddRecordViewModel
+@model ActiveRecordsViewModel
 
 @{
-    ViewData["Title"] = "ورود و خروج ها";
+    ViewData["Title"] = "ورود و خروج های فعال";
 }
 
 <html>
@@ -46,31 +46,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for (int i = 0; i < 40; i++)
+                            @foreach (var item in @Model.ActiveRecordsList.ActiveRecords)
                             {
-                            <tr class="accordion-toggle" data-toggle="collapse" data-target="#collapseOne" >
-                                    <td>09939827916</td>
-                                    <td>23521-ب</td>
-                                    <td>1402/12/4</td>
+                            <tr>
+                                    <td>@item.PhoneNumber</td>
+                                    <td>@item.PlateNumber</td>
+                                    <td>@item.EntranceTime</td>
                                     <td>
-                                        @if (false)
+                                    @if (item.Status == 0)
                                         {
-                                            <a class="btn btn-warning">توقف</a>
+                                            <a class="btn btn-warning w-75">توقف</a>
                                         }
                                         else
                                         {
-                                            <a class="btn btn-success">ادامه دادن</a>
-                                            <a class="btn btn-info">شارژ کردن حساب</a>
+                                            <a class="btn btn-info w-50">شارژ کردن حساب</a>
 
-                                            if (false)
+                                            if (!item.IsMoneyEnough)
                                             {
                                                 <span tabindex="0" data-toggle="tooltip" data-placement="top" title="موجودی کاربر کافی نمی‌باشد">
-                                                    <a class="btn btn-danger disabled">خروج</a>
+                                                    <a class="btn btn-danger disabled w-25" asp-controller="" asp-action="">خروج</a>
                                                 </span>
                                             }
                                             else
                                             {
-                                                <a class="btn btn-danger">خروج</a>
+                                                <a class="btn btn-danger w-25" asp-controller="" asp-action="">خروج</a>
                                             }
                                         }
 
@@ -93,16 +92,16 @@
                     <div class="row">
                         <div class="col-3">
                             <div class="form-floating mb-3 justify-content-star3t form-group">
-                                <input asp-for="PhoneNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
-                                <label asp-for="PhoneNumber" for="floatingInput" class="ms-0"></label>
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            <input asp-for="AddRecord.PhoneNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
+                                <label asp-for="AddRecord.PhoneNumber" for="floatingInput" class="ms-0"></label>
+                                <span asp-validation-for="AddRecord.PhoneNumber" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-3">
                             <div class="form-floating mb-3 justify-content-star3t form-group">
-                                <input asp-for="PlateNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
-                                <label asp-for="PlateNumber" for="floatingInput" class="ms-0"></label>
-                                <span asp-validation-for="PlateNumber" class="text-danger"></span>
+                                <input asp-for="AddRecord.PlateNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
+                            <label asp-for="AddRecord.PlateNumber" for="floatingInput" class="ms-0"></label>
+                            <span asp-validation-for="AddRecord.PlateNumber" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-3">
