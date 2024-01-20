@@ -323,8 +323,16 @@ namespace ParkingControlWeb.Controllers
             if (Activity != null) return Activity;
 
             AppUser user = await _userManager.FindByIdAsync(id);
+            List<AppUser> ownedUsers = new List<AppUser>();
 
+            if (User.IsInRole("GlobalAdmin"))
+            {
+                var allSubUsers = await _userManager.GetUsersInRoleAsync("Expert");
+                ownedUsers = allSubUsers.Where(s => s.SuperiorUserId == user.Id).ToList();
+            }
             user.Active = user.Active == 0 ? 1 : 0;
+            for (int i = 0; i < ownedUsers.Count; i++)
+                ownedUsers[i].Active = ownedUsers[i].Active == 0 ? 1 : 0;
 
             string txt = user.Active == 1 ? "فعال" : "غیر فعال";
             if (_context.SaveChanges() > 0)
