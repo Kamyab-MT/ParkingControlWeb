@@ -15,5 +15,6 @@ namespace ParkingControlWeb.Models
         public Parking? Parking { get; set; }
         public DateTime SubscriptionExpiry { get; set; }
         public float Ballance { get; set; }
+        public DateTime? RegisterDate { get; set; }
     }
 }

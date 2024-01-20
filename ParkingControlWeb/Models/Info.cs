@@ -14,6 +14,5 @@ namespace ParkingControlWeb.Models
         public string? NationalCode { get; set; }
         public string? LandlineTel { get; set; }
         public string? Address { get; set; }
-        public DateTime? RegisterDate { get; set; }
     }
 }

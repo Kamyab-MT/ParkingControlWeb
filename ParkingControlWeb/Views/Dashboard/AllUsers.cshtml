@@ -1,0 +1,71 @@
+﻿@using ParkingControlWeb.ViewModels.List;
+
+@model AllUsersViewModel;
+
+@{
+    ViewData["Title"] = "لیست تمامی کاربران";
+}
+<html>
+
+
+<body>
+
+    <div class="container-fluid">
+
+        <div class="mt-5">
+
+
+            <div class="row">
+
+                <div class="col-6">
+                    <h3>لیست تمامی کاربران</h3>
+                </div>
+
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>شماره همراه</th>
+                        <th>تاریخ ثبت نام</th>
+                        <th>نوع حساب</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (Model != null)
+                    {
+                        @for (int i = 0; i < Model.Users.Count; i++)
+                        {
+                            <tr>
+                                <th>@(i + 1)</th>
+                                <td>@Model.Users[i].PhoneNumber</td>
+                                <td>@Model.Users[i].DateJoined</td>
+
+                                @{
+                                    string classTxt = "text text-success"; // Global Admin
+
+                                    if (Model.Users[i].Role == "SystemAdmin")
+                                        classTxt = "text text-primary";
+                                    else if (Model.Users[i].Role == "Expert")
+                                        classTxt = "text text-info";
+                                    else if (Model.Users[i].Role == "Driver")
+                                        classTxt = "text text-secondary";
+                                }
+
+                                <td class="@classTxt">@Model.Users[i].Role</td>
+                            </tr>
+                        }
+
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

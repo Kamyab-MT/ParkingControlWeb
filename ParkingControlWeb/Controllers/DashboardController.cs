@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Interface;
@@ -8,6 +9,7 @@ using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels;
 using ParkingControlWeb.ViewModels.Account;
 using ParkingControlWeb.ViewModels.Edit;
+using ParkingControlWeb.ViewModels.List;
 using System.Globalization;
 
 namespace ParkingControlWeb.Controllers
@@ -77,7 +79,7 @@ namespace ParkingControlWeb.Controllers
                             FullName = info.FullName
                         };
 
-                        infoVM.RegisterDate = Helper.DateShow((DateTime)info.RegisterDate);
+                        infoVM.RegisterDate = Helper.DateShow((DateTime)user.RegisterDate);
 
                         infos.Add(infoVM);
                     }
@@ -198,7 +200,6 @@ namespace ParkingControlWeb.Controllers
                         NationalCode = registerViewModel.NationalCode,
                         LandlineTel = registerViewModel.LandlineTel,
                         UserId = newUser.Id,
-                        RegisterDate = DateTime.Now
                     };
 
                     _infoRepository.Add(info);
@@ -308,9 +309,28 @@ namespace ParkingControlWeb.Controllers
             return View(editViewModel);
         }
 
-        public IActionResult Reporting()
+        public async Task<IActionResult> AllUsers()
         {
-            return View();
+            var users = await _userManager.Users.ToListAsync();
+            List<UserVM> usersVM = new List<UserVM>();
+
+            for (int i = 0; i < users.Count; i++)
+            {
+                var role = await _userManager.GetRolesAsync(users[i]);
+                usersVM.Add(new UserVM()
+                {
+                    PhoneNumber = users[i].UserName,
+                    DateJoined = Helper.DateShow((DateTime)users[i].RegisterDate),
+                    Role = role[0].ToString(),
+                });
+            }
+
+            AllUsersViewModel VM = new AllUsersViewModel()
+            {
+                Users = usersVM
+            };
+
+            return View(VM);
         }
 
         public async Task<IActionResult> Active(string id)
