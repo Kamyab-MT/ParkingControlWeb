@@ -10,6 +10,7 @@ using ParkingControlWeb.ViewModels;
 using ParkingControlWeb.ViewModels.Account;
 using ParkingControlWeb.ViewModels.Edit;
 using ParkingControlWeb.ViewModels.List;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace ParkingControlWeb.Controllers
@@ -316,18 +317,25 @@ namespace ParkingControlWeb.Controllers
 
             for (int i = 0; i < users.Count; i++)
             {
-                var role = await _userManager.GetRolesAsync(users[i]);
+                var roles = await _userManager.GetRolesAsync(users[i]);
                 usersVM.Add(new UserVM()
                 {
                     PhoneNumber = users[i].UserName,
                     DateJoined = Helper.DateShow((DateTime)users[i].RegisterDate),
-                    Role = role[0].ToString(),
+                    Role = roles[0],
                 });
             }
 
+            var globalAdmin = usersVM.FirstOrDefault(s=> s.Role == "GlobalAdmin");
+            var parkingOwners = usersVM.Where(s => s.Role == "SystemAdmin");
+            var experts = usersVM.Where(s => s.Role == "Expert");
+            var drivers = usersVM.Where(s => s.Role == "Driver");
+
+            List<UserVM> userVMs = [globalAdmin, .. parkingOwners, .. experts, .. drivers];
+
             AllUsersViewModel VM = new AllUsersViewModel()
             {
-                Users = usersVM
+                Users = userVMs
             };
 
             return View(VM);

@@ -54,7 +54,18 @@
                                         classTxt = "text text-secondary";
                                 }
 
-                                <td class="@classTxt">@Model.Users[i].Role</td>
+                                @{
+                                    string displayTxt = "ادمین کل";
+
+                                    if (Model.Users[i].Role == "SystemAdmin")
+                                        displayTxt = "صاحب پارکینگ";
+                                    else if (Model.Users[i].Role == "Expert")
+                                        displayTxt = "کارشناس";
+                                    else if (Model.Users[i].Role == "Driver")
+                                        displayTxt = "راننده";
+                                }
+
+                                <td class="@classTxt">@displayTxt</td>
                             </tr>
                         }
 
