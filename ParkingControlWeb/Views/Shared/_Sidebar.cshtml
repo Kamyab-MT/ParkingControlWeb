@@ -12,12 +12,12 @@
             var controller = ViewContext.RouteData.Values["Controller"].ToString();
     }
 
-    <p>@User.Identity.Name</p>
+@*     <p>@User.Identity.Name</p>
     <p>Global Admin : @User.IsInRole("GlobalAdmin")</p>
     <p>System Admin : @User.IsInRole("SystemAdmin")</p>
     <p>Expert : @User.IsInRole("Expert")</p>
     <p>Driver : @User.IsInRole("Driver")</p>
-    <p>@controller/@action</p>
+    <p>@controller/@action</p> *@
     
     @if (!User.IsInRole("Driver"))
     {

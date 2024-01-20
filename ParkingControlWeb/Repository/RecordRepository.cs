@@ -15,13 +15,20 @@ namespace ParkingControlWeb.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Record>> GetAllFromParking(Parking parking) => _dbContext.Records.ToList();
+        public async Task<IEnumerable<Record>> GetAll() =>
+            await _dbContext.Records.ToListAsync();
 
-        public async Task<IEnumerable<Record>> GetAllActiveFromParking(Parking parking) => await _dbContext.Records.Where(s => (s.Status == 0 && s.ParkingId == parking.Id)).ToListAsync();
+        public async Task<IEnumerable<Record>> GetAllFromParking(Parking parking) => 
+            await _dbContext.Records.Where(s => s.ParkingId == parking.Id).ToListAsync();
 
-        public async Task<IEnumerable<Record>> GetAllCompletedFromParking(Parking parking) => await _dbContext.Records.Where(s => (s.Status == 1 && s.ParkingId == parking.Id)).ToListAsync();
+        public async Task<IEnumerable<Record>> GetAllActiveFromParking(Parking parking) => 
+            await _dbContext.Records.Where(s => (s.Status == 0 && s.ParkingId == parking.Id)).ToListAsync();
 
-        public async Task<Record> GetFromParking(Parking parking, string userId) => await _dbContext.Records.FirstOrDefaultAsync(s => (s.UserId == userId && s.ParkingId == parking.Id));
+        public async Task<IEnumerable<Record>> GetAllCompletedFromParking(Parking parking) => 
+            await _dbContext.Records.Where(s => (s.Status == 1 && s.ParkingId == parking.Id)).ToListAsync();
+
+        public async Task<Record> GetFromParking(Parking parking, string userId) => 
+            await _dbContext.Records.FirstOrDefaultAsync(s => (s.UserId == userId && s.ParkingId == parking.Id));
 
         public bool Add(Record record)
         {

@@ -46,7 +46,7 @@ namespace ParkingControlWeb.Controllers
                 vmRecords.Add(
                 new ActiveRecordViewModel()
                 {
-                    EntranceTime = Helper.DateShow((DateTime)recordsList[i].EntranceTime),
+                    EntranceTime = Helper.DateShow(recordsList[i].EntranceTime),
                     Status = recordsList[i].Status,
                     PhoneNumber = currentUser.UserName,
                     PlateNumber = "123الف231",
@@ -76,21 +76,31 @@ namespace ParkingControlWeb.Controllers
 
             var user = await _userManager.FindByIdAsync(User.GetUserId());
 
-            Record record = new Record();
+            if(user == null)
+            {
 
-            record.Id = Guid.NewGuid().ToString();
-            record.ParkingId = user.ParkingId;
-            record.EntranceTime = DateTime.Now;
-            record.Status = 0;
+                Record record = new Record();
 
-            string PlateNumber = recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
+                record.Id = Guid.NewGuid().ToString();
+                record.ParkingId = user.ParkingId;
+                record.EntranceTime = DateTime.Now;
+                record.Status = 0;
 
-            record.UserId = await RegisterOrGetDriverUser(recordViewModel.AddRecord.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
-            record.CarId = await RegisterOrGetUserCar(PlateNumber, record.UserId);
+                string PlateNumber = recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
 
-            _recordRepository.Add(record);
+                record.PlateNumber = PlateNumber;
+                record.UserId = await RegisterOrGetDriverUser(recordViewModel.AddRecord.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
+                record.CarId = await RegisterOrGetUserCar(PlateNumber, record.UserId);
 
-            return RedirectToAction("Index", "Records");
+                _recordRepository.Add(record);
+
+                return RedirectToAction("Index", "Records");
+            }
+            else
+            {
+                TempData["Error"] = "شماره وارد شده در سیستم جاری موجود است،\nامکان ثبت رکورد جدید وجود ندارد.";
+                return RedirectToAction("Index", "Records");
+            }
         }
 
         public async Task<IActionResult> RecordsHistory()

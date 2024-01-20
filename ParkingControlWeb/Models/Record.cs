@@ -10,6 +10,7 @@ namespace ParkingControlWeb.Models
 
         public DateTime EntranceTime { get; set; }
         public DateTime ExitTime { get; set; }
+        public string PlateNumber { get; set; }
 
         [ForeignKey("User")]
         public string UserId { get; set; }
