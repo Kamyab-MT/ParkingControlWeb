@@ -87,7 +87,7 @@
             </div>
 
             <div class="mt-5">
-                <form asp-action="AddRecord">
+                <form asp-action="AddNewRecord">
 
                     <div class="row">
                         <div class="col-3">
@@ -97,14 +97,30 @@
                                 <span asp-validation-for="AddRecord.PhoneNumber" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-6">
                             <div class="form-floating mb-3 justify-content-star3t form-group">
-                                <input asp-for="AddRecord.PlateNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
-                            <label asp-for="AddRecord.PlateNumber" for="floatingInput" class="ms-0"></label>
-                            <span asp-validation-for="AddRecord.PlateNumber" class="text-danger"></span>
+                                <div class="row">
+                                    <label>پلاک</label>
+                                    <div class="col-2">
+                                        <input asp-for="AddRecord.PlateNumber1" type="text" maxlength="2" class="form-control rounded-3" id="floatingInput" placeholder="11">
+                                        <span asp-validation-for="AddRecord.PlateNumber1" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-3">
+                                        <input asp-for="AddRecord.PlateNumber2" type="text" maxlength="3" class="form-control rounded-3" id="floatingInput" placeholder="365">
+                                        <span asp-validation-for="AddRecord.PlateNumber2" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-2">
+                                        <input asp-for="AddRecord.PlateNumber3" type="text" maxlength="3" class="form-control rounded-3" id="floatingInput" placeholder="الف">
+                                        <span asp-validation-for="AddRecord.PlateNumber3" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-2">
+                                        <input asp-for="AddRecord.PlateNumber4" type="text" maxlength="2" class="form-control rounded-3" id="floatingInput" placeholder="12">
+                                        <span asp-validation-for="AddRecord.PlateNumber4" class="text-danger"></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <button class="btn btn-success form-control" type="submit">ثبت رکورد</button>
                         </div>
                     </div>

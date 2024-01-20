@@ -10,8 +10,13 @@ namespace ParkingControlWeb.ViewModels.Add
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
 
-        [DisplayName("شماره پلاک")]
-        [Required(ErrorMessage = "شماره پلاک الزامی است")]
-        public string PlateNumber { get; set; }
+        [Required(ErrorMessage = "وارد کنید")]
+        public string PlateNumber1 { get; set; }
+        [Required(ErrorMessage = "وارد کنید")]
+        public string PlateNumber2 { get; set; }
+        [Required(ErrorMessage = "وارد کنید")]
+        public string PlateNumber3 { get; set; }
+        [Required(ErrorMessage = "وارد کنید")]
+        public string PlateNumber4 { get; set; }
     }
 }

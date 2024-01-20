@@ -11,141 +11,58 @@
             var action = ViewContext.RouteData.Values["Action"].ToString();
             var controller = ViewContext.RouteData.Values["Controller"].ToString();
     }
-    
+
+    <p>@User.Identity.Name</p>
+    <p>Global Admin : @User.IsInRole("GlobalAdmin")</p>
+    <p>System Admin : @User.IsInRole("SystemAdmin")</p>
+    <p>Expert : @User.IsInRole("Expert")</p>
+    <p>Driver : @User.IsInRole("Driver")</p>
     <p>@controller/@action</p>
+    
     @if (!User.IsInRole("Driver"))
     {
-        @if (!User.IsInRole("GlobalAdmin"))
-            {
-                @if (User.IsInRole("SystemAdmin"))
-                {
-
-                    @if(action == "UsersList")
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                                لیست کارشناس ها
-                                <i class="bi bi-people-fill"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="Index">
-                                ورود و خروج های جاری
-                                <i class="bi bi-car-front-fill"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
-                                تاریخچه ورود و خروج ها
-                                <i class="bi bi-calendar-week"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
-                                گزارش گیری
-                                <i class="bi bi-clipboard-data"></i>
-                            </a>
-                        </li>
-                    }
-                    else if(action == "Reporting")
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                                لیست کارشناس ها
-                                <i class="bi bi-people-fill"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="Index">
-                                ورود و خروج های جاری
-                                <i class="bi bi-car-front-fill"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
-                                تاریخچه ورود و خروج ها
-                                <i class="bi bi-calendar-week"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
-                                گزارش گیری
-                                <i class="bi bi-clipboard-data"></i>
-                            </a>
-                        </li>
-                    }
-                    else if(action == "Index")
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                                لیست کارشناس ها
-                                <i class="bi bi-people-fill"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link active disabled" aria-current="page" asp-controller="Records" asp-action="Index">
-                                ورود و خروج های جاری
-                                <i class="bi bi-car-front-fill"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
-                                تاریخچه ورود و خروج ها
-                                <i class="bi bi-calendar-week"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
-                                گزارش گیری
-                                <i class="bi bi-clipboard-data"></i>
-                            </a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                                لیست کارشناس ها
-                                <i class="bi bi-people-fill"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Records" asp-action="Index">
-                                ورود و خروج های جاری
-                                <i class="bi bi-car-front-fill"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link active disabled" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
-                                تاریخچه ورود و خروج ها
-                                <i class="bi bi-calendar-week"></i>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
-                                گزارش گیری
-                                <i class="bi bi-clipboard-data"></i>
-                            </a>
-                        </li>
-                    }
-                }
-
-            }
-        else
+        if (!User.IsInRole("GlobalAdmin"))
         {
-            @if(action == "UsersList")
+
+            string UsersListTxt = action == "UsersList" ? "nav-link active disabled" : "nav-link link-dark";
+            string ActiveRecords = action == "Index" ? "nav-link active disabled" : "nav-link link-dark";
+            string RecordsHistory = action == "RecordsHistory" ? "nav-link active disabled" : "nav-link link-dark";
+            string Reporting = action == "Reporting" ? "nav-link active disabled" : "nav-link link-dark";
+
+            if (User.IsInRole("SystemAdmin")) // System Admin
+            {
+                <li class="nav-item">
+                    <a class="@UsersListTxt" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
+                        لیست کارشناس ها
+                        <i class="bi bi-people-fill"></i>
+                    </a>
+                </li>
+            }
+
+            <li>
+                <a class="@ActiveRecords" aria-current="page" asp-controller="Records" asp-action="Index">
+                    ورود و خروج های جاری
+                    <i class="bi bi-car-front-fill"></i>
+                </a>
+            </li>
+
+            <li>
+                <a class="@RecordsHistory" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
+                    تاریخچه ورود و خروج ها
+                    <i class="bi bi-calendar-week"></i>
+                </a>
+            </li>
+
+            <li>
+                <a class="@Reporting" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
+                    گزارش گیری
+                    <i class="bi bi-clipboard-data"></i>
+                </a>
+            </li>
+        }
+        else // Global Admin
+        {
+            if(action == "UsersList")
             {
                 <li class="nav-item">
                     <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
@@ -178,23 +95,23 @@
                 </li>
             }
         }
-        }
-        else
-        {
-            <li class="nav-item">
-                <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Charge">
-                    شارژ حساب
-                    <i class="bi bi-wallet2"></i>
-                </a>
-            </li>
-        }
-
+    }
+    else // Driver
+    {
         <li class="nav-item">
-            <a class="nav-link link-danger" aria-current="page" asp-controller="Account" asp-action="LogOut">
-                خروج از حساب کاربری
-                <i class="bi bi-box-arrow-left"></i>
+            <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Charge">
+                شارژ حساب
+                <i class="bi bi-wallet2"></i>
             </a>
         </li>
+    }
+
+    <li class="nav-item">
+        <a class="nav-link link-danger" aria-current="page" asp-controller="Account" asp-action="LogOut">
+            خروج از حساب کاربری
+            <i class="bi bi-box-arrow-left"></i>
+        </a>
+    </li>
     </ul>
 
 

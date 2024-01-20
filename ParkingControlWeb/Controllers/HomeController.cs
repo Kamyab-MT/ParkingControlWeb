@@ -17,7 +17,12 @@ namespace ParkingControlWeb.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("UsersList", "Dashboard");
+                if(User.IsInRole("GlobalAdmin"))
+                    return RedirectToAction("UsersList", "Dashboard");
+                else if (User.IsInRole("Driver"))
+                    return RedirectToAction("Charge", "Dashboard");
+                else
+                    return RedirectToAction("Index", "Records");
             }
 
             return View();

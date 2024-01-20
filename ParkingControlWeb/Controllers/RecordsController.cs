@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
-using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
 using ParkingControlWeb.ViewModels.Wrappers;
 
@@ -16,33 +16,41 @@ namespace ParkingControlWeb.Controllers
         readonly ApplicationDbContext _dbContext;
         readonly UserManager<AppUser> _userManager;
         readonly IRecord _recordRepository;
+        readonly ICar _carRepository;
+        readonly IParking _parkingRepository;
 
-        public RecordsController(ApplicationDbContext dbContext, UserManager<AppUser> userManager, IRecord recordRepository)
+        public RecordsController(ApplicationDbContext dbContext, UserManager<AppUser> userManager, IRecord recordRepository, ICar carRepository, IParking parkingRepository)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _recordRepository = recordRepository;
+            _carRepository = carRepository;
+            _parkingRepository = parkingRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            Info info = new Info();
-            Parking parking = new Parking();
+
+            AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
+            Parking parking = await _parkingRepository.GetById(user.ParkingId);
 
             var records = await _recordRepository.GetAllActiveFromParking(parking);
             var recordsList = records.ToList();
 
             List<ActiveRecordViewModel> vmRecords = new List<ActiveRecordViewModel>();
+
             for (int i = 0; i < recordsList.Count; i++)
             {
+                AppUser currentUser = await _userManager.FindByIdAsync(recordsList[i].UserId);
+
                 vmRecords.Add(
                 new ActiveRecordViewModel()
                 {
-                    EntranceTime = recordsList[i].EntranceTime,
+                    EntranceTime = Helper.DateShow((DateTime)recordsList[i].EntranceTime),
                     Status = recordsList[i].Status,
-                    PhoneNumber = recordsList[i].User.PhoneNumber,
-                    PlateNumber = recordsList[i].Car.PlateNumber,
-                    IsMoneyEnough = recordsList[i].User.Ballance >= ExpenseCalculator.CalculateExpense(),
+                    PhoneNumber = currentUser.UserName,
+                    PlateNumber = "123الف231",
+                    IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(),
                 });
             }
 
@@ -54,39 +62,93 @@ namespace ParkingControlWeb.Controllers
             return View(activeRecordsViewModel);
         }
 
-        public IActionResult AddNewRecord()
-        {
-            AddRecordViewModel record = new AddRecordViewModel();
-            return View(record);
-        }
-
         [HttpPost]
-        public async Task<IActionResult> AddNewRecord(Record record)
+        public async Task<IActionResult> AddNewRecord(ActiveRecordsViewModel recordViewModel)
         {
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "ورودی ها نامعتبر هستند";
-                return View(record);
+                if(ModelState.Values.SelectMany(v => v.Errors).ToList().Count != 1)
+                {
+                    TempData["Error"] = "ورودی ها نامعتبر هستند";
+                    return RedirectToAction("Index", "Records");
+                }
             }
 
             var user = await _userManager.FindByIdAsync(User.GetUserId());
+
+            Record record = new Record();
 
             record.Id = Guid.NewGuid().ToString();
             record.ParkingId = user.ParkingId;
             record.EntranceTime = DateTime.Now;
             record.Status = 0;
-            
-            record.UserId = ""; //TODO
-            record.CarId = ""; // TODO
+
+            string PlateNumber = recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
+
+            record.UserId = await RegisterOrGetDriverUser(recordViewModel.AddRecord.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
+            record.CarId = await RegisterOrGetUserCar(PlateNumber, record.UserId);
 
             _recordRepository.Add(record);
 
-            return null;
+            return RedirectToAction("Index", "Records");
         }
 
         public async Task<IActionResult> RecordsHistory()
         {
             return View();
+        }
+
+        public async Task<string> RegisterOrGetDriverUser(string Username, string ParkingId, string UserId, string SuperiorId)
+        {
+
+            AppUser? response = await _userManager.FindByNameAsync(Username);
+
+            if (response == null) // it does not exist
+            {
+                string parkingId = ParkingId;
+                string sup = User.IsInRole("SystemAdmin") ? UserId : SuperiorId;
+
+                AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username, PhoneNumber = Username, SuperiorUserId = sup, Active = 1, ParkingId = parkingId };
+
+                var result = await _userManager.CreateAsync(newUser, "Driver_12345");
+
+                if (result.Succeeded) // user created successfully
+                {
+                    await _userManager.AddToRoleAsync(newUser, "Driver");
+                    return newUser.Id;
+                }
+                else
+                {
+                    TempData["Error"] = "ساخت رکورد جدید با خطا رو به رو شد";
+                    return null;
+                }
+            }
+            else // already exist
+                return response.Id;
+        }
+
+        public async Task<string> RegisterOrGetUserCar(string PlateNumber, string UserId)
+        {
+            Car response = await _carRepository.GetByPlateNumber(PlateNumber);
+
+            if (response == null)
+            {
+                Car car = new Car()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    PlateNumber = PlateNumber,
+                    VisitCount = 1,
+                    OwnerId = UserId
+                };
+
+                _carRepository.Add(car);
+                return car.Id;
+            }
+            else
+            {
+                _carRepository.AddVisitCountToCar(response);
+                return response.Id;
+            }
         }
     }
 }

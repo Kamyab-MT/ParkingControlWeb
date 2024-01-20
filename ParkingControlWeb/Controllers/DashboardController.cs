@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Interface;
+using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels;
 using ParkingControlWeb.ViewModels.Account;
@@ -63,7 +64,6 @@ namespace ParkingControlWeb.Controllers
                 var limitedList = usersList.Where(t => t.SuperiorUserId == _httpContextAccessor.HttpContext.User.GetUserId());
 
                 List<InfoViewModel> infos = new List<InfoViewModel>();
-                PersianCalendar persianCalendar = new PersianCalendar();
 
                 if (limitedList.ToList().Count > 0)
                 {
@@ -77,7 +77,7 @@ namespace ParkingControlWeb.Controllers
                             FullName = info.FullName
                         };
 
-                        infoVM.RegisterDate = string.Format("{3}:{4} - {0}/{1}/{2}", persianCalendar.GetYear((DateTime)info.RegisterDate), persianCalendar.GetMonth((DateTime)info.RegisterDate), persianCalendar.GetDayOfMonth((DateTime)info.RegisterDate), persianCalendar.GetHour((DateTime)info.RegisterDate), persianCalendar.GetMinute((DateTime)info.RegisterDate));
+                        infoVM.RegisterDate = Helper.DateShow((DateTime)info.RegisterDate);
 
                         infos.Add(infoVM);
                     }

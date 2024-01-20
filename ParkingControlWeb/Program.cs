@@ -14,6 +14,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IInfo, InfoRepository>();
 builder.Services.AddScoped<IParking, ParkingRepository>();
 builder.Services.AddScoped<IRecord, RecordRepository>();
+builder.Services.AddScoped<ICar, CarRepository>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
