@@ -400,6 +400,11 @@ namespace ParkingControlWeb.Controllers
             return RedirectToAction("UsersList", "Dashboard");
         }
 
+        public IActionResult Renewal()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> SessionCheck()
         {
             if (!User.Identity.IsAuthenticated)

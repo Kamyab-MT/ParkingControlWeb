@@ -1,8 +1,19 @@
-﻿<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width : 15vw; max-width: 15vw; height: 100vh; position:fixed;">
+﻿@{
+    string displayTxt = "ادمین کل";
+
+    if (User.IsInRole("SystemAdmin"))
+        displayTxt = "صاحب پارکینگ";
+    else if (User.IsInRole("Expert"))
+        displayTxt = "کارشناس";
+    else if (User.IsInRole("Driver"))
+        displayTxt = "راننده";
+}
+
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width : 15vw; max-width: 15vw; height: 100vh; position:fixed;">
     <a class="d-flex align-items-center link-dark text-decoration-none" style="user-select: none;">
         <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
         <h3 class="fs-4 me-0">
-            ناحیه کاربری<br />dsd
+            ناحیه کاربری<br /><br />(@displayTxt)
         </h3>
 
     </a>
@@ -20,22 +31,29 @@
     <p>Expert : @User.IsInRole("Expert")</p>
     <p>Driver : @User.IsInRole("Driver")</p>
     <p>@controller/@action</p> *@
-    
     @if (!User.IsInRole("Driver"))
     {
         if (!User.IsInRole("GlobalAdmin"))
         {
 
             string UsersListTxt = action == "UsersList" ? "nav-link active disabled" : "nav-link link-dark";
+            string AllUsers = action == "AllUsers" ? "nav-link active disabled" : "nav-link link-dark";
             string ActiveRecords = action == "Index" ? "nav-link active disabled" : "nav-link link-dark";
             string RecordsHistory = action == "RecordsHistory" ? "nav-link active disabled" : "nav-link link-dark";
-            string Reporting = action == "Reporting" ? "nav-link active disabled" : "nav-link link-dark";
+            string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-dark";
 
             if (User.IsInRole("SystemAdmin")) // System Admin
             {
                 <li class="nav-item">
                     <a class="@UsersListTxt" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
                         لیست کارشناس ها
+                        <i class="bi bi-people-fill"></i>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="@AllUsers" aria-current="page" asp-controller="Dashboard" asp-action="AllUsers">
+                        لیست کاربران
                         <i class="bi bi-people-fill"></i>
                     </a>
                 </li>
@@ -55,55 +73,68 @@
                 </a>
             </li>
 
-            <li>
-                <a class="@Reporting" aria-current="page" asp-controller="Dashboard" asp-action="Reporting">
-                    گزارش گیری
-                    <i class="bi bi-clipboard-data"></i>
-                </a>
-            </li>
+            @if (User.IsInRole("SystemAdmin"))
+            {
+                <li>
+                    <a class="@TransactionsHistory" aria-current="page" asp-controller="Records" asp-action="TransactionsHistory">
+                        لیست تراکنش ها
+                        <i class="bi bi-credit-card-2-back-fill"></i>
+                    </a>
+                </li>
+            }
+
         }
         else // Global Admin
         {
-            if(action == "UsersList")
-            {
-                <li class="nav-item">
-                    <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                        لیست صاحبین پارکینگ
-                        <i class="bi bi-person-fill"></i>
-                    </a>
-                </li>
+            string ParkingOwners = action == "UsersList" ? "nav-link active disabled" : "nav-link link-dark";
+            string AllUsers = action == "AllUsers" ? "nav-link active disabled" : "nav-link link-dark";
+            string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-dark";
+            string RecordsHistory = action == "RecordsHistory" ? "nav-link active disabled" : "nav-link link-dark";
 
-                <li>
-                        <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="AllUsers">
-                            لیست تمامی کاربران
-                        <i class="bi bi-people-fill"></i>
-                    </a>
-                </li>
-            }
-            else
-            {
-                <li class="nav-item">
-                    <a class="nav-link link-dark" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                        لیست صاحبین پارکینگ
-                        <i class="bi bi-person-fill"></i>
-                    </a>
-                </li>
+            <li class="nav-item">
+                <a class="@ParkingOwners" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
+                    لیست صاحبین پارکینگ
+                    <i class="bi bi-person-fill"></i>
+                </a>
+            </li>
 
-                <li>
-                    <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="AllUsers">
-                            لیست تمامی کاربران
-                        <i class="bi bi-people-fill"></i>
-                    </a>
-                </li>
-            }
+            <li>
+                <a class="@AllUsers" aria-current="page" asp-controller="Dashboard" asp-action="AllUsers">
+                    لیست تمامی کاربران
+                    <i class="bi bi-people-fill"></i>
+                </a>
+            </li>
+
+            <li>
+                <a class="@TransactionsHistory" aria-current="page" asp-controller="Records" asp-action="TransactionsHistory">
+                    لیست تراکنش ها
+                    <i class="bi bi-credit-card-2-back-fill"></i>
+                </a>
+            </li>
+
+            <li>
+                <a class="@RecordsHistory" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
+                    لیست ورود و خروج ها
+                    <i class="bi bi-calendar-week"></i>
+                </a>
+            </li>
         }
     }
     else // Driver
     {
+        string Charge = action == "Charge" ? "nav-link active disabled" : "nav-link link-dark";
+        string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-dark";
         <li class="nav-item">
-            <a class="nav-link active disabled" aria-current="page" asp-controller="Dashboard" asp-action="Charge">
+            <a class="@Charge" aria-current="page" asp-controller="Dashboard" asp-action="Charge">
                 شارژ حساب
                 <i class="bi bi-wallet2"></i>
+            </a>
+        </li>
+
+        <li>
+            <a class="@TransactionsHistory" aria-current="page" asp-controller="Records" asp-action="TransactionsHistory">
+                لیست تراکنش ها
+                <i class="bi bi-credit-card-2-back-fill"></i>
             </a>
         </li>
     }

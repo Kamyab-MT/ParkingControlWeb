@@ -160,5 +160,10 @@ namespace ParkingControlWeb.Controllers
                 return response.Id;
             }
         }
+
+        public IActionResult TransactionsHistory()
+        {
+            return View();
+        }
     }
 }

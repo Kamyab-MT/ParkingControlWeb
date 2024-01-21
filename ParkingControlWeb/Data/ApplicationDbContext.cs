@@ -23,6 +23,7 @@ namespace ParkingControlWeb.Data
         public DbSet<Parking> Parkings { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<Record> Records { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
     }
 }
