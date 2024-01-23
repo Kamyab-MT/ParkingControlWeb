@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
 using System.Diagnostics;
 
@@ -15,6 +16,10 @@ namespace ParkingControlWeb.Controllers
 
         public IActionResult Index()
         {
+            string enc = Helper.Encrypt("09939827916");
+            Console.WriteLine("\n\n" + enc);
+            Console.WriteLine(Helper.Decrypt(enc));
+
             if (User.Identity.IsAuthenticated)
             {
                 if(User.IsInRole("GlobalAdmin"))
