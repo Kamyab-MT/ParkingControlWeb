@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ParkingControlWeb.Data;
 
@@ -11,9 +12,11 @@ using ParkingControlWeb.Data;
 namespace ParkingControlWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240127080337_AddRoles")]
+    partial class AddRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,22 +46,22 @@ namespace ParkingControlWeb.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8c7a7a3c-713a-414f-9ff8-c825017592fa",
+                            Id = "b22b46ca-5cd8-4396-a41f-26ddb6c53bfc",
                             Name = "GlobalAdmin"
                         },
                         new
                         {
-                            Id = "91c5290a-b043-4751-bb34-881e870109b1",
+                            Id = "fe494481-663d-42b5-a744-7acf2af83082",
                             Name = "SystemAdmin"
                         },
                         new
                         {
-                            Id = "b1d9991e-29d4-4244-8012-4a25639526e0",
+                            Id = "4aed93ce-336f-4cd5-9ba1-a93c60673672",
                             Name = "Expert"
                         },
                         new
                         {
-                            Id = "790f7260-a8e6-49a9-a087-d39301a9e991",
+                            Id = "2d9a2d5b-7008-4291-8cf7-640474892d63",
                             Name = "Driver"
                         });
                 });

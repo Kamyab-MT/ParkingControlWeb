@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
+using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
@@ -10,8 +12,6 @@ using ParkingControlWeb.ViewModels;
 using ParkingControlWeb.ViewModels.Account;
 using ParkingControlWeb.ViewModels.Edit;
 using ParkingControlWeb.ViewModels.List;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -74,14 +74,19 @@ namespace ParkingControlWeb.Controllers
                     foreach (var user in limitedList)
                     {
                         var info = await _infoRepository.GetById(user.InfoId);
+                        StreamWriter w = new StreamWriter("D://gh.txt");
 
+                        string iso = info.FullName.Decrypt();
+
+                        w.WriteLine(iso.ToString());
+                        w.Flush();
                         InfoViewModel infoVM = new InfoViewModel()
                         {
-                            FullName = info.FullName
+                            FullName = info.FullName.Decrypt()
                         };
 
                         infoVM.RegisterDate = Helper.DateShow((DateTime)user.RegisterDate);
-
+                        
                         infos.Add(infoVM);
                     }
 
@@ -100,9 +105,10 @@ namespace ParkingControlWeb.Controllers
             return View(null);
         }
 
+        [Authorize()]
         public async Task<IActionResult> Register()
         {
-
+            
             var Session = await SessionCheck();
             if (Session != null) return Session;
 
@@ -112,11 +118,10 @@ namespace ParkingControlWeb.Controllers
 
             if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert))
                 return RedirectToAction("Index", "Home");
-
+            
             RegisterViewModel model = new RegisterViewModel();
             return View(model);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
@@ -157,7 +162,7 @@ namespace ParkingControlWeb.Controllers
                     parkingId = user.ParkingId;
                 }
 
-                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName, SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId(), Active = 1, ParkingId = parkingId };
+                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName, SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId(), Active = 1, RegisterDate = DateTime.Now };
 
                 string selectedRole = _httpContextAccessor.HttpContext.User.IsInRole(Role.GlobalAdmin) ? Role.SystemAdmin : Role.Expert;
 
@@ -173,10 +178,10 @@ namespace ParkingControlWeb.Controllers
                         Parking parking = new Parking()
                         {
                             Id = parkingId,
-                            Address = registerViewModel.ParkingAddress,
-                            City = registerViewModel.City,
-                            State = registerViewModel.State,
-                            Name = registerViewModel.ParkingName,
+                            Address = registerViewModel.ParkingAddress.Encrypt(),
+                            City = registerViewModel.City.Encrypt(),
+                            State = registerViewModel.State.Encrypt(),
+                            Name = registerViewModel.ParkingName.Encrypt(),
                             DailyRate = registerViewModel.DailyRate,
                             EntranceRate = registerViewModel.EntranceRate,
                             HourlyRate = registerViewModel.HourlyRate,
@@ -184,7 +189,8 @@ namespace ParkingControlWeb.Controllers
                         };
 
                         _parkingRepository.Add(parking);
-
+                        newUser.ParkingId = parkingId;
+                        _context.SaveChanges();
                     }
                     else
                     {
@@ -196,10 +202,10 @@ namespace ParkingControlWeb.Controllers
                     Info info = new Info()
                     {
                         Id = infoId,
-                        FullName = registerViewModel.FullName,
-                        Address = registerViewModel.Address,
-                        NationalCode = registerViewModel.NationalCode,
-                        LandlineTel = registerViewModel.LandlineTel,
+                        FullName = registerViewModel.FullName.Encrypt(),
+                        Address = registerViewModel.Address.Encrypt(),
+                        NationalCode = registerViewModel.NationalCode.Encrypt(),
+                        LandlineTel = registerViewModel.LandlineTel.Encrypt(),
                         UserId = newUser.Id,
                     };
 
@@ -226,7 +232,7 @@ namespace ParkingControlWeb.Controllers
             }
 
         }
-
+        
         public async Task<IActionResult> Edit(string id)
         {
 
@@ -244,7 +250,7 @@ namespace ParkingControlWeb.Controllers
             {
                 Id = info.UserId,
                 UserName = user.UserName,
-                FullName = info.FullName,
+                FullName = info.FullName.Decrypt(),
                 NationalCode = info.NationalCode,
                 LandlineTel = info.LandlineTel,
                 Address = info.Address,
@@ -280,7 +286,7 @@ namespace ParkingControlWeb.Controllers
             var info = await _infoRepository.GetById(user.InfoId);
             var parking = await _parkingRepository.GetById(user.ParkingId);
 
-            info.FullName = editViewModel.FullName;
+            info.FullName = editViewModel.FullName.Encrypt();
             info.Address = editViewModel.Address;
             info.LandlineTel = editViewModel.LandlineTel;
             info.NationalCode = editViewModel.NationalCode;
@@ -439,36 +445,20 @@ namespace ParkingControlWeb.Controllers
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
 
-            if (!ModelState.IsValid)
+            AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName, SuperiorUserId = "None" };
+
+            string selectedRole = "GlobalAdmin";
+            
+            var result = await _userManager.CreateAsync(newUser, registerViewModel.Password);
+
+            if (result.Succeeded) // user created successfully
             {
-                TempData["Error"] = "ورودی ها نامعتبر هستند";
-                return View(registerViewModel);
+                await _userManager.AddToRoleAsync(newUser, selectedRole);
+                return RedirectToAction("Index", "Dashboard");
             }
-
-            IdentityUser response = await _userManager.FindByNameAsync(registerViewModel.UserName);
-
-            if (response == null) // it does not exist
+            else
             {
-                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName, SuperiorUserId = "None" };
-
-                string selectedRole = "Driver";
-
-                var result = await _userManager.CreateAsync(newUser, registerViewModel.Password);
-
-                if (result.Succeeded) // user created successfully
-                {
-                    await _userManager.AddToRoleAsync(newUser, selectedRole);
-                    return RedirectToAction("Index", "Dashboard");
-                }
-                else
-                {
-                    TempData["Error"] = "ساخت کاربر جدید با خطا رو به رو شد";
-                    return View(registerViewModel);
-                }
-            }
-            else // already exist
-            {
-                TempData["Error"] = "شماره وارد شده قبلا در سیستم ثبت شده است";
+                TempData["Error"] = "ساخت کاربر جدید با خطا رو به رو شد";
                 return View(registerViewModel);
             }
 

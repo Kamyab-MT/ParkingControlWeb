@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using ParkingControlWeb.Data;
+using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
@@ -50,7 +51,7 @@ namespace ParkingControlWeb.Controllers
                     Status = recordsList[i].Status,
                     PhoneNumber = currentUser.UserName,
                     PlateNumber = "123الف231",
-                    IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(),
+                    IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(0,0,0),
                 });
             }
 

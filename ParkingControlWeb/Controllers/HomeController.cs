@@ -16,10 +16,12 @@ namespace ParkingControlWeb.Controllers
 
         public IActionResult Index()
         {
-            string enc = Helper.Encrypt("09939827916");
-            Console.WriteLine("\n\n" + enc);
-            Console.WriteLine(Helper.Decrypt(enc));
 
+/*            TimeSpan F = new TimeSpan(25, 30, 0);
+            Console.WriteLine(F.Days * 12000);
+            Console.WriteLine(F.Hours * 6000);
+            Console.WriteLine(6000 * ((float)F.Minutes / 60));*/
+            
             if (User.Identity.IsAuthenticated)
             {
                 if(User.IsInRole("GlobalAdmin"))

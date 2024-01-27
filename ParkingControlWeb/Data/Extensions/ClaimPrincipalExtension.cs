@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace ParkingControlWeb.Data
+namespace ParkingControlWeb.Data.Extensions
 {
     public static class ClaimPrincipalExtension
     {
