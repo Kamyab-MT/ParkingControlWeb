@@ -2,6 +2,7 @@
 {
     public class RenewalViewModel
     {
+        public string Id { get; set; }
         public float OneMonth { get; set; }
         public float ThreeMonth { get; set; }
         public float SixMonth { get; set; }

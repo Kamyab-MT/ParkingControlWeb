@@ -416,7 +416,7 @@ namespace ParkingControlWeb.Controllers
             return RedirectToAction("UsersList", "Dashboard");
         }
 
-        public async Task<IActionResult> Renewal()
+        public async Task<IActionResult> Renewal(string id)
         {
             RenewalViewModel renewalViewModel = new RenewalViewModel();
 
@@ -424,11 +424,13 @@ namespace ParkingControlWeb.Controllers
             var secondPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "ThreeMonth");
             var thirdPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "SixMonth");
             var fourthPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneYear");
-
+            
             renewalViewModel.OneMonth = firstPrice.Price;
             renewalViewModel.ThreeMonth = secondPrice.Price;
             renewalViewModel.SixMonth = thirdPrice.Price;
             renewalViewModel.OneYear = fourthPrice.Price;
+
+            renewalViewModel.Id = id;
 
             return View(renewalViewModel);
         }
@@ -436,7 +438,28 @@ namespace ParkingControlWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Renewal(RenewalViewModel renewalViewModel)
         {
-            return View();
+            int[] values = [1, 3, 6, 12];
+            int index = int.Parse(renewalViewModel.OptionSelected);
+
+            AppUser user = await _userManager.FindByIdAsync(renewalViewModel.Id);
+
+            if(user.SubscriptionExpiry >= DateTime.Now)
+                user.SubscriptionExpiry = user.SubscriptionExpiry.AddMonths(values[index]);
+            else
+                user.SubscriptionExpiry = DateTime.Now.AddMonths(values[index]);
+
+            if (_context.SaveChanges() > 0)
+            {
+                
+                TempData["Success"] = "اشتراک کاربر با موفقیت تمدید شد";
+                return RedirectToAction("UsersList","Dashboard");
+            }
+            else
+            {
+                TempData["Error"] = "تمدید اشتراک کاربر با خطا رو به رو شد";
+                return View(renewalViewModel);
+            }
+
         }
 
         public async Task<IActionResult> SessionCheck()
