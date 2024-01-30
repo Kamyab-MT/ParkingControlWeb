@@ -1,4 +1,8 @@
-﻿@{
+﻿@using ParkingControlWeb.ViewModels.Request;
+
+@model RenewalViewModel
+
+@{
     ViewData["Title"] = "تمدید اشتراک";
 }
 
@@ -18,8 +22,53 @@
 
             <div class="modal-body p-5 pt-0">
 
+                <form>
+
+                    <div class="row d-flex align-items-center">
+
+                        <div class="col-3">
+
+                            <label asp-for="OptionSelected">بازه زمانی تمدید</label>
+                            <select asp-for="OptionSelected" class="form-control" id="period" onchange="changeLabel()">
+                                <option value="0">یک ماهه</option>
+                                <option value="1">سه ماهه</option>
+                                <option value="2">شش ماهه</option>
+                                <option value="3">یک ساله</option>
+                            </select>
+
+                        </div>
+
+                        <div class="col-3 text-center">
+                            <p id="price">قیمت : @Model.OneMonth</p>
+                        </div>
+
+                        <div class="col-3">
+                            <button class="btn btn-success form-control">تمدید</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <script>
+
+        function changeLabel() {
+            
+            var obj = document.getElementById("period");
+            var price = document.getElementById("price");
+            var value = obj.value;
+
+            if (value == "0")
+                price.innerHTML = "قیمت : " + @Model.OneMonth;
+            if (value == "1")
+                price.innerHTML = "قیمت : " + @Model.ThreeMonth;
+            if (value == "2")
+                price.innerHTML = "قیمت : " + @Model.SixMonth;
+            if (value == "3")
+                price.innerHTML = "قیمت : " + @Model.OneYear;
+        }
+
+    </script>
     </body>
 </html>

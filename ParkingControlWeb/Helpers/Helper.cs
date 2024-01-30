@@ -10,6 +10,7 @@ namespace ParkingControlWeb.Helpers
     {
 
         static AesCryptography aesCryptography = new AesCryptography();
+        static LocalDate localDate = new LocalDate();
 
         public static float CalculateExpense(float entranceExpense, float hourlyExpense, float dailyExpense)
         {
@@ -19,9 +20,7 @@ namespace ParkingControlWeb.Helpers
 
         public static string DateShow(DateTime date)
         {
-            PersianCalendar persianCalendar = new PersianCalendar();
-
-            return string.Format("{3}:{4} - {0}/{1}/{2}", persianCalendar.GetYear(date), persianCalendar.GetMonth(date), persianCalendar.GetDayOfMonth(date), persianCalendar.GetHour(date), persianCalendar.GetMinute(date));
+            return localDate.ShowWeekDayAndMonth(date);
         }
 
         public static string DottedPriceShow()

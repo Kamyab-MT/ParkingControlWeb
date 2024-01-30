@@ -22,6 +22,11 @@ namespace ParkingControlWeb.Data
             builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.SystemAdmin, NormalizedName = Role.SystemAdmin.ToUpper() });
             builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.Expert, NormalizedName = Role.Expert.ToUpper() });
             builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.Driver , NormalizedName = Role.Driver.ToUpper() });
+
+            builder.Entity<Pricing>().HasData(new Pricing() { Id = Guid.NewGuid().ToString(), Title = "OneMonth", Price = 2000 });
+            builder.Entity<Pricing>().HasData(new Pricing() { Id = Guid.NewGuid().ToString(), Title = "ThreeMonth", Price = 5000 });
+            builder.Entity<Pricing>().HasData(new Pricing() { Id = Guid.NewGuid().ToString(), Title = "SixMonth", Price = 9000 });
+            builder.Entity<Pricing>().HasData(new Pricing() { Id = Guid.NewGuid().ToString(), Title = "OneYear", Price = 16000 });
         }
 
         public DbSet<Info> Info { get; set; }
@@ -29,6 +34,7 @@ namespace ParkingControlWeb.Data
         public DbSet<Car> Cars { get; set; }
         public DbSet<Record> Records { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Pricing> Pricings { get; set; }
 
     }
 }

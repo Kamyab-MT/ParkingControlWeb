@@ -12,6 +12,7 @@ using ParkingControlWeb.ViewModels;
 using ParkingControlWeb.ViewModels.Account;
 using ParkingControlWeb.ViewModels.Edit;
 using ParkingControlWeb.ViewModels.List;
+using ParkingControlWeb.ViewModels.Request;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -74,18 +75,15 @@ namespace ParkingControlWeb.Controllers
                     foreach (var user in limitedList)
                     {
                         var info = await _infoRepository.GetById(user.InfoId);
-                        StreamWriter w = new StreamWriter("D://gh.txt");
 
-                        string iso = info.FullName.Decrypt();
-
-                        w.WriteLine(iso.ToString());
-                        w.Flush();
                         InfoViewModel infoVM = new InfoViewModel()
                         {
-                            FullName = info.FullName.Decrypt()
+                            FullName = info.FullName.Decrypt(),
+                            RegisterDate = Helper.DateShow((DateTime)user.RegisterDate),
+                            ExpireDate = Helper.DateShow(user.SubscriptionExpiry),
+                            ParkingName = _parkingRepository.GetById(user.ParkingId).GetAwaiter().GetResult().Name.Decrypt()
                         };
 
-                        infoVM.RegisterDate = Helper.DateShow((DateTime)user.RegisterDate);
                         
                         infos.Add(infoVM);
                     }
@@ -147,7 +145,7 @@ namespace ParkingControlWeb.Controllers
                 }
             }
 
-            IdentityUser response = await _userManager.FindByNameAsync(registerViewModel.UserName);
+            IdentityUser response = await _userManager.FindByNameAsync(registerViewModel.UserName.Encrypt());
 
             if (response == null) // it does not exist
             {
@@ -162,7 +160,7 @@ namespace ParkingControlWeb.Controllers
                     parkingId = user.ParkingId;
                 }
 
-                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName, PhoneNumber = registerViewModel.UserName, SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId(), Active = 1, RegisterDate = DateTime.Now };
+                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName.Encrypt(), PhoneNumber = registerViewModel.UserName.Encrypt(), SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId(), Active = 1, RegisterDate = DateTime.Now };
 
                 string selectedRole = _httpContextAccessor.HttpContext.User.IsInRole(Role.GlobalAdmin) ? Role.SystemAdmin : Role.Expert;
 
@@ -249,15 +247,15 @@ namespace ParkingControlWeb.Controllers
             EditViewModel editVM = new EditViewModel()
             {
                 Id = info.UserId,
-                UserName = user.UserName,
+                UserName = user.UserName.Decrypt(),
                 FullName = info.FullName.Decrypt(),
-                NationalCode = info.NationalCode,
-                LandlineTel = info.LandlineTel,
-                Address = info.Address,
-                ParkingName = parking.Name,
-                State = parking.State,
-                City = parking.City,
-                ParkingAddress = parking.Address,
+                NationalCode = info.NationalCode.Decrypt(),
+                LandlineTel = info.LandlineTel.Decrypt(),
+                Address = info.Address.Decrypt(),
+                ParkingName = parking.Name.Decrypt(),
+                State = parking.State.Decrypt(),
+                City = parking.City.Decrypt(),
+                ParkingAddress = parking.Address.Decrypt(),
                 EntranceRate = parking.EntranceRate,
                 HourlyRate = parking.HourlyRate,
                 DailyRate = parking.DailyRate,
@@ -282,38 +280,50 @@ namespace ParkingControlWeb.Controllers
                 }
             }
 
-            var user = await _userManager.FindByNameAsync(editViewModel.UserName);
+            var user = await _userManager.FindByIdAsync(editViewModel.Id);
             var info = await _infoRepository.GetById(user.InfoId);
             var parking = await _parkingRepository.GetById(user.ParkingId);
 
             info.FullName = editViewModel.FullName.Encrypt();
-            info.Address = editViewModel.Address;
-            info.LandlineTel = editViewModel.LandlineTel;
-            info.NationalCode = editViewModel.NationalCode;
+            info.Address = editViewModel.Address.Encrypt();
+            info.LandlineTel = editViewModel.LandlineTel.Encrypt();
+            info.NationalCode = editViewModel.NationalCode.Encrypt();
 
-            parking.Address = editViewModel.ParkingAddress;
-            parking.City = editViewModel.City;
-            parking.State = editViewModel.State;
-            parking.Name = editViewModel.ParkingName;
+            parking.Address = editViewModel.ParkingAddress.Encrypt();
+            parking.City = editViewModel.City.Encrypt();
+            parking.State = editViewModel.State.Encrypt();
+            parking.Name = editViewModel.ParkingName.Encrypt();
             parking.DailyRate = editViewModel.DailyRate;
             parking.EntranceRate = editViewModel.EntranceRate;
             parking.HourlyRate = editViewModel.HourlyRate;
 
-            if (_infoRepository.Update(info) && _parkingRepository.Update(parking))
+            var conflict = await _userManager.FindByNameAsync(editViewModel.UserName.Encrypt());
+
+            if (conflict == null)
             {
-                user.UserName = editViewModel.UserName;
 
-                var result = await _userManager.UpdateAsync(user);
-
-                if (result.Succeeded)
+                if (_infoRepository.Update(info) && _parkingRepository.Update(parking))
                 {
-                    TempData["Success"] = "ویرایش حساب کاربری با موفقیت انجام شد";
-                    return RedirectToAction("UsersList", "Dashboard");
+                    user.UserName = editViewModel.UserName.Encrypt();
+
+                    var result = await _userManager.UpdateAsync(user);
+
+                    if (result.Succeeded)
+                    {
+                        TempData["Success"] = "ویرایش حساب کاربری با موفقیت انجام شد";
+                        return RedirectToAction("UsersList", "Dashboard");
+                    }
+                }
+                else
+                {
+                    TempData["Error"] = "ویرایش حساب کاربری با خطا رو به رو شد";
+                    return View(editViewModel);
                 }
             }
 
-            TempData["Error"] = "ویرایش حساب کاربری با خطا رو به رو شد";
+            TempData["Error"] = "شماره وارد شده قبلا در سیستم ثبت شده";
             return View(editViewModel);
+
         }
 
         public async Task<IActionResult> AllUsers()
@@ -406,7 +416,25 @@ namespace ParkingControlWeb.Controllers
             return RedirectToAction("UsersList", "Dashboard");
         }
 
-        public IActionResult Renewal()
+        public async Task<IActionResult> Renewal()
+        {
+            RenewalViewModel renewalViewModel = new RenewalViewModel();
+
+            var firstPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneMonth");
+            var secondPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "ThreeMonth");
+            var thirdPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "SixMonth");
+            var fourthPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneYear");
+
+            renewalViewModel.OneMonth = firstPrice.Price;
+            renewalViewModel.ThreeMonth = secondPrice.Price;
+            renewalViewModel.SixMonth = thirdPrice.Price;
+            renewalViewModel.OneYear = fourthPrice.Price;
+
+            return View(renewalViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Renewal(RenewalViewModel renewalViewModel)
         {
             return View();
         }

@@ -75,7 +75,7 @@ namespace ParkingControlWeb.Controllers
                 }
             }
 
-            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            var user = await _userManager.FindByNameAsync(recordViewModel.AddRecord.PhoneNumber.Encrypt());
 
             if(user == null)
             {
@@ -89,7 +89,7 @@ namespace ParkingControlWeb.Controllers
 
                 string PlateNumber = recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
 
-                record.PlateNumber = PlateNumber;
+                record.PlateNumber = PlateNumber.Encrypt();
                 record.UserId = await RegisterOrGetDriverUser(recordViewModel.AddRecord.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
                 record.CarId = await RegisterOrGetUserCar(PlateNumber, record.UserId);
 
