@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Extensions;
@@ -81,7 +82,9 @@ namespace ParkingControlWeb.Controllers
                             FullName = info.FullName.Decrypt(),
                             RegisterDate = Helper.DateShow((DateTime)user.RegisterDate),
                             ExpireDate = Helper.DateShow(user.SubscriptionExpiry),
-                            ParkingName = _parkingRepository.GetById(user.ParkingId).GetAwaiter().GetResult().Name.Decrypt()
+                            ParkingName = _parkingRepository.GetById(user.ParkingId).GetAwaiter().GetResult().Name.Decrypt(),
+                            Username = user.UserName.Decrypt()
+                            
                         };
 
                         
@@ -334,11 +337,19 @@ namespace ParkingControlWeb.Controllers
             for (int i = 0; i < users.Count; i++)
             {
                 var roles = await _userManager.GetRolesAsync(users[i]);
+                var info = await _infoRepository.GetById(users[i].InfoId);
+                var parking = await _parkingRepository.GetById(users[i].ParkingId);
+
+                string parkingName = parking != null ? parking.Name.Decrypt() : "-";
+                string name = info != null ? info.FullName.Decrypt() : "-";
+
                 usersVM.Add(new UserVM()
                 {
-                    PhoneNumber = users[i].UserName,
+                    PhoneNumber = users[i].UserName.Decrypt(),
                     DateJoined = Helper.DateShow((DateTime)users[i].RegisterDate),
                     Role = roles[0],
+                    Name = name,
+                    Parking = parkingName,
                 });
             }
 

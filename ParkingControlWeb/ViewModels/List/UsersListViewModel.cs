@@ -14,5 +14,7 @@ namespace ParkingControlWeb.ViewModels
         public string RegisterDate { get; set; }
         public string ExpireDate { get; set; }
         public string ParkingName { get; set; }
+        public string Username { get; set; }
+
     }
 }

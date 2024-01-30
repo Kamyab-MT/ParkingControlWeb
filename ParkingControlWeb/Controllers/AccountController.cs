@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
+using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels.Account;
 
@@ -43,7 +44,7 @@ namespace ParkingControlWeb.Controllers
         {
             if (!ModelState.IsValid) return View(loginViewModel);
 
-            var user = await _userManager.FindByNameAsync(loginViewModel.UserName); // first we need to check that the user actually exist
+            var user = await _userManager.FindByNameAsync(loginViewModel.UserName.Encrypt()); // first we need to check that the user actually exist
 
             if (user != null)
             {
