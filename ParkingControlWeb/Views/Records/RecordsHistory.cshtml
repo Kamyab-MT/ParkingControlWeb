@@ -1,4 +1,8 @@
-﻿@{
+﻿@using ParkingControlWeb.ViewModels.List;
+
+@model List<RecordsHistoryViewModel>
+
+@{
     ViewData["Title"] = "تاریخچه ورود و خروج ها";
 }
 
@@ -6,6 +10,16 @@
 
     <head>
 
+        <style>
+            td,th{
+                text-align:center;
+            }
+
+            th{
+                position: sticky;
+                top: 0px;
+            }
+        </style>
     </head>
 
     <body>
@@ -16,7 +30,7 @@
                 <div class="row">
 
                     <div class="col-6">
-                        <h3>تاریخچه رکورد ها</h3>
+                        <h3>تاریخچه ورود و خروج ها</h3>
                     </div>
                 </div>
 
@@ -24,22 +38,28 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>شماره همراه</th>
-                                <th>شماره پلاک</th>
-                                <th>زمان ورود</th>
-                                <th>زمان خروج</th>
-                                <th>مدت زمان گذشته</th>
+                                <th  class="bg-white border-bottom">#</th>
+                                <th  class="bg-white border-bottom">شماره همراه</th>
+                                <th  class="bg-white border-bottom">شماره پلاک</th>
+                                <th  class="bg-white border-bottom">زمان ورود</th>
+                                <th  class="bg-white border-bottom">زمان خروج</th>
+                                <th  class="bg-white border-bottom">هزینه</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @for (int i = 0; i < 55; i++)
+                            @for (int i = 0; i < Model.Count; i++)
                             {
                                 <tr>
-                                    <td>09939827916</td>
-                                    <td>23521-ب</td>
-                                    <td>1402/12/4</td>
-                                    <td>1402/12/5</td>
-                                    <td>2 روز</td>
+                                    <td>@(i+1)</td>
+                                    <td>@Model[i].PhoneNumber</td>
+                                    <td>@Model[i].PlateNumber</td>
+                                    <td>@Model[i].EntranceTime</td>
+                                    <td>
+                                        <span tabindex="0" data-toggle="tooltip" data-placement="top" title=@Model[i].PassedTime>
+                                            @Model[i].ExitTime
+                                        </span>
+                                    </td>
+                                    <td>@Model[i].Price</td>
                                 </tr>
                             }
                         </tbody>

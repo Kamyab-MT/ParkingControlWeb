@@ -78,6 +78,17 @@
                                     <span asp-validation-for="RepeatPassword" class="text-danger"></span>
                                 </div>
 
+                                @if (User.IsInRole("GlobalAdmin"))
+                                {
+                                    <label asp-for="RenewalIndex"></label>
+                                <select asp-for="RenewalIndex" class="form-control" id="period">
+                                        <option value="0">یک ماهه</option>
+                                        <option value="1">سه ماهه</option>
+                                        <option value="2">شش ماهه</option>
+                                        <option value="3">یک ساله</option>
+                                    </select>
+                                }
+
                             </div>
 
                             <div class="col-@colSize">

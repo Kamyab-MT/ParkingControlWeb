@@ -4,6 +4,7 @@ namespace ParkingControlWeb.Data.Interface
 {
     public interface IRecord
     {
+        public Task<IEnumerable<Record>> GetAll();
         public Task<IEnumerable<Record>> GetAllFromParking(Parking parking);
         public Task<IEnumerable<Record>> GetAllActiveFromParking(Parking parking);
         public Task<IEnumerable<Record>> GetAllCompletedFromParking(Parking parking);

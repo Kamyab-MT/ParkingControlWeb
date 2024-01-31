@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using ParkingControlWeb.Data;
+using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Helpers;
@@ -29,6 +31,7 @@ namespace ParkingControlWeb.Controllers
             _parkingRepository = parkingRepository;
         }
 
+        [Authorize(Roles = "SystemAdmin,Expert")]
         public async Task<IActionResult> Index()
         {
 
@@ -36,7 +39,12 @@ namespace ParkingControlWeb.Controllers
             Parking parking = await _parkingRepository.GetById(user.ParkingId);
 
             var records = await _recordRepository.GetAllActiveFromParking(parking);
-            var recordsList = records.ToList();
+            List<Record> recordsList;
+
+            if (User.IsInRole("SystemAdmin"))
+                recordsList = records.ToList();
+            else
+                recordsList = records.Where(s => s.Creator == User.GetUserId()).ToList();
 
             List<ActiveRecordViewModel> vmRecords = new List<ActiveRecordViewModel>();
 
@@ -50,8 +58,8 @@ namespace ParkingControlWeb.Controllers
                     EntranceTime = Helper.DateShow(recordsList[i].EntranceTime),
                     Status = recordsList[i].Status,
                     PhoneNumber = currentUser.UserName,
-                    PlateNumber = "123الف231",
-                    IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(0,0,0),
+                    PlateNumber = recordsList[i].PlateNumber,
+                    IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(parking.EntranceRate,parking.HourlyRate,parking.DailyRate),
                 });
             }
 
@@ -92,6 +100,7 @@ namespace ParkingControlWeb.Controllers
                 record.PlateNumber = PlateNumber.Encrypt();
                 record.UserId = await RegisterOrGetDriverUser(recordViewModel.AddRecord.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
                 record.CarId = await RegisterOrGetUserCar(PlateNumber, record.UserId);
+                record.Creator = User.GetUserId();
 
                 _recordRepository.Add(record);
 
@@ -106,7 +115,51 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> RecordsHistory()
         {
-            return View();
+
+            if (User.IsInRole(Role.GlobalAdmin))
+                return RedirectToAction("Index", "Dashboard");
+
+            IEnumerable<Record> records;
+            AppUser user;
+            Parking parking = null;
+
+            if (User.IsInRole(Role.GlobalAdmin))
+                records = await _recordRepository.GetAll();
+            else
+            {
+
+                user = await _userManager.FindByIdAsync(User.GetUserId());
+                parking = await _parkingRepository.GetById(user.ParkingId);
+
+                records = await _recordRepository.GetAllCompletedFromParking(parking);
+            }
+
+            List<Record> recordsList;
+            List<RecordsHistoryViewModel> vmRecords = new List<RecordsHistoryViewModel>();
+
+            if (User.IsInRole(Role.GlobalAdmin) || User.IsInRole(Role.SystemAdmin))
+                recordsList = records.ToList();
+            else
+                recordsList = records.Where(s => s.Creator == User.GetUserId()).ToList();
+
+            for (int i = 0; i < recordsList.Count; i++)
+            {
+                AppUser currentUser = await _userManager.FindByIdAsync(recordsList[i].UserId);
+
+                vmRecords.Add(
+                new RecordsHistoryViewModel()
+                {
+                    
+                    EntranceTime = Helper.DateShow(recordsList[i].EntranceTime),
+                    PhoneNumber = currentUser.UserName.Decrypt(),
+                    PlateNumber = recordsList[i].PlateNumber.Decrypt(),
+                    ExitTime = Helper.DateShow(recordsList[i].ExitTime),
+                    PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime),
+                    Price = Helper.DottedPriceShow(Helper.CalculateExpense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate))
+                });
+            }
+
+            return View(vmRecords);
         }
 
         public async Task<string> RegisterOrGetDriverUser(string Username, string ParkingId, string UserId, string SuperiorId)
@@ -118,10 +171,11 @@ namespace ParkingControlWeb.Controllers
             {
                 string parkingId = ParkingId;
                 string sup = User.IsInRole("SystemAdmin") ? UserId : SuperiorId;
+                AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
 
-                AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username, PhoneNumber = Username, SuperiorUserId = sup, Active = 1, ParkingId = parkingId };
+                AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username.Encrypt(), PhoneNumber = Username.Encrypt(), SuperiorUserId = sup, Active = 1, ParkingId = parkingId, SubscriptionExpiry = user.SubscriptionExpiry };
 
-                var result = await _userManager.CreateAsync(newUser, "Driver_12345");
+                var result = await _userManager.CreateAsync(newUser);
 
                 if (result.Succeeded) // user created successfully
                 {
@@ -130,7 +184,7 @@ namespace ParkingControlWeb.Controllers
                 }
                 else
                 {
-                    TempData["Error"] = "ساخت رکورد جدید با خطا رو به رو شد";
+                    TempData["Error"] = "ثبت ورود با خطا مواجه شد";
                     return null;
                 }
             }
@@ -147,7 +201,7 @@ namespace ParkingControlWeb.Controllers
                 Car car = new Car()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    PlateNumber = PlateNumber,
+                    PlateNumber = PlateNumber.Encrypt(),
                     VisitCount = 1,
                     OwnerId = UserId
                 };

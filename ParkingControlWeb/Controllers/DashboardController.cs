@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Extensions;
@@ -84,10 +83,10 @@ namespace ParkingControlWeb.Controllers
                             ExpireDate = Helper.DateShow(user.SubscriptionExpiry),
                             ParkingName = _parkingRepository.GetById(user.ParkingId).GetAwaiter().GetResult().Name.Decrypt(),
                             Username = user.UserName.Decrypt()
-                            
+
                         };
 
-                        
+
                         infos.Add(infoVM);
                     }
 
@@ -109,7 +108,7 @@ namespace ParkingControlWeb.Controllers
         [Authorize()]
         public async Task<IActionResult> Register()
         {
-            
+
             var Session = await SessionCheck();
             if (Session != null) return Session;
 
@@ -119,7 +118,7 @@ namespace ParkingControlWeb.Controllers
 
             if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert))
                 return RedirectToAction("Index", "Home");
-            
+
             RegisterViewModel model = new RegisterViewModel();
             return View(model);
         }
@@ -155,15 +154,26 @@ namespace ParkingControlWeb.Controllers
                 string infoId = Guid.NewGuid().ToString();
                 string parkingId = "";
 
+                AppUser user = null;
                 if (User.IsInRole(Role.GlobalAdmin))
                     parkingId = Guid.NewGuid().ToString();
                 else
                 {
-                    var user = await _userManager.GetUserAsync(User);
+                    user = await _userManager.GetUserAsync(User);
                     parkingId = user.ParkingId;
                 }
 
-                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName.Encrypt(), PhoneNumber = registerViewModel.UserName.Encrypt(), SuperiorUserId = _httpContextAccessor.HttpContext.User.GetUserId(), Active = 1, RegisterDate = DateTime.Now };
+                AppUser newUser = new AppUser() { UserName = registerViewModel.UserName.Encrypt(), PhoneNumber = registerViewModel.UserName.Encrypt(), SuperiorUserId = User.GetUserId(), Active = 1, RegisterDate = DateTime.Now };
+
+                if (User.IsInRole("GlobalAdmin"))
+                {
+                    int[] values = [1, 3, 6, 12];
+                    int index = int.Parse(registerViewModel.RenewalIndex);
+
+                    newUser.SubscriptionExpiry = DateTime.Now.AddMonths(values[index]);
+                }
+                else
+                    newUser.SubscriptionExpiry = user.SubscriptionExpiry;
 
                 string selectedRole = _httpContextAccessor.HttpContext.User.IsInRole(Role.GlobalAdmin) ? Role.SystemAdmin : Role.Expert;
 
@@ -233,7 +243,7 @@ namespace ParkingControlWeb.Controllers
             }
 
         }
-        
+
         public async Task<IActionResult> Edit(string id)
         {
 
@@ -329,6 +339,7 @@ namespace ParkingControlWeb.Controllers
 
         }
 
+        [Authorize(Roles = "GlobalAdmin,SystemAdmin")]
         public async Task<IActionResult> AllUsers()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -353,12 +364,16 @@ namespace ParkingControlWeb.Controllers
                 });
             }
 
-            var globalAdmin = usersVM.FirstOrDefault(s=> s.Role == "GlobalAdmin");
-            var parkingOwners = usersVM.Where(s => s.Role == "SystemAdmin");
-            var experts = usersVM.Where(s => s.Role == "Expert");
-            var drivers = usersVM.Where(s => s.Role == "Driver");
+            var globalAdmin = usersVM.FirstOrDefault(s => s.Role == "GlobalAdmin");
+            var parkingOwners = usersVM.Where(s => s.Role == "SystemAdmin").ToList();
+            var experts = usersVM.Where(s => s.Role == "Expert").ToList();
+            var drivers = usersVM.Where(s => s.Role == "Driver").ToList();
 
-            List<UserVM> userVMs = [globalAdmin, .. parkingOwners, .. experts, .. drivers];
+            List<UserVM> userVMs = new List<UserVM>();
+            if(User.IsInRole(Role.GlobalAdmin)) userVMs.Add(globalAdmin);
+            userVMs.AddRange(parkingOwners);
+            userVMs.AddRange(experts);
+            userVMs.AddRange(drivers);
 
             AllUsersViewModel VM = new AllUsersViewModel()
             {
@@ -435,7 +450,7 @@ namespace ParkingControlWeb.Controllers
             var secondPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "ThreeMonth");
             var thirdPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "SixMonth");
             var fourthPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneYear");
-            
+
             renewalViewModel.OneMonth = firstPrice.Price;
             renewalViewModel.ThreeMonth = secondPrice.Price;
             renewalViewModel.SixMonth = thirdPrice.Price;
@@ -454,16 +469,16 @@ namespace ParkingControlWeb.Controllers
 
             AppUser user = await _userManager.FindByIdAsync(renewalViewModel.Id);
 
-            if(user.SubscriptionExpiry >= DateTime.Now)
+            if (user.SubscriptionExpiry >= DateTime.Now)
                 user.SubscriptionExpiry = user.SubscriptionExpiry.AddMonths(values[index]);
             else
                 user.SubscriptionExpiry = DateTime.Now.AddMonths(values[index]);
 
             if (_context.SaveChanges() > 0)
             {
-                
+
                 TempData["Success"] = "اشتراک کاربر با موفقیت تمدید شد";
-                return RedirectToAction("UsersList","Dashboard");
+                return RedirectToAction("UsersList", "Dashboard");
             }
             else
             {
@@ -490,6 +505,25 @@ namespace ParkingControlWeb.Controllers
             if (user.Active == 0)
             {
                 TempData["Error"] = "این حساب غیر فعال شده است";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return null;
+        }
+
+        public async Task<IActionResult> SubscriptionCheck()
+        {
+            if (User.IsInRole(Role.GlobalAdmin)) return null;
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user.SubscriptionExpiry < DateTime.Now)
+            {
+                if (User.IsInRole(Role.SystemAdmin))
+                    TempData["Error"] = "اشتراک پارکینگ شما به اتمام رسیده\nجهت تمدید با پشتیبانی تماس بگیرید";
+                else if (User.IsInRole(Role.Driver))
+                    TempData["Error"] = "این پارکینگ در حال حاضر\nبه سامانه دسترسی ندارد";
+
                 return RedirectToAction("Index", "Home");
             }
 

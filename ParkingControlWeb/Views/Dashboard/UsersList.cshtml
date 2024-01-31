@@ -62,22 +62,26 @@
                                 <td>
                                     <div class="row">
 
-                                        <div class="col-4">
+                                        <div class="col-6 mt-1">
                                             <a class="btn btn-primary form-control asp-controller="Dashboard" asp-action="Edit" asp-route-id="@Model.Users[i].Id">ویرایش اطلاعات</a>
                                         </div>
 
-                                        <div class="col-4">
-                                            <a class="btn btn-success form-control asp-controller="Dashboard" asp-action="Renewal" asp-route-id="@Model.Users[i].Id">تمدید اشتراک</a>
-                                        </div>
+                                        @if (User.IsInRole("GlobalAdmin"))
+                                        {
+                                            <div class="col-6 mt-1">
+                                                <a class="btn btn-success form-control asp-controller="Dashboard" asp-action="Renewal" asp-route-id="@Model.Users[i].Id">تمدید اشتراک</a>
+                                            </div>
+                                        }
+
                                         @if (Model.Users[i].Active == 1)
                                         {
-                                            <div class="col-4">
+                                            <div class="col-6 mt-1">
                                                 <a class="btn btn-danger form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id">غیر فعال کردن حساب</a>
                                             </div>
                                         }
                                         else
                                         {
-                                            <div class="col-4">
+                                            <div class="col-6 mt-1">
                                                 <a class="btn btn-success form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id">فعال کردن حساب</a>
                                             </div>
                                         }

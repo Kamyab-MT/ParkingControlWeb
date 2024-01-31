@@ -79,6 +79,8 @@ namespace ParkingControlWeb.ViewModels.Account
         [Required(ErrorMessage = "نرخ روزانه را وارد کنید")]
         public int DailyRate { get; set; }
 
+        [Display(Name = "تمدید اولیه")]
+        public string RenewalIndex { get; set; }
 
     }
 }
