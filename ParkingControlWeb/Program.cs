@@ -22,6 +22,10 @@ builder.Services.AddIdentity<AppUser, Role>().AddEntityFrameworkStores<Applicati
 builder.Services.AddMemoryCache();
 builder.Services.AddSession();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-*._@+/=*%^\\";
+});
 
 var app = builder.Build();
 

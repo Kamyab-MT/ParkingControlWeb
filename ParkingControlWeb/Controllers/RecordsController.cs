@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Extensions;
@@ -57,8 +56,8 @@ namespace ParkingControlWeb.Controllers
                 {
                     EntranceTime = Helper.DateShow(recordsList[i].EntranceTime),
                     Status = recordsList[i].Status,
-                    PhoneNumber = currentUser.UserName,
-                    PlateNumber = recordsList[i].PlateNumber,
+                    PhoneNumber = currentUser.UserName.Decrypt(),
+                    PlateNumber = recordsList[i].PlateNumber.Decrypt(),
                     IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(parking.EntranceRate,parking.HourlyRate,parking.DailyRate),
                 });
             }
@@ -83,9 +82,15 @@ namespace ParkingControlWeb.Controllers
                 }
             }
 
-            var user = await _userManager.FindByNameAsync(recordViewModel.AddRecord.PhoneNumber.Encrypt());
+            AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
+            Parking parking = await _parkingRepository.GetById(user.ParkingId);
 
-            if(user == null)
+            string PlateNumber = recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
+
+            var rec = await _recordRepository.GetAllActiveFromParking(parking);
+            var plate = rec.FirstOrDefault(s=> s.PlateNumber == PlateNumber);
+            
+            if(plate == null)
             {
 
                 Record record = new Record();
@@ -95,10 +100,12 @@ namespace ParkingControlWeb.Controllers
                 record.EntranceTime = DateTime.Now;
                 record.Status = 0;
 
-                string PlateNumber = recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
-
                 record.PlateNumber = PlateNumber.Encrypt();
-                record.UserId = await RegisterOrGetDriverUser(recordViewModel.AddRecord.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
+                
+                var newUser = await RegisterOrGetDriverUser(recordViewModel.AddRecord.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
+                
+                record.UserId = newUser.Id;
+
                 record.CarId = await RegisterOrGetUserCar(PlateNumber, record.UserId);
                 record.Creator = User.GetUserId();
 
@@ -108,7 +115,7 @@ namespace ParkingControlWeb.Controllers
             }
             else
             {
-                TempData["Error"] = "شماره وارد شده در سیستم جاری موجود است،\nامکان ثبت رکورد جدید وجود ندارد.";
+                TempData["Error"] = "پلاک وارد شده در سیستم جاری موجود است،\nامکان ثبت ورود جدید وجود ندارد.";
                 return RedirectToAction("Index", "Records");
             }
         }
@@ -162,10 +169,10 @@ namespace ParkingControlWeb.Controllers
             return View(vmRecords);
         }
 
-        public async Task<string> RegisterOrGetDriverUser(string Username, string ParkingId, string UserId, string SuperiorId)
+        public async Task<AppUser> RegisterOrGetDriverUser(string Username, string ParkingId, string UserId, string SuperiorId)
         {
 
-            AppUser? response = await _userManager.FindByNameAsync(Username);
+            var response = await _userManager.FindByNameAsync(Username.Encrypt());
 
             if (response == null) // it does not exist
             {
@@ -173,14 +180,14 @@ namespace ParkingControlWeb.Controllers
                 string sup = User.IsInRole("SystemAdmin") ? UserId : SuperiorId;
                 AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
 
-                AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username.Encrypt(), PhoneNumber = Username.Encrypt(), SuperiorUserId = sup, Active = 1, ParkingId = parkingId, SubscriptionExpiry = user.SubscriptionExpiry };
+                AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username.Encrypt(), PhoneNumber = Username.Encrypt(), SuperiorUserId = sup, Active = 1, ParkingId = parkingId, SubscriptionExpiry = user.SubscriptionExpiry, RegisterDate = DateTime.Now };
 
                 var result = await _userManager.CreateAsync(newUser);
 
                 if (result.Succeeded) // user created successfully
                 {
-                    await _userManager.AddToRoleAsync(newUser, "Driver");
-                    return newUser.Id;
+                    await _userManager.AddToRoleAsync(newUser, Role.Driver);
+                    return newUser;
                 }
                 else
                 {
@@ -189,7 +196,7 @@ namespace ParkingControlWeb.Controllers
                 }
             }
             else // already exist
-                return response.Id;
+                return response;
         }
 
         public async Task<string> RegisterOrGetUserCar(string PlateNumber, string UserId)
