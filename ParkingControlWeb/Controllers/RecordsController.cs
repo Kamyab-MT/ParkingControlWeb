@@ -17,14 +17,16 @@ namespace ParkingControlWeb.Controllers
 
         readonly ApplicationDbContext _dbContext;
         readonly UserManager<AppUser> _userManager;
+        readonly SignInManager<AppUser> _signInManager;
         readonly IRecord _recordRepository;
         readonly ICar _carRepository;
         readonly IParking _parkingRepository;
 
-        public RecordsController(ApplicationDbContext dbContext, UserManager<AppUser> userManager, IRecord recordRepository, ICar carRepository, IParking parkingRepository)
+        public RecordsController(ApplicationDbContext dbContext, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, ICar carRepository, IParking parkingRepository)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _signInManager = signInManager;
             _recordRepository = recordRepository;
             _carRepository = carRepository;
             _parkingRepository = parkingRepository;
@@ -33,6 +35,15 @@ namespace ParkingControlWeb.Controllers
         [Authorize(Roles = "SystemAdmin,Expert")]
         public async Task<IActionResult> Index()
         {
+
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
 
             AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
             Parking parking = await _parkingRepository.GetById(user.ParkingId);
@@ -88,7 +99,7 @@ namespace ParkingControlWeb.Controllers
             string PlateNumber = recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
 
             var rec = await _recordRepository.GetAllActiveFromParking(parking);
-            var plate = rec.FirstOrDefault(s=> s.PlateNumber == PlateNumber);
+            var plate = rec.FirstOrDefault(s=> s.PlateNumber.Decrypt() == PlateNumber);
             
             if(plate == null)
             {
@@ -125,6 +136,15 @@ namespace ParkingControlWeb.Controllers
 
             if (User.IsInRole(Role.GlobalAdmin))
                 return RedirectToAction("Index", "Dashboard");
+
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
 
             IEnumerable<Record> records;
             AppUser user;
@@ -226,6 +246,51 @@ namespace ParkingControlWeb.Controllers
         public IActionResult TransactionsHistory()
         {
             return View();
+        }
+
+
+        public async Task<IActionResult> SessionCheck()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                TempData["Error"] = "از حساب خود خارج شدید، لطفا مجدد وارد شوید";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return null;
+        }
+
+        public async Task<IActionResult> ActivityCheck()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Active == 0)
+            {
+                TempData["Error"] = "این حساب غیر فعال شده است";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return null;
+        }
+
+        public async Task<IActionResult> SubscriptionCheck()
+        {
+            if (User.IsInRole(Role.GlobalAdmin)) return null;
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user.SubscriptionExpiry < DateTime.Now)
+            {
+                if (User.IsInRole(Role.Driver))
+                    TempData["Error"] = "این پارکینگ در حال حاضر\nبه سامانه دسترسی ندارد";
+                else
+                    TempData["Error"] = "اشتراک این پارکینگ به اتمام رسیده\nجهت تمدید با پشتیبانی تماس بگیرید";
+
+                await _signInManager.SignOutAsync();
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            return null;
         }
     }
 }

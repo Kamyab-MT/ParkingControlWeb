@@ -20,6 +20,7 @@ namespace ParkingControlWeb.Controllers
     {
 
         readonly UserManager<AppUser> _userManager;
+        readonly SignInManager<AppUser> _signManager;
         readonly ApplicationDbContext _context;
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly IInfo _infoRepository;
@@ -27,9 +28,10 @@ namespace ParkingControlWeb.Controllers
 
         Role role = new Role();
 
-        public DashboardController(UserManager<AppUser> userManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository)
+        public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository)
         {
             _userManager = userManager;
+            _signManager = signInManager;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _infoRepository = infoRepository;
@@ -60,6 +62,8 @@ namespace ParkingControlWeb.Controllers
             var Activity = await ActivityCheck();
             if (Activity != null) return Activity;
 
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
 
             if (!_httpContextAccessor.HttpContext.User.IsInRole("Driver") && !_httpContextAccessor.HttpContext.User.IsInRole("Expert"))
             {
@@ -115,6 +119,8 @@ namespace ParkingControlWeb.Controllers
             var Activity = await ActivityCheck();
             if (Activity != null) return Activity;
 
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
 
             if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert))
                 return RedirectToAction("Index", "Home");
@@ -253,6 +259,9 @@ namespace ParkingControlWeb.Controllers
             var Activity = await ActivityCheck();
             if (Activity != null) return Activity;
 
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
+
             var user = await _userManager.FindByIdAsync(id);
             var info = await _infoRepository.GetById(user.InfoId);
             var parking = await _parkingRepository.GetById(user.ParkingId);
@@ -342,6 +351,16 @@ namespace ParkingControlWeb.Controllers
         [Authorize(Roles = "GlobalAdmin,SystemAdmin")]
         public async Task<IActionResult> AllUsers()
         {
+
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
+
             var users = await _userManager.Users.ToListAsync();
             List<UserVM> usersVM = new List<UserVM>();
 
@@ -392,6 +411,9 @@ namespace ParkingControlWeb.Controllers
             var Activity = await ActivityCheck();
             if (Activity != null) return Activity;
 
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
+
             AppUser user = await _userManager.FindByIdAsync(id);
             List<AppUser> ownedUsers = new List<AppUser>();
 
@@ -422,6 +444,9 @@ namespace ParkingControlWeb.Controllers
             var Activity = await ActivityCheck();
             if (Activity != null) return Activity;
 
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
+
             AppUser user = await _userManager.FindByIdAsync(id);
 
             Info info = await _infoRepository.GetById(user.InfoId);
@@ -444,6 +469,15 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> Renewal(string id)
         {
+
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
             RenewalViewModel renewalViewModel = new RenewalViewModel();
 
             var firstPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneMonth");
@@ -519,10 +553,12 @@ namespace ParkingControlWeb.Controllers
 
             if (user.SubscriptionExpiry < DateTime.Now)
             {
-                if (User.IsInRole(Role.SystemAdmin))
-                    TempData["Error"] = "اشتراک پارکینگ شما به اتمام رسیده\nجهت تمدید با پشتیبانی تماس بگیرید";
-                else if (User.IsInRole(Role.Driver))
+                if (User.IsInRole(Role.Driver))
                     TempData["Error"] = "این پارکینگ در حال حاضر\nبه سامانه دسترسی ندارد";
+                else
+                    TempData["Error"] = "اشتراک این پارکینگ به اتمام رسیده\nجهت تمدید با پشتیبانی تماس بگیرید";
+
+                await _signManager.SignOutAsync();
 
                 return RedirectToAction("Index", "Home");
             }

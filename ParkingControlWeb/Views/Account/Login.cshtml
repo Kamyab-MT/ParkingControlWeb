@@ -25,13 +25,10 @@
     @section Scripts {
         <partial name="_ValidationScriptsPartial" />
     }
-    <div class="modal-dialog animate__animated  animate__fadeInUp">
-            <div class="modal-content rounded-4 shadow">
-                <div class="modal-header p-5 pb-4 border-bottom-0">
-                    <h1 class="fw-bold mb-0 fs-2">ورود به حساب کاربری</h1>
-                </div>
-
-                <div class="modal-body p-5 pt-0">
+    <section class="vh-100">
+        <div class="container py-5 h-100">
+            <div class="row d-flex align-items-center justify-content-center h-100">
+                <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
                     <form asp-action="Login">
                         <div class="form-floating mb-3 justify-content-star3t">
                             <input asp-for="UserName" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com">
@@ -44,15 +41,17 @@
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">ورود</button>
-                        <hr class="my-4">
                     </form>
+                </div>
+                <div class="col-md-8 col-lg-7 col-xl-6">
+                    <img src="https://cdni.iconscout.com/illustration/premium/thumb/man-holding-key-and-unlocking-safe-5753796-4823076.png?f=webp"
+                         class="img-fluid" alt="Phone image">
                 </div>
             </div>
         </div>
-
+    </section>
 
     </body>
-
 
 
 </html>

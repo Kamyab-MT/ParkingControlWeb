@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
 using System.Diagnostics;
@@ -7,21 +9,22 @@ namespace ParkingControlWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+
+        readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
 
-/*            TimeSpan F = new TimeSpan(25, 30, 0);
+        /*  TimeSpan F = new TimeSpan(25, 30, 0);
             Console.WriteLine(F.Days * 12000);
             Console.WriteLine(F.Hours * 6000);
             Console.WriteLine(6000 * ((float)F.Minutes / 60));*/
-            
+
             if (User.Identity.IsAuthenticated)
             {
                 if(User.IsInRole("GlobalAdmin"))

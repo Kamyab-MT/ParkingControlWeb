@@ -54,6 +54,17 @@ namespace ParkingControlWeb.Controllers
                     TempData["Error"] = "این حساب غیر فعال شده است";
                     return View();
                 }
+                
+                if (user.SubscriptionExpiry < DateTime.Now)
+                {
+                    if (await _userManager.IsInRoleAsync(user, Role.Driver))
+                        TempData["Error"] = "این پارکینگ در حال حاضر\nبه سامانه دسترسی ندارد";
+                    else
+                        TempData["Error"] = "اشتراک پارکینگ شما به اتمام رسیده\nجهت تمدید با پشتیبانی تماس بگیرید";
+
+                    return View();
+                }
+
 
                 bool passwordCheck = await _userManager.CheckPasswordAsync(user, loginViewModel.Password);
 

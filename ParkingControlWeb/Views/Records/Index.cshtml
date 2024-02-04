@@ -51,7 +51,8 @@
                                 <th>شماره همراه</th>
                                 <th>شماره پلاک</th>
                                 <th>زمان ورود</th>
-                                <th>اکشن</th>
+                                <th>زمان خروج</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -67,6 +68,7 @@
                                     <td>@item.PhoneNumber</td>
                                     <td>@item.PlateNumber</td>
                                     <td>@item.EntranceTime</td>
+                                    <td>@item.EntranceTime</td>
                                     <td>
                                         @if (item.Status == 1)
                                         {
@@ -77,7 +79,7 @@
                                         <a class="btn btn-info w-50" data-toggle="collapse" href="#charge_@i" class="accordion-toggle">شارژ کردن حساب</a>
 
 
-                                            if (item.IsMoneyEnough)
+                                            if (!item.IsMoneyEnough)
                                             {
                                                 <span tabindex="0" data-toggle="tooltip" data-placement="top" title="موجودی کاربر کافی نمی‌باشد">
                                                     <a class="btn btn-danger disabled w-25" asp-controller="" asp-action="">خروج</a>
@@ -102,11 +104,11 @@
                                         <form>
                                             <div class="row">
 
-                                                <div class="col-6">
+                                                <div class="col-8">
                                                     <input class="form-control" />
                                                 </div>
-                                                <div class="col-6">
-                                                    <a class="btn btn-success">Chrage</a>
+                                                <div class="col-4">
+                                                    <a class="form-control btn btn-success">شارژ کردن</a>
                                                 </div>
                                             </div>
                                         </form>
@@ -130,14 +132,14 @@
 
                     <div class="row">
                         <div class="col-3">
-                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                            <div class="form-floating form-group">
                             <input asp-for="AddRecord.PhoneNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
                                 <label asp-for="AddRecord.PhoneNumber" for="floatingInput" class="ms-0"></label>
                                 <span asp-validation-for="AddRecord.PhoneNumber" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-floating mb-3 justify-content-star3t form-group">
+                            <div class="form-floating form-group">
                                 <div class="row">
                                     <label>پلاک</label>
                                     <div class="col-2">
