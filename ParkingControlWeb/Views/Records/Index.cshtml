@@ -42,6 +42,15 @@
                         <h3>ورود و خروج های جاری</h3>
                     </div>
                 </div>
+                
+                <div class="row">
+
+
+                </div>
+                
+                <div class="row">
+
+                </div>
 
                 <div class="overflow-scroll" style="max-height:60vh;">
                     <table class="table table-hover">
@@ -69,9 +78,9 @@
                                     <td>@item.PlateNumber</td>
                                     <td>@item.EntranceTime</td>
                                     <td>
-                                        <span tabindex="0" data-toggle="tooltip" data-placement="top" title=@item.PassedTime>
+                                        <p tabindex="1" data-toggle="tooltip" data-placement="top" title=@item.PassedTime>
                                             @item.ExitTime
-                                        </span>
+                                        </p>
                                     </td>
                                     <td>
                                         @if (item.Status == 0)
@@ -80,7 +89,7 @@
                                         }
                                         else
                                         {
-                                            <a class="btn btn-info w-50" data-toggle="collapse" href="#charge_@i" class="accordion-toggle">شارژ کردن حساب</a>
+                                        <a class="btn btn-info w-50" data-toggle="collapse" href=".multi-collapse_@i" aria-expanded="false" aria-controls="ballance_@i charge_@i">جزئیات حساب</a>
 
 
                                             if (!item.IsMoneyEnough)
@@ -102,11 +111,24 @@
                             {
                                 <tr>
                                     <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td colspan="4" class="hiddenRow">
-                                        <div class="collapse hidden" id="charge_@i">
+                                    <td>
+                                        <div id="ballance_@i" class="collapse multi-collapse_@i">
+                                            <span class="text text-success">موجودی کاربر : 3000 تومان</span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div id="ballance_@i" class="collapse multi-collapse_@i">
+                                            <span class="text text-danger">هزینه خروج : 3000 تومان</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div id="ballance_@i" class="collapse multi-collapse_@i">
+                                            <span class="text text-info">تفاوت : 3000 تومان</span>
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <div id="charge_@i" class="collapse multi-collapse_@i">
                                             <form>
                                                 <div class="row">
 
@@ -121,6 +143,7 @@
                                         </div>
                                     </td>
                                 </tr>
+
                             }
 
                             i = i + 1;
@@ -185,6 +208,7 @@
         function getVal(ref) {
 
             var doc = document.getElementById(ref);
+
             alert(doc.innerHTML);
             return doc.innerHTML;
         }

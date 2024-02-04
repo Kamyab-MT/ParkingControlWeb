@@ -69,7 +69,7 @@ namespace ParkingControlWeb.Controllers
                     EntranceTime = Helper.DateShow(recordsList[i].EntranceTime),
                     Status = recordsList[i].Status,
                     ExitTime = recordsList[i].Status == -1 ? Helper.DateShow(recordsList[i].ExitTime) : "-",
-                    PassedTime = recordsList[i].Status == -1 ? Helper.DateShow(recordsList[i].ExitTime) : "حاضر در پارکینگ",
+                    PassedTime = Helper.TimeBetween(DateTime.Now, recordsList[i].EntranceTime),
                     PhoneNumber = currentUser.UserName.Decrypt(),
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
                 };

@@ -23,10 +23,12 @@ namespace ParkingControlWeb.Helpers
         {
             var sub = first.Subtract(second);
             
-            if(sub.TotalDays > 0)
-                return sub.TotalDays + "روز و " + sub.TotalHours + "ساعت";
+            if(sub.Days > 0)
+                return sub.Days + "روز⠀و" + sub.Hours + "⠀ساعت";
+            else if(sub.Hours > 0)
+                return sub.Hours + "ساعت⠀و" + sub.Minutes + "⠀دقیقه";
             else
-                return sub.TotalHours + " ساعت و " + sub.TotalMinutes + " دقیقه";
+                return sub.Minutes + "⠀دقیقه";
         }
 
         public static string DottedPriceShow(float number)
