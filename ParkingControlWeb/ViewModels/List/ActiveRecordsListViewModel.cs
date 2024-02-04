@@ -7,9 +7,12 @@
 
     public class ActiveRecordViewModel
     {
+        public string Id { get; set; }
         public string PhoneNumber { get; set; }
         public string PlateNumber { get; set; }
         public string EntranceTime { get; set; }
+        public string ExitTime { get; set; }
+        public string PassedTime { get; set; }
         public int Status { get; set; }
         public bool IsMoneyEnough { get; set; }
     }

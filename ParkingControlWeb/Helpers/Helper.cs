@@ -12,11 +12,7 @@ namespace ParkingControlWeb.Helpers
         static AesCryptography aesCryptography = new AesCryptography();
         static LocalDate localDate = new LocalDate();
 
-        public static float CalculateExpense(float entranceExpense, float hourlyExpense, float dailyExpense)
-        {
-
-            return 0;
-        }
+        public static float CalculateExpense(Expense expense) => expense.Calculate();
 
         public static string DateShow(DateTime date)
         {
@@ -44,5 +40,18 @@ namespace ParkingControlWeb.Helpers
         public static string Encrypt(string data) => aesCryptography.Encrypt(data);
 
         public static string Decrypt(string encryptedData) => aesCryptography.Decrypt(encryptedData);
+    }
+
+    public class Expense
+    {
+
+        public float expense;
+
+        public Expense(float enterPrice, float hourlyPrice, float dailyPrice, float minutesSpent,float hoursSpent, float daysSpent)
+        {
+            expense += enterPrice;
+        }
+
+        public float Calculate() => expense;
     }
 }

@@ -68,53 +68,60 @@
                                     <td>@item.PhoneNumber</td>
                                     <td>@item.PlateNumber</td>
                                     <td>@item.EntranceTime</td>
-                                    <td>@item.EntranceTime</td>
                                     <td>
-                                        @if (item.Status == 1)
+                                        <span tabindex="0" data-toggle="tooltip" data-placement="top" title=@item.PassedTime>
+                                            @item.ExitTime
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (item.Status == 0)
                                         {
-                                            <a class="btn btn-warning w-75">توقف</a>
+                                            <a class="btn btn-warning w-75" asp-controller="Records" asp-action="StopARecord" asp-route-id="@item.Id">توقف</a>
                                         }
                                         else
                                         {
-                                        <a class="btn btn-info w-50" data-toggle="collapse" href="#charge_@i" class="accordion-toggle">شارژ کردن حساب</a>
+                                            <a class="btn btn-info w-50" data-toggle="collapse" href="#charge_@i" class="accordion-toggle">شارژ کردن حساب</a>
 
 
                                             if (!item.IsMoneyEnough)
                                             {
                                                 <span tabindex="0" data-toggle="tooltip" data-placement="top" title="موجودی کاربر کافی نمی‌باشد">
-                                                    <a class="btn btn-danger disabled w-25" asp-controller="" asp-action="">خروج</a>
+                                                    <a class="btn btn-danger disabled w-25">خروج</a>
                                                 </span>
                                             }
                                             else
                                             {
-                                                <a class="btn btn-danger w-25" asp-controller="" asp-action="">خروج</a>
+                                                <a class="btn btn-danger w-25" asp-controller="Records" asp-action="FinalizeARecord" asp-route-id="@item.Id">خروج</a>
                                             }
                                         }
 
 
                                     </td>
                             </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td colspan="4" class="hiddenRow">
-                                    <div class="collapse hidden" id="charge_@i">
-                                        <form>
-                                            <div class="row">
+                            if(item.Status == -1)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td colspan="4" class="hiddenRow">
+                                        <div class="collapse hidden" id="charge_@i">
+                                            <form>
+                                                <div class="row">
 
-                                                <div class="col-8">
-                                                    <input class="form-control" />
+                                                    <div class="col-8">
+                                                        <input class="form-control" asp-format="{C}" id="charge_amount_@i"/>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <a class="form-control btn btn-success" asp-controller="Records" asp-action="ChargeDriver" asp-route-id="@item.Id" asp-route-amount="getVal(charge_amount_@i)">شارژ کردن</a>
+                                                    </div>
                                                 </div>
-                                                <div class="col-4">
-                                                    <a class="form-control btn btn-success">شارژ کردن</a>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
 
                             i = i + 1;
                             
@@ -173,6 +180,15 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+
+        function getVal(ref) {
+
+            var doc = document.getElementById(ref);
+            alert(doc.innerHTML);
+            return doc.innerHTML;
+        }
+    </script>
 
     </body>
 

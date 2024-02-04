@@ -15,16 +15,14 @@ namespace ParkingControlWeb.Controllers
     public class RecordsController : Controller
     {
 
-        readonly ApplicationDbContext _dbContext;
         readonly UserManager<AppUser> _userManager;
         readonly SignInManager<AppUser> _signInManager;
         readonly IRecord _recordRepository;
         readonly ICar _carRepository;
         readonly IParking _parkingRepository;
 
-        public RecordsController(ApplicationDbContext dbContext, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, ICar carRepository, IParking parkingRepository)
+        public RecordsController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, ICar carRepository, IParking parkingRepository)
         {
-            _dbContext = dbContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _recordRepository = recordRepository;
@@ -60,17 +58,31 @@ namespace ParkingControlWeb.Controllers
 
             for (int i = 0; i < recordsList.Count; i++)
             {
-                AppUser currentUser = await _userManager.FindByIdAsync(recordsList[i].UserId);
+                
+                if (recordsList[i].Status == 1)
+                    continue;
 
-                vmRecords.Add(
-                new ActiveRecordViewModel()
+                AppUser currentUser = await _userManager.FindByIdAsync(recordsList[i].UserId);
+                ActiveRecordViewModel vm = new ActiveRecordViewModel()
                 {
+                    Id = recordsList[i].Id,
                     EntranceTime = Helper.DateShow(recordsList[i].EntranceTime),
                     Status = recordsList[i].Status,
+                    ExitTime = recordsList[i].Status == -1 ? Helper.DateShow(recordsList[i].ExitTime) : "-",
+                    PassedTime = recordsList[i].Status == -1 ? Helper.DateShow(recordsList[i].ExitTime) : "حاضر در پارکینگ",
                     PhoneNumber = currentUser.UserName.Decrypt(),
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
-                    IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(parking.EntranceRate,parking.HourlyRate,parking.DailyRate),
-                });
+                };
+
+                if (vm.Status == -1)
+                {
+                    TimeSpan timePassed = recordsList[i].ExitTime.Subtract(recordsList[i].EntranceTime);
+                    Expense expense = new Expense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate, timePassed.Minutes, timePassed.Hours, timePassed.Days);
+                    vm.IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(expense);
+                    vm.PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime);
+                }
+
+                vmRecords.Add(vm);
             }
 
             ActiveRecordsViewModel activeRecordsViewModel = new ActiveRecordsViewModel()
@@ -101,7 +113,7 @@ namespace ParkingControlWeb.Controllers
             var rec = await _recordRepository.GetAllActiveFromParking(parking);
             var plate = rec.FirstOrDefault(s=> s.PlateNumber.Decrypt() == PlateNumber);
             
-            if(plate == null)
+            if(plate == null || (plate != null && plate.Status != 0) )
             {
 
                 Record record = new Record();
@@ -130,6 +142,63 @@ namespace ParkingControlWeb.Controllers
                 return RedirectToAction("Index", "Records");
             }
         }
+
+        public async Task<IActionResult> StopARecord(string id)
+        {
+
+            Record record = await _recordRepository.GetAsync(id);
+
+            record.ExitTime = DateTime.Now;
+            record.Status = -1;
+
+            _recordRepository.Save();
+
+            return RedirectToAction("Index", "Records");
+        }
+
+        public async Task<IActionResult> ChargeDriver(string id, int amount)
+        {
+            Record record = await _recordRepository.GetAsync(id);
+            AppUser user = await _userManager.FindByIdAsync(record.UserId);
+
+            user.Ballance += amount;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+                TempData["Success"] = "حساب کاربر با موفقیت شارژ شد";
+            else
+                TempData["Error"] = "شارژ کردن حساب کاربر با\nخطا رو به رو شد";
+
+            return RedirectToAction("Index", "Records");
+        }
+
+        public async Task<IActionResult> FinalizeARecord(string id)
+        {
+            Record record = await _recordRepository.GetAsync(id);
+            Parking parking = await _parkingRepository.GetById(record.ParkingId);
+            AppUser user = await _userManager.FindByIdAsync(record.UserId);
+
+            TimeSpan timePassed = record.ExitTime.Subtract(record.EntranceTime);
+
+            Expense expense = new Expense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate, timePassed.Minutes, timePassed.Hours, timePassed.Days);
+
+            float expenseAmount = Helper.CalculateExpense(expense);
+
+            if (expenseAmount <= user.Ballance)
+            {
+                user.Ballance -= expenseAmount;
+                record.Status = 1;
+                
+                _userManager.UpdateAsync(user);
+                _recordRepository.Save();
+            }
+            else
+                TempData["Error"] = "موجودی کاربر کافی نمی‌باشد.";
+
+            return RedirectToAction("Index", "Records");
+        }
+
+
 
         public async Task<IActionResult> RecordsHistory()
         {
@@ -172,7 +241,8 @@ namespace ParkingControlWeb.Controllers
             for (int i = 0; i < recordsList.Count; i++)
             {
                 AppUser currentUser = await _userManager.FindByIdAsync(recordsList[i].UserId);
-
+                TimeSpan timePassed = recordsList[i].ExitTime.Subtract(recordsList[i].EntranceTime);
+                Expense expense = new Expense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate, timePassed.Minutes, timePassed.Hours, timePassed.Days);
                 vmRecords.Add(
                 new RecordsHistoryViewModel()
                 {
@@ -182,7 +252,7 @@ namespace ParkingControlWeb.Controllers
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
                     ExitTime = Helper.DateShow(recordsList[i].ExitTime),
                     PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime),
-                    Price = Helper.DottedPriceShow(Helper.CalculateExpense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate))
+                    Price = Helper.DottedPriceShow(Helper.CalculateExpense(expense))
                 });
             }
 
