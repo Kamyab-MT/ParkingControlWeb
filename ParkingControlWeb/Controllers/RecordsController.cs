@@ -6,6 +6,7 @@ using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
+using ParkingControlWeb.Repository;
 using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
 using ParkingControlWeb.ViewModels.Wrappers;
@@ -20,14 +21,16 @@ namespace ParkingControlWeb.Controllers
         readonly IRecord _recordRepository;
         readonly ICar _carRepository;
         readonly IParking _parkingRepository;
+        readonly ITransaction _transactionRepository;
 
-        public RecordsController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, ICar carRepository, IParking parkingRepository)
+        public RecordsController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, ICar carRepository, IParking parkingRepository, ITransaction transactionRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _recordRepository = recordRepository;
             _carRepository = carRepository;
             _parkingRepository = parkingRepository;
+            _transactionRepository = transactionRepository;
         }
 
         [Authorize(Roles = "SystemAdmin,Expert")]
@@ -169,16 +172,12 @@ namespace ParkingControlWeb.Controllers
             Record record = await _recordRepository.GetAsync(vm.DriverId);
             AppUser user = await _userManager.FindByIdAsync(record.UserId);
 
-            while(vm.Amount.Contains(','))
-            {
-                int i = vm.Amount.IndexOf(',');
-                 vm.Amount = vm.Amount.Remove(i);
-            }
-
-            int amount = int.Parse(vm.Amount);
+            string right = vm.Amount.Replace(",", "");
+            int amount = int.Parse(right);
 
             if(amount >= 1000 && amount <= 10000000)
             {
+
                 Transaction transaction = new Transaction()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -194,13 +193,12 @@ namespace ParkingControlWeb.Controllers
 
                 user.Ballance += amount;
                 var result = await _userManager.UpdateAsync(user);
+                var transResult = _transactionRepository.Add(transaction);
 
-                if (result.Succeeded)
+                if (result.Succeeded && transResult)
                     TempData["Success"] = "حساب کاربر با موفقیت شارژ شد";
                 else
                     TempData["Error"] = "شارژ کردن حساب کاربر با\nخطا رو به رو شد";
-
-                TempData["Success"] = vm.Amount.ToString();
 
                 return RedirectToAction("Index", "Records");
             }
