@@ -7,6 +7,7 @@ using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
+using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
 using ParkingControlWeb.ViewModels.Wrappers;
 
@@ -156,18 +157,28 @@ namespace ParkingControlWeb.Controllers
             return RedirectToAction("Index", "Records");
         }
 
-        public async Task<IActionResult> ChargeDriver(string id, int amount)
+        public IActionResult ChargeDriver(string id)
         {
-            Record record = await _recordRepository.GetAsync(id);
+            ChargeDriverViewModel vm = new ChargeDriverViewModel();
+            vm.DriverId = id;
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChargeDriver(ChargeDriverViewModel vm)
+        {
+            Record record = await _recordRepository.GetAsync(vm.DriverId);
             AppUser user = await _userManager.FindByIdAsync(record.UserId);
 
-            user.Ballance += amount;
+            user.Ballance += vm.Amount;
             var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
                 TempData["Success"] = "حساب کاربر با موفقیت شارژ شد";
             else
                 TempData["Error"] = "شارژ کردن حساب کاربر با\nخطا رو به رو شد";
+
+            TempData["Success"] = vm.Amount.ToString();
 
             return RedirectToAction("Index", "Records");
         }

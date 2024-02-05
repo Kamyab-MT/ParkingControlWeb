@@ -127,21 +127,17 @@
                                             <span class="text text-info">تفاوت : 3000 تومان</span>
                                         </div>
                                     </td>
+                                    
                                     <td colspan="3">
                                         <div id="charge_@i" class="collapse multi-collapse_@i">
-                                            <form>
-                                                <div class="row">
-
-                                                    <div class="col-8">
-                                                        <input class="form-control" asp-format="{C}" id="charge_amount_@i"/>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <a class="form-control btn btn-success" asp-controller="Records" asp-action="ChargeDriver" asp-route-id="@item.Id" asp-route-amount="getVal(charge_amount_@i)">شارژ کردن</a>
-                                                    </div>
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <a class="form-control btn btn-success" asp-controller="Records" asp-action="ChargeDriver" asp-route-id="@item.Id">شارژ کردن</a>
                                                 </div>
-                                            </form>
+                                            </div>
                                         </div>
                                     </td>
+
                                 </tr>
 
                             }
