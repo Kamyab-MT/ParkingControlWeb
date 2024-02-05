@@ -10,6 +10,19 @@
 
     <head>
 
+        <style>
+
+            .form-floating > label {
+                right: 0;
+                left: auto;
+            }
+
+            .dropdown-toggle::after {
+                display: none;
+            }
+
+        </style>
+
     </head>
 
     <body>
@@ -25,10 +38,94 @@
             <hr />
 
             <div class="modal-body p-5 pt-0">
-                سلام
+                
+                <div class="row">
+
+                    <form asp-asp-action="ChargeDriver">
+
+                        <div class="row">
+                            <div class="col-4 d-flex align-items-center">
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group w-100">
+                                    <input asp-for="Amount" dir="ltr" class="form-control rounded-3" id="floatingInput12" placeholder="1000">
+                                    <label asp-for="Amount" for="floatingInput12" class="ms-0"></label>
+                                </div>
+                            </div>
+
+                            <div class="col-3 d-flex align-items-center">
+                                <span class="">تومان</span>
+                            </div>
+
+                            <div class="col-5 d-flex align-items-center">
+                                <p class="text text-info">*مبلغ وارد شده باید بین 10 هزار تومان تا 10 میلیون تومان باشد</p>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                        <br />
+                        <br />
+                        <div class="row">
+                            <div class="col-6">
+
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="CardNumber" type="text" class="form-control rounded-3" id="floatingInput8" placeholder="XXXX-XXXX-XXXX-XXXX">
+                                    <label asp-for="CardNumber" for="floatingInput8" class="ms-0"></label>
+                                    <span asp-validation-for="CardNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                        <div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                    <input asp-for="OwnerName" type="text" class="form-control rounded-3" id="floatingInput9" placeholder="نام صاحب کارت">
+                                    <label asp-for="OwnerName" for="floatingInput9" class="ms-0"></label>
+                                    <span asp-validation-for="OwnerName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        <div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-floating mb-3 justify-content-star3t form-group">
+                                        <input asp-for="TrackingCode" type="text" class="form-control rounded-3" id="floatingInput11" placeholder="کد رهگیری">
+                                        <label asp-for="TrackingCode" for="floatingInput11" class="ms-0"></label>
+                                        <span asp-validation-for="TrackingCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn btn-lg btn-success mt-5 form-control rounded-3" type="submit">شارژ و ثبت تراکنش</button>
+                            </div>
+                            <div class="col-6">
+                                <a class="btn btn-lg btn-secondary mt-5 form-control rounded-3" asp-controller="Records" asp-action="Index">بازگشت</a>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var numberInput = document.getElementById('floatingInput12');
+
+            numberInput.addEventListener('input', function () {
+                var inputValue = parseFloat(numberInput.value.replace(/,/g, ''));
+                if (!isNaN(inputValue)) {
+                    numberInput.value = inputValue.toLocaleString();
+                }
+            });
+        });
+    </script>
+
     </body>
 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
 </html>

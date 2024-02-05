@@ -7,12 +7,14 @@ namespace ParkingControlWeb.Data.Extensions
 
         public static string Decrypt(this string txt)
         {
-            return Helper.Decrypt(txt);
+            var output = txt == "-" ? "-" : Helper.Decrypt(txt);
+            return output;
         }
 
         public static string Encrypt(this string txt)
         {
-            return Helper.Encrypt(txt);
+            var output = txt == null ? "-" : Helper.Encrypt(txt);
+            return output;
         }
     }
 }

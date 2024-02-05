@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Data.Interface;
@@ -170,17 +169,46 @@ namespace ParkingControlWeb.Controllers
             Record record = await _recordRepository.GetAsync(vm.DriverId);
             AppUser user = await _userManager.FindByIdAsync(record.UserId);
 
-            user.Ballance += vm.Amount;
-            var result = await _userManager.UpdateAsync(user);
+            while(vm.Amount.Contains(','))
+            {
+                int i = vm.Amount.IndexOf(',');
+                 vm.Amount = vm.Amount.Remove(i);
+            }
 
-            if (result.Succeeded)
-                TempData["Success"] = "حساب کاربر با موفقیت شارژ شد";
+            int amount = int.Parse(vm.Amount);
+
+            if(amount >= 1000 && amount <= 10000000)
+            {
+                Transaction transaction = new Transaction()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Amount = amount,
+                    CardNumber = vm.CardNumber.Encrypt(),
+                    DateCreated = DateTime.Now,
+                    OwnerName = vm.OwnerName.Encrypt(),
+                    TrackingCode = vm.TrackingCode.Encrypt(),
+                    UserId = user.Id,
+                    ParkingId = record.ParkingId,
+                    CarId = record.CarId,
+                };
+
+                user.Ballance += amount;
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                    TempData["Success"] = "حساب کاربر با موفقیت شارژ شد";
+                else
+                    TempData["Error"] = "شارژ کردن حساب کاربر با\nخطا رو به رو شد";
+
+                TempData["Success"] = vm.Amount.ToString();
+
+                return RedirectToAction("Index", "Records");
+            }
             else
-                TempData["Error"] = "شارژ کردن حساب کاربر با\nخطا رو به رو شد";
-
-            TempData["Success"] = vm.Amount.ToString();
-
-            return RedirectToAction("Index", "Records");
+            {
+                TempData["Error"] = "مبلغ شارژ باید بین 10 هزار تومان و\n10 میلیون تومان باشد";
+                return View(vm);
+            }
         }
 
         public async Task<IActionResult> FinalizeARecord(string id)
@@ -193,7 +221,7 @@ namespace ParkingControlWeb.Controllers
 
             Expense expense = new Expense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate, timePassed.Minutes, timePassed.Hours, timePassed.Days);
 
-            float expenseAmount = Helper.CalculateExpense(expense);
+            int expenseAmount = Helper.CalculateExpense(expense);
 
             if (expenseAmount <= user.Ballance)
             {
