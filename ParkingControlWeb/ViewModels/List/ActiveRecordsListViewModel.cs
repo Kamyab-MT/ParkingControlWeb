@@ -14,6 +14,9 @@
         public string ExitTime { get; set; }
         public string PassedTime { get; set; }
         public int Status { get; set; }
+        public string Ballance { get; set; }
+        public string Price { get; set; }
+        public string Diffrence { get; set; }
         public bool IsMoneyEnough { get; set; }
     }
 }

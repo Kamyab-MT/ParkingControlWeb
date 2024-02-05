@@ -31,12 +31,17 @@ namespace ParkingControlWeb.Helpers
                 return sub.Minutes + "⠀دقیقه";
         }
 
-        public static string DottedPriceShow(float number)
+        public static string DottedPriceShow(int number)
         {
-            float price = float.Parse(number.ToString(), NumberStyles.Currency);
-            return price.ToString("#,#");
+            NumberFormatInfo numberFormat = new NumberFormatInfo
+            {
+                NumberGroupSeparator = ",",
+                NumberGroupSizes = new[] { 3 }
+            };
 
-            return null;
+            string formattedNumber = number.ToString("N0", numberFormat);
+
+            return formattedNumber;
         }
 
         public static string Encrypt(string data) => aesCryptography.Encrypt(data);
@@ -51,7 +56,10 @@ namespace ParkingControlWeb.Helpers
 
         public Expense(int enterPrice, int hourlyPrice, int dailyPrice, int minutesSpent, int hoursSpent, int daysSpent)
         {
-            expense += enterPrice;
+            expense += enterPrice +
+                (daysSpent * dailyPrice) + (daysSpent * 24 * hourlyPrice) +
+                (hoursSpent * hourlyPrice) +
+                (hourlyPrice * (minutesSpent / 60));
         }
 
         public int Calculate() => expense;

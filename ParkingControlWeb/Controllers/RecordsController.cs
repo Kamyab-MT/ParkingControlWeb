@@ -83,6 +83,9 @@ namespace ParkingControlWeb.Controllers
                     Expense expense = new Expense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate, timePassed.Minutes, timePassed.Hours, timePassed.Days);
                     vm.IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(expense);
                     vm.PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime);
+                    vm.Ballance = Helper.DottedPriceShow((int)currentUser.Ballance);
+                    vm.Price = Helper.DottedPriceShow(Helper.CalculateExpense(expense));
+                    vm.Diffrence = Helper.DottedPriceShow(Math.Abs((int)currentUser.Ballance - Helper.CalculateExpense(expense)));
                 }
 
                 vmRecords.Add(vm);
