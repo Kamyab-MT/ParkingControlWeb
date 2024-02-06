@@ -27,5 +27,6 @@ namespace ParkingControlWeb.Models
         public string Creator { get; set; }
 
         public int Status { get; set; }
+        public string Username { get; set; }
     }
 }

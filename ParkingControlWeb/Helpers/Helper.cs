@@ -1,5 +1,7 @@
-﻿using ParkingControlWeb.Models;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using ParkingControlWeb.Models;
 using System.Globalization;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -30,6 +32,10 @@ namespace ParkingControlWeb.Helpers
             else
                 return sub.Minutes + "⠀دقیقه";
         }
+
+        public static string ShowCardNumber(string number) => number.Insert(4,"-").Insert(9,"-").Insert(14,"-");
+
+        public static string ShowNumber(string number) => number.Insert(4, "-").Insert(8, "-");
 
         public static string DottedPriceShow(int number)
         {

@@ -2,7 +2,25 @@
     ViewData["Title"] = "تراکنش های ورود و خروج";
 }
 
+@using ParkingControlWeb.ViewModels.List
+
+@model List<TransactionViewModel>
+
 <html>
+
+    <head>
+
+        <style>
+            td, th {
+                text-align: center;
+            }
+
+            th {
+                position: sticky;
+                top: 0px;
+            }
+        </style>
+    </head>
 
     <body>
 
@@ -22,14 +40,29 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>کاربر</th>
+                                <th>شماره همراه</th>
+                                <th>شماره کارت</th>
+                                <th>صاحب کارت</th>
                                 <th>مبلغ</th>
+                                <th>کد رهگیری</th>
                                 <th>تاریخ</th>
                             </tr>
                         </thead>
-                        <tbody>@* 
-                            @for(int i=0;i<) *@
-                        </tbody>
+                        <tbody>
+
+                        @for(int i = 0; i < Model.Count; i++)
+                        {
+                            <tr>
+                                <td>@(i+1)</td>
+                                <td>@Model[i].PhoneNumber</td>
+                                <td>@Model[i].CardNumber</td>
+                                <td>@Model[i].Owner</td>
+                                <td>@Model[i].Amount</td>
+                                <td>@Model[i].TrackingCode</td>
+                                <td>@Model[i].DateCreated</td>
+                            </tr>
+                        }
+                    </tbody>
                     </table>
                 </div>
 

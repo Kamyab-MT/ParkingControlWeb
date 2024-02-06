@@ -26,6 +26,7 @@ namespace ParkingControlWeb.Models
         public Car Car { get; set; }
 
         public DateTime DateCreated { get; set; }
+        public string Username { get; set; }
 
     }
 }

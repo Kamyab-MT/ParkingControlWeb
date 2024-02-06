@@ -10,6 +10,8 @@ using ParkingControlWeb.Repository;
 using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
 using ParkingControlWeb.ViewModels.Wrappers;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -137,6 +139,7 @@ namespace ParkingControlWeb.Controllers
 
                 record.CarId = await RegisterOrGetUserCar(PlateNumber, record.UserId);
                 record.Creator = User.GetUserId();
+                record.Username = newUser.UserName;
 
                 _recordRepository.Add(record);
 
@@ -165,7 +168,8 @@ namespace ParkingControlWeb.Controllers
         public IActionResult ChargeDriver(string id)
         {
             ChargeDriverViewModel vm = new ChargeDriverViewModel();
-            vm.DriverId = id;
+            vm.Amount = id.Substring(id.IndexOf('|')+1);
+            vm.DriverId = id.Substring(0, id.IndexOf('|'));
             return View(vm);
         }
 
@@ -180,7 +184,6 @@ namespace ParkingControlWeb.Controllers
 
             if(amount >= 1000 && amount <= 10000000)
             {
-
                 Transaction transaction = new Transaction()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -192,6 +195,7 @@ namespace ParkingControlWeb.Controllers
                     UserId = user.Id,
                     ParkingId = record.ParkingId,
                     CarId = record.CarId,
+                    Username = user.UserName.Encrypt(),
                 };
 
                 user.Ballance += amount;
@@ -280,7 +284,6 @@ namespace ParkingControlWeb.Controllers
 
             for (int i = 0; i < recordsList.Count; i++)
             {
-                AppUser currentUser = await _userManager.FindByIdAsync(recordsList[i].UserId);
                 TimeSpan timePassed = recordsList[i].ExitTime.Subtract(recordsList[i].EntranceTime);
                 Expense expense = new Expense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate, timePassed.Minutes, timePassed.Hours, timePassed.Days);
                 vmRecords.Add(
@@ -288,7 +291,7 @@ namespace ParkingControlWeb.Controllers
                 {
                     
                     EntranceTime = Helper.DateShow(recordsList[i].EntranceTime),
-                    PhoneNumber = currentUser.UserName.Decrypt(),
+                    PhoneNumber = recordsList[i].Username,
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
                     ExitTime = Helper.DateShow(recordsList[i].ExitTime),
                     PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime),
@@ -353,9 +356,38 @@ namespace ParkingControlWeb.Controllers
             }
         }
 
-        public IActionResult TransactionsHistory()
+        [Authorize(Roles = "GlobalAdmin, SystemAdmin")]
+        public async Task<IActionResult> TransactionsHistory()
         {
-            return View();
+            List<TransactionViewModel> vm = new List<TransactionViewModel>();
+
+            IEnumerable<Transaction> trs = null;
+
+            if (User.IsInRole(Role.GlobalAdmin))
+                trs = await _transactionRepository.GetAll();
+            else
+            {
+                AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
+                trs = await _transactionRepository.GetAllFromAParking(user.ParkingId);
+            }
+
+            var list = trs.ToList();
+
+            for (int i = 0; i < list.Count; i++)
+            {
+
+                vm.Add(new TransactionViewModel()
+                {
+                    Amount = Helper.DottedPriceShow(list[i].Amount) + " تومان",
+                    CardNumber = Helper.ShowCardNumber(list[i].CardNumber.Decrypt()),
+                    DateCreated = Helper.DateShow(list[i].DateCreated),
+                    PhoneNumber = Helper.ShowNumber(list[i].Username.Decrypt()),
+                    TrackingCode = list[i].TrackingCode.Decrypt(),
+                    Owner = list[i].OwnerName.Decrypt(),
+                });
+            }
+
+            return View(vm);
         }
 
 

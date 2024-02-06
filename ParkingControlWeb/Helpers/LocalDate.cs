@@ -48,7 +48,7 @@ namespace ParkingControlWeb.Helpers
             int mIndex = persianCalendar.GetMonth(date) - 1;
             string month = Month[mIndex];
             
-            return string.Format("{0} {1} {2} {3}", weekDay, persianCalendar.GetDayOfMonth(date), month, persianCalendar.GetYear(date));
+            return string.Format("{0} {1} {2} {3} - ساعت {4}:{5}", weekDay, persianCalendar.GetDayOfMonth(date), month, persianCalendar.GetYear(date), date.Hour, date.Minute);
         }
     }
 }
