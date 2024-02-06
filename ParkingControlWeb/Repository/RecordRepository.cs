@@ -22,7 +22,9 @@ namespace ParkingControlWeb.Repository
             await _dbContext.Records.Where(s => s.ParkingId == parking.Id).ToListAsync();
 
         public async Task<IEnumerable<Record>> GetAllActiveFromParking(Parking parking) => 
-            await _dbContext.Records.Where(s => ( (s.Status == 0 || s.Status == -1) && s.ParkingId == parking.Id)).ToListAsync();
+            await _dbContext.Records.Where(s => ( s.Status == 0 && s.ParkingId == parking.Id)).ToListAsync();
+        public async Task<IEnumerable<Record>> GetAllPendingFromParking(Parking parking) =>
+            await _dbContext.Records.Where(s => ( (s.Status == -1 || s.Status == 0) && s.ParkingId == parking.Id)).ToListAsync();
 
         public async Task<IEnumerable<Record>> GetAllCompletedFromParking(Parking parking) => 
             await _dbContext.Records.Where(s => (s.Status == 1 && s.ParkingId == parking.Id)).ToListAsync();

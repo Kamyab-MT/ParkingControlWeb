@@ -86,7 +86,7 @@ namespace ParkingControlWeb.Controllers
                             RegisterDate = Helper.DateShow((DateTime)user.RegisterDate),
                             ExpireDate = Helper.DateShow(user.SubscriptionExpiry),
                             ParkingName = _parkingRepository.GetById(user.ParkingId).GetAwaiter().GetResult().Name.Decrypt(),
-                            Username = user.UserName.Decrypt()
+                            Username = Helper.ShowNumber(user.UserName.Decrypt())
 
                         };
 
@@ -321,7 +321,7 @@ namespace ParkingControlWeb.Controllers
 
             var conflict = await _userManager.FindByNameAsync(editViewModel.UserName.Encrypt());
 
-            if (conflict == null)
+            if (conflict == null || conflict.UserName == user.UserName)
             {
 
                 if (_infoRepository.Update(info) && _parkingRepository.Update(parking))
@@ -375,7 +375,7 @@ namespace ParkingControlWeb.Controllers
 
                 usersVM.Add(new UserVM()
                 {
-                    PhoneNumber = users[i].UserName.Decrypt(),
+                    PhoneNumber = Helper.ShowNumber(users[i].UserName.Decrypt()),
                     DateJoined = Helper.DateShow((DateTime)users[i].RegisterDate),
                     Role = roles[0],
                     Name = name,

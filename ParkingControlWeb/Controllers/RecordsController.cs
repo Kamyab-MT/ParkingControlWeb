@@ -6,12 +6,9 @@ using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Data.Interface;
 using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
-using ParkingControlWeb.Repository;
 using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
 using ParkingControlWeb.ViewModels.Wrappers;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -51,7 +48,7 @@ namespace ParkingControlWeb.Controllers
             AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
             Parking parking = await _parkingRepository.GetById(user.ParkingId);
 
-            var records = await _recordRepository.GetAllActiveFromParking(parking);
+            var records = await _recordRepository.GetAllPendingFromParking(parking);
             List<Record> recordsList;
 
             if (User.IsInRole("SystemAdmin"))
@@ -75,7 +72,7 @@ namespace ParkingControlWeb.Controllers
                     Status = recordsList[i].Status,
                     ExitTime = recordsList[i].Status == -1 ? Helper.DateShow(recordsList[i].ExitTime) : "-",
                     PassedTime = Helper.TimeBetween(DateTime.Now, recordsList[i].EntranceTime),
-                    PhoneNumber = currentUser.UserName.Decrypt(),
+                    PhoneNumber = Helper.ShowNumber(currentUser.UserName.Decrypt()),
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
                 };
 
@@ -119,8 +116,8 @@ namespace ParkingControlWeb.Controllers
             string PlateNumber = recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
 
             var rec = await _recordRepository.GetAllActiveFromParking(parking);
-            var plate = rec.FirstOrDefault(s=> s.PlateNumber.Decrypt() == PlateNumber);
-            
+            var plate = rec.FirstOrDefault(s=> s.PlateNumber == PlateNumber.Encrypt());
+
             if(plate == null || (plate != null && plate.Status != 0) )
             {
 
@@ -142,6 +139,8 @@ namespace ParkingControlWeb.Controllers
                 record.Username = newUser.UserName;
 
                 _recordRepository.Add(record);
+
+                TempData["Success"] = "خروج کاربر با موفقیت انجام شد";
 
                 return RedirectToAction("Index", "Records");
             }
@@ -233,7 +232,6 @@ namespace ParkingControlWeb.Controllers
                 user.Ballance -= expenseAmount;
                 record.Status = 1;
                 
-                _userManager.UpdateAsync(user);
                 _recordRepository.Save();
             }
             else
@@ -241,8 +239,6 @@ namespace ParkingControlWeb.Controllers
 
             return RedirectToAction("Index", "Records");
         }
-
-
 
         public async Task<IActionResult> RecordsHistory()
         {
@@ -291,7 +287,7 @@ namespace ParkingControlWeb.Controllers
                 {
                     
                     EntranceTime = Helper.DateShow(recordsList[i].EntranceTime),
-                    PhoneNumber = recordsList[i].Username,
+                    PhoneNumber = Helper.ShowNumber(recordsList[i].Username.Decrypt()),
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
                     ExitTime = Helper.DateShow(recordsList[i].ExitTime),
                     PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime),
