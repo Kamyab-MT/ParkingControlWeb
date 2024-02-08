@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Data.Interface;
@@ -15,21 +16,23 @@ namespace ParkingControlWeb.Controllers
     public class RecordsController : Controller
     {
 
+        readonly ApplicationDbContext _dbContext;
         readonly UserManager<AppUser> _userManager;
         readonly SignInManager<AppUser> _signInManager;
         readonly IRecord _recordRepository;
-        readonly ICar _carRepository;
         readonly IParking _parkingRepository;
         readonly ITransaction _transactionRepository;
+        readonly IBallance _ballanceRepository;
 
-        public RecordsController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, ICar carRepository, IParking parkingRepository, ITransaction transactionRepository)
+        public RecordsController(ApplicationDbContext dbContext ,UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, IParking parkingRepository, ITransaction transactionRepository, IBallance ballanceRepository)
         {
+            _dbContext = dbContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _recordRepository = recordRepository;
-            _carRepository = carRepository;
             _parkingRepository = parkingRepository;
             _transactionRepository = transactionRepository;
+            _ballanceRepository = ballanceRepository;
         }
 
         [Authorize(Roles = "SystemAdmin,Expert")]
@@ -76,15 +79,17 @@ namespace ParkingControlWeb.Controllers
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
                 };
 
+                Ballance ballance = _dbContext.Ballances.FirstOrDefault(s => (s.UserId == currentUser.Id && s.ParkingId == currentUser.ParkingId));
+
                 if (vm.Status == -1)
                 {
                     TimeSpan timePassed = recordsList[i].ExitTime.Subtract(recordsList[i].EntranceTime);
                     Expense expense = new Expense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate, timePassed.Minutes, timePassed.Hours, timePassed.Days);
-                    vm.IsMoneyEnough = currentUser.Ballance >= Helper.CalculateExpense(expense);
+                    vm.IsMoneyEnough = ballance.Amount >= Helper.CalculateExpense(expense);
                     vm.PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime);
-                    vm.Ballance = Helper.DottedPriceShow((int)currentUser.Ballance);
+                    vm.Ballance = Helper.DottedPriceShow(ballance.Amount);
                     vm.Price = Helper.DottedPriceShow(Helper.CalculateExpense(expense));
-                    vm.Diffrence = Helper.DottedPriceShow(Math.Abs((int)currentUser.Ballance - Helper.CalculateExpense(expense)));
+                    vm.Diffrence = Helper.DottedPriceShow(Math.Abs(ballance.Amount - Helper.CalculateExpense(expense)));
                 }
 
                 vmRecords.Add(vm);
@@ -131,10 +136,9 @@ namespace ParkingControlWeb.Controllers
                 record.PlateNumber = PlateNumber.Encrypt();
                 
                 var newUser = await RegisterOrGetDriverUser(recordViewModel.AddRecord.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
-                
+
                 record.UserId = newUser.Id;
 
-                record.CarId = await RegisterOrGetUserCar(PlateNumber, record.UserId);
                 record.Creator = User.GetUserId();
                 record.Username = newUser.UserName;
 
@@ -193,15 +197,19 @@ namespace ParkingControlWeb.Controllers
                     TrackingCode = vm.TrackingCode.Encrypt(),
                     UserId = user.Id,
                     ParkingId = record.ParkingId,
-                    CarId = record.CarId,
-                    Username = user.UserName.Encrypt(),
+                    Username = user.UserName,
+                    PlateNumber = record.PlateNumber,
                 };
 
-                user.Ballance += amount;
-                var result = await _userManager.UpdateAsync(user);
-                var transResult = _transactionRepository.Add(transaction);
+                Ballance ballance = _dbContext.Ballances.FirstOrDefault(s => (s.UserId == user.Id && s.ParkingId == user.ParkingId));
 
-                if (result.Succeeded && transResult)
+                ballance.Amount += amount;
+                _dbContext.Ballances.Update(ballance);
+
+                var transResult = _transactionRepository.Add(transaction);
+                var result = _dbContext.SaveChanges() > 0;
+
+                if (result && transResult)
                     TempData["Success"] = "حساب کاربر با موفقیت شارژ شد";
                 else
                     TempData["Error"] = "شارژ کردن حساب کاربر با\nخطا رو به رو شد";
@@ -227,9 +235,13 @@ namespace ParkingControlWeb.Controllers
 
             int expenseAmount = Helper.CalculateExpense(expense);
 
-            if (expenseAmount <= user.Ballance)
+            Ballance ballance = _dbContext.Ballances.FirstOrDefault(s => (s.UserId == user.Id && s.ParkingId == user.ParkingId));
+
+            if (expenseAmount <= ballance.Amount)
             {
-                user.Ballance -= expenseAmount;
+                ballance.Amount -= expenseAmount;
+                _dbContext.Update(ballance);
+
                 record.Status = 1;
                 
                 _recordRepository.Save();
@@ -242,10 +254,6 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> RecordsHistory()
         {
-
-            if (User.IsInRole(Role.GlobalAdmin))
-                return RedirectToAction("Index", "Dashboard");
-
             var Session = await SessionCheck();
             if (Session != null) return Session;
 
@@ -281,6 +289,8 @@ namespace ParkingControlWeb.Controllers
             for (int i = 0; i < recordsList.Count; i++)
             {
                 TimeSpan timePassed = recordsList[i].ExitTime.Subtract(recordsList[i].EntranceTime);
+                parking = await _parkingRepository.GetById(recordsList[i].ParkingId);
+
                 Expense expense = new Expense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate, timePassed.Minutes, timePassed.Hours, timePassed.Days);
                 vmRecords.Add(
                 new RecordsHistoryViewModel()
@@ -291,7 +301,8 @@ namespace ParkingControlWeb.Controllers
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
                     ExitTime = Helper.DateShow(recordsList[i].ExitTime),
                     PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime),
-                    Price = Helper.DottedPriceShow(Helper.CalculateExpense(expense))
+                    Price = Helper.DottedPriceShow(Helper.CalculateExpense(expense)),
+                    Parking = parking.Name.Decrypt(),
                 });
             }
 
@@ -302,16 +313,28 @@ namespace ParkingControlWeb.Controllers
         {
 
             var response = await _userManager.FindByNameAsync(Username.Encrypt());
-
+            
             if (response == null) // it does not exist
             {
+
                 string parkingId = ParkingId;
                 string sup = User.IsInRole("SystemAdmin") ? UserId : SuperiorId;
                 AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
 
-                AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username.Encrypt(), PhoneNumber = Username.Encrypt(), SuperiorUserId = sup, Active = 1, ParkingId = parkingId, SubscriptionExpiry = user.SubscriptionExpiry, RegisterDate = DateTime.Now };
+                AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username.Encrypt(), PhoneNumber = Username.Encrypt(), SuperiorUserId = sup, Active = 1, SubscriptionExpiry = user.SubscriptionExpiry, RegisterDate = DateTime.Now };
 
+                Ballance ballance = new Ballance() 
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ParkingId = parkingId,
+                    UserId = newUser.Id,
+                    Amount = 0
+                };
+                
                 var result = await _userManager.CreateAsync(newUser);
+                
+                _dbContext.Ballances.Add(ballance);
+                _dbContext.SaveChanges();
 
                 if (result.Succeeded) // user created successfully
                 {
@@ -324,31 +347,19 @@ namespace ParkingControlWeb.Controllers
                     return null;
                 }
             }
-            else // already exist
-                return response;
-        }
-
-        public async Task<string> RegisterOrGetUserCar(string PlateNumber, string UserId)
-        {
-            Car response = await _carRepository.GetByPlateNumber(PlateNumber);
-
-            if (response == null)
+            else // it does exist
             {
-                Car car = new Car()
+
+                Ballance ballance = new Ballance()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    PlateNumber = PlateNumber.Encrypt(),
-                    VisitCount = 1,
-                    OwnerId = UserId
+                    ParkingId = response.ParkingId,
+                    UserId = response.Id,
+                    Amount = 0
                 };
 
-                _carRepository.Add(car);
-                return car.Id;
-            }
-            else
-            {
-                _carRepository.AddVisitCountToCar(response);
-                return response.Id;
+                return response;
+
             }
         }
 

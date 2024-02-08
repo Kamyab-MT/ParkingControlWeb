@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="overflow-scroll" style="max-height:90vh;">
-                    <table class="table table-hover">
+                <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th  class="bg-white border-bottom">#</th>
@@ -43,7 +43,14 @@
                                 <th  class="bg-white border-bottom">شماره پلاک</th>
                                 <th  class="bg-white border-bottom">زمان ورود</th>
                                 <th  class="bg-white border-bottom">زمان خروج</th>
-                                <th  class="bg-white border-bottom">هزینه</th>
+                                @if (User.IsInRole("GlobalAdmin"))
+                                {
+                                    <th class="bg-white border-bottom">پارکینگ</th>
+                                }
+                                else
+                                {
+                                    <th  class="bg-white border-bottom">هزینه</th>
+                                }
                             </tr>
                         </thead>
                         <tbody>
@@ -59,8 +66,15 @@
                                             @Model[i].ExitTime
                                         </span>
                                     </td>
-                                    <td>@Model[i].Price تومان</td>
-                                </tr>
+                                    @if (User.IsInRole("GlobalAdmin"))
+                                    {
+                                        <td>@Model[i].Parking</td>
+                                    }
+                                else
+                                    {
+                                        <td>@Model[i].Price تومان</td>
+                                    }
+                            </tr>
                             }
                         </tbody>
                     </table>

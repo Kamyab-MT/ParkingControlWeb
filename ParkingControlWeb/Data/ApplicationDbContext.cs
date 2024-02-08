@@ -31,10 +31,9 @@ namespace ParkingControlWeb.Data
 
         public DbSet<Info> Info { get; set; }
         public DbSet<Parking> Parkings { get; set; }
-        public DbSet<Car> Cars { get; set; }
         public DbSet<Record> Records { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Pricing> Pricings { get; set; }
-
+        public DbSet<Ballance> Ballances { get; set; }
     }
 }
