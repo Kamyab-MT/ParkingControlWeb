@@ -31,6 +31,12 @@ namespace ParkingControlWeb.Repository
             return Save();
         }
 
+        public bool Update(Ballance ballance)
+        {
+            _dbContext.Ballances.Update(ballance);
+            return Save();
+        }
+
         public bool Save() => _dbContext.SaveChanges() > 0;
 
     }

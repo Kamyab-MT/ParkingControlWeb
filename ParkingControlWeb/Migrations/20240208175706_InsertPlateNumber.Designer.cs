@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ParkingControlWeb.Data;
 
@@ -11,9 +12,11 @@ using ParkingControlWeb.Data;
 namespace ParkingControlWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240208175706_InsertPlateNumber")]
+    partial class InsertPlateNumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,9 +240,6 @@ namespace ParkingControlWeb.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateJoined")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ParkingId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -395,6 +395,10 @@ namespace ParkingControlWeb.Migrations
                     b.Property<string>("ParkingId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PlateNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TrackingCode")
                         .IsRequired()

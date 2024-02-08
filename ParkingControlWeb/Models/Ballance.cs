@@ -12,5 +12,6 @@ namespace ParkingControlWeb.Models
         public AppUser User { get; set; }
         public string ParkingId { get; set; }
         public int Amount { get; set; }
+        public DateTime DateJoined { get; set; }
     }
 }

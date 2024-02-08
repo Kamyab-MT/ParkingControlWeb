@@ -12,7 +12,6 @@ namespace ParkingControlWeb.Models
         public string CardNumber { get; set; }
         public string OwnerName { get; set; }
         public string TrackingCode { get; set; }
-        public string PlateNumber { get; set; }
 
         [ForeignKey("User")]
         public string UserId { get; set; }

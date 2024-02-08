@@ -17,8 +17,6 @@ namespace ParkingControlWeb.Repository
 
         public async Task<IEnumerable<Transaction>> GetAll() => await _dbContext.Transactions.ToListAsync();
 
-        public async Task<IEnumerable<Transaction>> GetAllFromACar(string carId) => await _dbContext.Transactions.Where(s => s.PlateNumber == carId).ToListAsync();
-
         public async Task<IEnumerable<Transaction>> GetAllFromAParking(string parkingId) => await _dbContext.Transactions.Where(s=> s.ParkingId == parkingId).ToListAsync();
 
         public async Task<IEnumerable<Transaction>> GetAllFromAUser(string userId) => await _dbContext.Transactions.Where(s => s.UserId == userId).ToListAsync();

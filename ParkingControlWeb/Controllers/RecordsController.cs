@@ -16,7 +16,7 @@ namespace ParkingControlWeb.Controllers
     public class RecordsController : Controller
     {
 
-        readonly ApplicationDbContext _dbContext;
+        //readonly ApplicationDbContext _dbContext;
         readonly UserManager<AppUser> _userManager;
         readonly SignInManager<AppUser> _signInManager;
         readonly IRecord _recordRepository;
@@ -24,9 +24,8 @@ namespace ParkingControlWeb.Controllers
         readonly ITransaction _transactionRepository;
         readonly IBallance _ballanceRepository;
 
-        public RecordsController(ApplicationDbContext dbContext ,UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, IParking parkingRepository, ITransaction transactionRepository, IBallance ballanceRepository)
+        public RecordsController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, IParking parkingRepository, ITransaction transactionRepository, IBallance ballanceRepository)
         {
-            _dbContext = dbContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _recordRepository = recordRepository;
@@ -79,17 +78,19 @@ namespace ParkingControlWeb.Controllers
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
                 };
 
-                Ballance ballance = _dbContext.Ballances.FirstOrDefault(s => (s.UserId == currentUser.Id && s.ParkingId == currentUser.ParkingId));
+                Ballance ballance = await _ballanceRepository.Get(recordsList[i].ParkingId, currentUser.Id);
+
+                int balAmount = ballance == null ? 0 : ballance.Amount;
 
                 if (vm.Status == -1)
                 {
                     TimeSpan timePassed = recordsList[i].ExitTime.Subtract(recordsList[i].EntranceTime);
                     Expense expense = new Expense(parking.EntranceRate, parking.HourlyRate, parking.DailyRate, timePassed.Minutes, timePassed.Hours, timePassed.Days);
-                    vm.IsMoneyEnough = ballance.Amount >= Helper.CalculateExpense(expense);
+                    vm.IsMoneyEnough = balAmount >= Helper.CalculateExpense(expense);
                     vm.PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime);
-                    vm.Ballance = Helper.DottedPriceShow(ballance.Amount);
+                    vm.Ballance = Helper.DottedPriceShow(balAmount);
                     vm.Price = Helper.DottedPriceShow(Helper.CalculateExpense(expense));
-                    vm.Diffrence = Helper.DottedPriceShow(Math.Abs(ballance.Amount - Helper.CalculateExpense(expense)));
+                    vm.Diffrence = Helper.DottedPriceShow(Math.Abs(balAmount - Helper.CalculateExpense(expense)));
                 }
 
                 vmRecords.Add(vm);
@@ -144,7 +145,7 @@ namespace ParkingControlWeb.Controllers
 
                 _recordRepository.Add(record);
 
-                TempData["Success"] = "خروج کاربر با موفقیت انجام شد";
+                TempData["Success"] = "ورود ماشین با موفقیت ثبت شد";
 
                 return RedirectToAction("Index", "Records");
             }
@@ -198,16 +199,14 @@ namespace ParkingControlWeb.Controllers
                     UserId = user.Id,
                     ParkingId = record.ParkingId,
                     Username = user.UserName,
-                    PlateNumber = record.PlateNumber,
                 };
 
-                Ballance ballance = _dbContext.Ballances.FirstOrDefault(s => (s.UserId == user.Id && s.ParkingId == user.ParkingId));
+                Ballance ballance = await _ballanceRepository.Get(record.ParkingId, user.Id);
 
                 ballance.Amount += amount;
-                _dbContext.Ballances.Update(ballance);
-
+                
+                var result = _ballanceRepository.Update(ballance);
                 var transResult = _transactionRepository.Add(transaction);
-                var result = _dbContext.SaveChanges() > 0;
 
                 if (result && transResult)
                     TempData["Success"] = "حساب کاربر با موفقیت شارژ شد";
@@ -235,12 +234,12 @@ namespace ParkingControlWeb.Controllers
 
             int expenseAmount = Helper.CalculateExpense(expense);
 
-            Ballance ballance = _dbContext.Ballances.FirstOrDefault(s => (s.UserId == user.Id && s.ParkingId == user.ParkingId));
+            Ballance ballance = await _ballanceRepository.Get(parking.Id, user.Id);
 
             if (expenseAmount <= ballance.Amount)
             {
                 ballance.Amount -= expenseAmount;
-                _dbContext.Update(ballance);
+                _ballanceRepository.Update(ballance);
 
                 record.Status = 1;
                 
@@ -328,13 +327,13 @@ namespace ParkingControlWeb.Controllers
                     Id = Guid.NewGuid().ToString(),
                     ParkingId = parkingId,
                     UserId = newUser.Id,
-                    Amount = 0
+                    Amount = 0,
+                    DateJoined = DateTime.Now,
                 };
                 
                 var result = await _userManager.CreateAsync(newUser);
                 
-                _dbContext.Ballances.Add(ballance);
-                _dbContext.SaveChanges();
+                _ballanceRepository.Add(ballance);
 
                 if (result.Succeeded) // user created successfully
                 {
@@ -355,8 +354,11 @@ namespace ParkingControlWeb.Controllers
                     Id = Guid.NewGuid().ToString(),
                     ParkingId = response.ParkingId,
                     UserId = response.Id,
-                    Amount = 0
+                    Amount = 0,
+                    DateJoined = DateTime.Now,
                 };
+
+                _ballanceRepository.Add(ballance);
 
                 return response;
 

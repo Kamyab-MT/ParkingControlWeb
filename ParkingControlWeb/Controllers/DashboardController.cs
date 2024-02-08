@@ -25,10 +25,11 @@ namespace ParkingControlWeb.Controllers
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly IInfo _infoRepository;
         readonly IParking _parkingRepository;
+        readonly IBallance _ballanceRepository;
 
         Role role = new Role();
 
-        public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository)
+        public DashboardController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IInfo infoRepository, IParking parkingRepository, IBallance ballanceRepository)
         {
             _userManager = userManager;
             _signManager = signInManager;
@@ -36,6 +37,7 @@ namespace ParkingControlWeb.Controllers
             _httpContextAccessor = httpContextAccessor;
             _infoRepository = infoRepository;
             _parkingRepository = parkingRepository;
+            _ballanceRepository = ballanceRepository;
         }
 
         public IActionResult Index()
@@ -361,6 +363,9 @@ namespace ParkingControlWeb.Controllers
             var Subscription = await SubscriptionCheck();
             if (Subscription != null) return Subscription;
 
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            var userParking = await _parkingRepository.GetById(user.ParkingId);
+
             var users = await _userManager.Users.ToListAsync();
             List<UserVM> usersVM = new List<UserVM>();
 
@@ -386,10 +391,38 @@ namespace ParkingControlWeb.Controllers
             var globalAdmin = usersVM.FirstOrDefault(s => s.Role == "GlobalAdmin");
             var parkingOwners = usersVM.Where(s => s.Role == "SystemAdmin").ToList();
             var experts = usersVM.Where(s => s.Role == "Expert").ToList();
-            var drivers = usersVM.Where(s => s.Role == "Driver").ToList();
+            List<UserVM> drivers = new List<UserVM>();
 
             List<UserVM> userVMs = new List<UserVM>();
-            if(User.IsInRole(Role.GlobalAdmin)) userVMs.Add(globalAdmin);
+            if (User.IsInRole(Role.GlobalAdmin))
+            {
+                userVMs.Add(globalAdmin);
+                drivers = usersVM.Where(s => s.Role == "Driver").ToList();
+            }
+            else
+            {
+                parkingOwners = parkingOwners.Where(s => s.Parking == userParking.Name.Decrypt()).ToList();
+                experts = experts.Where(s => s.Parking == userParking.Name.Decrypt()).ToList();
+                
+                var bal = await _ballanceRepository.GetAllFromParking(userParking.Id);
+                var balList = bal.ToList();
+
+                for (int i = 0; i < balList.Count; i++)
+                {
+                    AppUser u = await _userManager.FindByIdAsync(balList[i].UserId);
+                    var roles = await _userManager.GetRolesAsync(u);
+
+                    drivers.Add(new UserVM()
+                    {
+                        DateJoined = Helper.DateShow(balList[i].DateJoined),
+                        Name = "-",
+                        Parking = userParking.Name,
+                        PhoneNumber = u.UserName.Decrypt(),
+                        Role = roles[0],
+                    });
+                }
+            }
+
             userVMs.AddRange(parkingOwners);
             userVMs.AddRange(experts);
             userVMs.AddRange(drivers);
