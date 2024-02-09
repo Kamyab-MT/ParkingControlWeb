@@ -244,6 +244,8 @@ namespace ParkingControlWeb.Controllers
                 record.Status = 1;
                 
                 _recordRepository.Save();
+
+                TempData["Success"] = "خروج راننده با موفقیت ثبت شد";
             }
             else
                 TempData["Error"] = "موجودی کاربر کافی نمی‌باشد.";
@@ -322,18 +324,24 @@ namespace ParkingControlWeb.Controllers
 
                 AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username.Encrypt(), PhoneNumber = Username.Encrypt(), SuperiorUserId = sup, Active = 1, SubscriptionExpiry = user.SubscriptionExpiry, RegisterDate = DateTime.Now };
 
-                Ballance ballance = new Ballance() 
+                var conflict = await _ballanceRepository.Get(response.ParkingId, response.Id);
+
+                if (conflict == null)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    ParkingId = parkingId,
-                    UserId = newUser.Id,
-                    Amount = 0,
-                    DateJoined = DateTime.Now,
-                };
-                
+
+                    Ballance ballance = new Ballance()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ParkingId = parkingId,
+                        UserId = newUser.Id,
+                        Amount = 0,
+                        DateJoined = DateTime.Now,
+                    };
+
+                    _ballanceRepository.Add(ballance);
+                }
+
                 var result = await _userManager.CreateAsync(newUser);
-                
-                _ballanceRepository.Add(ballance);
 
                 if (result.Succeeded) // user created successfully
                 {
@@ -348,17 +356,22 @@ namespace ParkingControlWeb.Controllers
             }
             else // it does exist
             {
+                var conflict = await _ballanceRepository.Get(ParkingId, response.Id);
 
-                Ballance ballance = new Ballance()
+                if (conflict == null)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    ParkingId = ParkingId,
-                    UserId = response.Id,
-                    Amount = 0,
-                    DateJoined = DateTime.Now,
-                };
 
-                _ballanceRepository.Add(ballance);
+                    Ballance ballance = new Ballance()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ParkingId = ParkingId,
+                        UserId = response.Id,
+                        Amount = 0,
+                        DateJoined = DateTime.Now,
+                    };
+
+                    _ballanceRepository.Add(ballance);
+                }
 
                 return response;
 
