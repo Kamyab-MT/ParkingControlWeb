@@ -8,79 +8,79 @@
 <html>
 
 
-<body>
+    <body>
 
-    <div class="container-fluid">
+        <div class="container-fluid">
 
-        <div class="mt-5">
+            <div class="mt-5">
 
 
-            <div class="row">
+                <div class="row">
 
-                <div class="col-6">
-                    <h3>لیست تمامی کاربران</h3>
+                    <div class="col-6">
+                        <h3>لیست تمامی کاربران</h3>
+                    </div>
+
                 </div>
 
-            </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>نام</th>
+                            <th>پارکینگ</th>
+                            <th>شماره همراه</th>
+                            <th>تاریخ ثبت نام</th>
+                            <th>نوع حساب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>نام</th>
-                        <th>پارکینگ</th>
-                        <th>شماره همراه</th>
-                        <th>تاریخ ثبت نام</th>
-                        <th>نوع حساب</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    @if (Model != null)
-                    {
-                        @for (int i = 0; i < Model.Users.Count; i++)
+                        @if (Model != null)
                         {
-                            <tr>
-                                <th>@(i + 1)</th>
-                                <td>@Model.Users[i].Name</td>
-                                <td>@Model.Users[i].Parking</td>
-                                <td>@Model.Users[i].PhoneNumber</td>
-                                <td>@Model.Users[i].DateJoined</td>
+                            @for (int i = 0; i < Model.Users.Count; i++)
+                            {
+                                <tr>
+                                    <th>@(i + 1)</th>
+                                    <td>@Model.Users[i].Name</td>
+                                    <td>@Model.Users[i].Parking</td>
+                                    <td>@Model.Users[i].PhoneNumber</td>
+                                    <td>@Model.Users[i].DateJoined</td>
 
-                                @{
-                                    string classTxt = "text text-success"; // Global Admin
+                                    @{
+                                        string classTxt = "text text-success"; // Global Admin
 
-                                    if (Model.Users[i].Role == "SystemAdmin")
-                                        classTxt = "text text-primary";
-                                    else if (Model.Users[i].Role == "Expert")
-                                        classTxt = "text text-info";
-                                    else if (Model.Users[i].Role == "Driver")
-                                        classTxt = "text text-dark";
-                                }
+                                        if (Model.Users[i].Role == "SystemAdmin")
+                                            classTxt = "text text-primary";
+                                        else if (Model.Users[i].Role == "Expert")
+                                            classTxt = "text text-info";
+                                        else if (Model.Users[i].Role == "Driver")
+                                            classTxt = "text text-dark";
+                                    }
 
-                                @{
-                                    string displayTxt = "ادمین کل";
+                                    @{
+                                        string displayTxt = "ادمین کل";
 
-                                    if (Model.Users[i].Role == "SystemAdmin")
-                                        displayTxt = "صاحب پارکینگ";
-                                    else if (Model.Users[i].Role == "Expert")
-                                        displayTxt = "کارشناس";
-                                    else if (Model.Users[i].Role == "Driver")
-                                        displayTxt = "راننده";
-                                }
+                                        if (Model.Users[i].Role == "SystemAdmin")
+                                            displayTxt = "صاحب پارکینگ";
+                                        else if (Model.Users[i].Role == "Expert")
+                                            displayTxt = "کارشناس";
+                                        else if (Model.Users[i].Role == "Driver")
+                                            displayTxt = "راننده";
+                                    }
 
-                                <td class="@classTxt">@displayTxt</td>
-                            </tr>
+                                    <td class="@classTxt">@displayTxt</td>
+                                </tr>
+                            }
+
                         }
 
-                    }
+                    </tbody>
+                </table>
+            </div>
 
-                </tbody>
-            </table>
         </div>
 
-    </div>
-
-</body>
+    </body>
 
 </html>

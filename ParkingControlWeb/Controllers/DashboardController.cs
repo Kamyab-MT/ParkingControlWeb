@@ -598,6 +598,11 @@ namespace ParkingControlWeb.Controllers
             return null;
         }
 
+        public async Task<IActionResult> RenewalRequests()
+        {
+            return View();
+        }
+
         public IActionResult Charge()
         {
             return View();

@@ -90,6 +90,7 @@
             string AllUsers = action == "AllUsers" ? "nav-link active disabled" : "nav-link link-dark";
             string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-dark";
             string RecordsHistory = action == "RecordsHistory" ? "nav-link active disabled" : "nav-link link-dark";
+            string RenewalRequests = action == "RenewalRequests" ? "nav-link active disabled" : "nav-link link-dark";
 
             <li class="nav-item">
                 <a class="@ParkingOwners" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
@@ -116,6 +117,13 @@
                 <a class="@RecordsHistory" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
                     لیست ورود و خروج ها
                     <i class="bi bi-calendar-week"></i>
+                </a>
+            </li>
+
+            <li>
+                    <a class="@RenewalRequests" aria-current="page" asp-controller="Dashboard" asp-action="RenewalRequests">
+                    درخواست های تمدید
+                        <i class="bi bi-hourglass-bottom"></i>
                 </a>
             </li>
         }

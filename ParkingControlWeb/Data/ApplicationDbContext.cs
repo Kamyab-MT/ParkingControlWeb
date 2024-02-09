@@ -35,5 +35,6 @@ namespace ParkingControlWeb.Data
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Pricing> Pricings { get; set; }
         public DbSet<Ballance> Ballances { get; set; }
+        public DbSet<RenewalRequest> RenewalRequests { get; set; }
     }
 }

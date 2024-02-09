@@ -12,7 +12,6 @@ namespace ParkingControlWeb.Models
         public string UserId { get; set; }
         public AppUser User { get; set; }
         public int ServiceIndex { get; set; }
-        public string Price { get; set; }
         public string CardNumber { get; set; }
         public string TrackingCode { get; set; }
         public string ImageLink { get; set; }
