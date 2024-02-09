@@ -410,15 +410,14 @@ namespace ParkingControlWeb.Controllers
                 for (int i = 0; i < balList.Count; i++)
                 {
                     AppUser u = await _userManager.FindByIdAsync(balList[i].UserId);
-                    var roles = await _userManager.GetRolesAsync(u);
 
                     drivers.Add(new UserVM()
                     {
                         DateJoined = Helper.DateShow(balList[i].DateJoined),
                         Name = "-",
-                        Parking = userParking.Name,
-                        PhoneNumber = u.UserName.Decrypt(),
-                        Role = roles[0],
+                        Parking = userParking.Name.Decrypt(),
+                        PhoneNumber = Helper.ShowNumber(u.UserName.Decrypt()),
+                        Role = "Driver",
                     });
                 }
             }

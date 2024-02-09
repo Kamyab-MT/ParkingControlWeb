@@ -352,7 +352,7 @@ namespace ParkingControlWeb.Controllers
                 Ballance ballance = new Ballance()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    ParkingId = response.ParkingId,
+                    ParkingId = ParkingId,
                     UserId = response.Id,
                     Amount = 0,
                     DateJoined = DateTime.Now,
