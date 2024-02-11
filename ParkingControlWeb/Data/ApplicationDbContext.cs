@@ -18,15 +18,14 @@ namespace ParkingControlWeb.Data
         {
             base.OnModelCreating(builder);
 
-/*            builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.GlobalAdmin, NormalizedName = Role.GlobalAdmin.ToUpper() });
-            builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.SystemAdmin, NormalizedName = Role.SystemAdmin.ToUpper() });
-            builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.Expert, NormalizedName = Role.Expert.ToUpper() });
-            builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.Driver , NormalizedName = Role.Driver.ToUpper() });
+            /*            builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.GlobalAdmin, NormalizedName = Role.GlobalAdmin.ToUpper() });
+                        builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.SystemAdmin, NormalizedName = Role.SystemAdmin.ToUpper() });
+                        builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.Expert, NormalizedName = Role.Expert.ToUpper() });
+                        builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.Driver , NormalizedName = Role.Driver.ToUpper() });
+            */
+            builder.Entity<MetaData>().HasData(new MetaData() { Id = Guid.NewGuid().ToString(), Key = "RenewalCardName", Value = "کامیاب محمدی تبار" });
+            builder.Entity<MetaData>().HasData(new MetaData() { Id = Guid.NewGuid().ToString(), Key = "RenewalCardNumber", Value = "585983119387" });
 
-            builder.Entity<Pricing>().HasData(new Pricing() { Id = Guid.NewGuid().ToString(), Title = "OneMonth", Price = 2000 });
-            builder.Entity<Pricing>().HasData(new Pricing() { Id = Guid.NewGuid().ToString(), Title = "ThreeMonth", Price = 5000 });
-            builder.Entity<Pricing>().HasData(new Pricing() { Id = Guid.NewGuid().ToString(), Title = "SixMonth", Price = 9000 });
-            builder.Entity<Pricing>().HasData(new Pricing() { Id = Guid.NewGuid().ToString(), Title = "OneYear", Price = 16000 });*/
         }
 
         public DbSet<Info> Info { get; set; }
@@ -36,5 +35,6 @@ namespace ParkingControlWeb.Data
         public DbSet<Pricing> Pricings { get; set; }
         public DbSet<Ballance> Ballances { get; set; }
         public DbSet<RenewalRequest> RenewalRequests { get; set; }
+        public DbSet<MetaData> MetaDatas { get; set; }
     }
 }
