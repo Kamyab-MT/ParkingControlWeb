@@ -34,7 +34,7 @@ namespace ParkingControlWeb.Helpers
         public string ShowFormalDateAndTime(DateTime date)
         {
             PersianCalendar persianCalendar = new PersianCalendar();
-            return string.Format("{3}:{4} - {0}/{1}/{2}", persianCalendar.GetYear(date), persianCalendar.GetMonth(date), persianCalendar.GetDayOfMonth(date), persianCalendar.GetHour(date), persianCalendar.GetMinute(date));
+            return string.Format("{0}/{1}/{2}", persianCalendar.GetYear(date), persianCalendar.GetMonth(date), persianCalendar.GetDayOfMonth(date));
         }
 
         public string ShowWeekDayAndMonth(DateTime date)
@@ -47,8 +47,9 @@ namespace ParkingControlWeb.Helpers
 
             int mIndex = persianCalendar.GetMonth(date) - 1;
             string month = Month[mIndex];
-            
+
             return string.Format("{0} {1} {2} {3} - ساعت {4}:{5}", weekDay, persianCalendar.GetDayOfMonth(date), month, persianCalendar.GetYear(date), date.Hour, date.Minute);
         }
+
     }
 }

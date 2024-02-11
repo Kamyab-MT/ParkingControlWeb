@@ -41,6 +41,7 @@
             string ActiveRecords = action == "Index" ? "nav-link active disabled" : "nav-link link-dark";
             string RecordsHistory = action == "RecordsHistory" ? "nav-link active disabled" : "nav-link link-dark";
             string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-dark";
+                string RenewalRequest = action == "RenewalRequest" ? "nav-link active disabled" : "nav-link link-dark";
 
             if (User.IsInRole("SystemAdmin")) // System Admin
             {
@@ -81,6 +82,14 @@
                         <i class="bi bi-credit-card-2-back-fill"></i>
                     </a>
                 </li>
+
+                <li>
+                        <a class="@RenewalRequest" aria-current="page" asp-controller="Dashboard" asp-action="RenewalRequest">
+                        درخواست تمدید اشتراک
+                        <i class="bi bi-hourglass-split"></i>
+                    </a>
+                </li>
+
             }
 
         }

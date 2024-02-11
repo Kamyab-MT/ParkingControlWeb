@@ -1,4 +1,4 @@
-﻿namespace ParkingControlWeb.ViewModels.Request
+﻿namespace ParkingControlWeb.ViewModels.List
 {
     public class RenewalRequestReceivedViewModel
     {

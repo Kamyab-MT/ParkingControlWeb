@@ -1,0 +1,115 @@
+﻿@using ParkingControlWeb.ViewModels.Request
+
+@model RenewalRequestViewModel
+
+@{
+    ViewData["Title"] = "تمدید اشتراک";
+}
+
+<html>
+
+<body>
+
+    <div class="container-fluid mt-5">
+        <div class="modal-content rounded-5 shadow">
+
+            <div class="modal-body p-5 pt-0">
+
+                <form asp-action="RenewalRequest">
+
+                    <div class="row">
+                        <h3 class="fw-bold mb-0 fs-2">مراحل ثبت درخواست تمدید اشتراک</h3>
+                    </div>
+
+                    <div class="row mt-3">
+                        <p>
+                            • ابتدا بازه زمانی تمدید اشتراک خود را انتخاب کنید
+                            <br>
+                            <br>
+                            • سپس هزینه اعلام شده را به حساب بانکی مربوطه واریز نمائید
+                            <br>
+                            <br>
+                            • در نهایت چهار رقم آخر شماره کارتی که واریز را با آن انجام داده اید، به علاوه تاریخ و ساعت واریز و کد رهگیری (اختیاری) را درج کنید و درخواست خود را ثبت کنید
+                            <br>
+                            <br>
+                            • در اسرع وقت به درخواست شما رسیدگی خواهد شد
+                        </p>
+                    </div>
+                    <div class="row d-flex align-items-center mt-5">
+
+                        <div class="col-6">
+
+                            <label asp-for="OptionSelected">بازه زمانی تمدید</label>
+                            <select asp-for="OptionSelected" class="form-control" id="period" onchange="update()">
+                                <option value="0">یک ماهه</option>
+                                <option value="1">سه ماهه</option>
+                                <option value="2">شش ماهه</option>
+                                <option value="3">یک ساله</option>
+                            </select>
+
+                        </div>
+
+                        <div class="col-3 text-center">
+                            <h5 id="price">هزینه : @Model.OneMonthPrice تومان</h5>
+                        </div>
+
+                        <div class="col-3 text-center">
+                            <p id="until">اعتبار تا : @Model.UntilOneMonth</p>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5">
+                        
+                        <div class="col-6 text-center">
+                            <h5>شماره کارت : 4723-9387-8311-5859</h5>
+                        </div>
+
+                        <div class="col-6 text-center">
+                            <h5>به نام فلانی</h5>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5">
+                        <div class="col-12 text-center">
+                            <button class="mb-2 btn btn-lg rounded-3 btn-success form-control" type="submit">ارسال درخواست</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function update() {
+
+            var obj = document.getElementById("period");
+
+            var price = document.getElementById("price");
+            var until = document.getElementById("until");
+
+            var value = obj.value;
+
+            if (value == "0") {
+                price.innerHTML = "هزینه : @Model.OneMonthPrice تومان";
+                until.innerHTML = "اعتبار تا @Model.UntilOneMonth";
+            }
+            if (value == "1") {
+                price.innerHTML = "هزینه : @Model.ThreeMonthPrice تومان";
+                until.innerHTML = "اعتبار تا @Model.UntilThreeMonth";
+            }
+            if (value == "2") {
+                price.innerHTML = "هزینه : @Model.SixMonthPrice تومان";
+                until.innerHTML = "اعتبار تا @Model.UntilSixMonth";
+            }
+            if (value == "3") {
+                price.innerHTML = "هزینه : @Model.OneYearPrice تومان";
+                until.innerHTML = "اعتبار تا @Model.UntilOneYear";
+            }
+        }
+
+    </script>
+
+</body>
+</html>

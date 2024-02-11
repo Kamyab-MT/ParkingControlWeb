@@ -598,9 +598,53 @@ namespace ParkingControlWeb.Controllers
             return null;
         }
 
-        public async Task<IActionResult> RenewalRequests()
+        [Authorize(Roles = "SystemAdmin")]
+        public async Task<IActionResult> RenewalRequest()
         {
-            return View();
+            var Session = await SessionCheck();
+            if (Session != null) return Session;
+
+            var Activity = await ActivityCheck();
+            if (Activity != null) return Activity;
+
+            var Subscription = await SubscriptionCheck();
+            if (Subscription != null) return Subscription;
+
+            AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
+
+            RenewalRequestViewModel renewalViewModel = new RenewalRequestViewModel();
+
+            var firstPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneMonth");
+            var secondPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "ThreeMonth");
+            var thirdPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "SixMonth");
+            var fourthPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneYear");
+
+            renewalViewModel.OneMonthPrice = Helper.DottedPriceShow(firstPrice.Price);
+            renewalViewModel.ThreeMonthPrice = Helper.DottedPriceShow(secondPrice.Price);
+            renewalViewModel.SixMonthPrice = Helper.DottedPriceShow(thirdPrice.Price);
+            renewalViewModel.OneYearPrice = Helper.DottedPriceShow(fourthPrice.Price);
+
+            renewalViewModel.UntilOneMonth = Helper.DateShow(user.SubscriptionExpiry.AddMonths(1));
+            renewalViewModel.UntilThreeMonth = Helper.DateShow(user.SubscriptionExpiry.AddMonths(3));
+            renewalViewModel.UntilSixMonth = Helper.DateShow(user.SubscriptionExpiry.AddMonths(6));
+            renewalViewModel.UntilOneYear = Helper.DateShow(user.SubscriptionExpiry.AddMonths(12));
+
+            renewalViewModel.Id = User.GetUserId();
+
+            return View(renewalViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RenewalRequest(RenewalRequestViewModel vm)
+        {
+            return View(vm);
+        }
+
+        public IActionResult RenewalRequests()
+        {
+            List<RenewalRequestReceivedViewModel> vm = new List<RenewalRequestReceivedViewModel>();
+
+            return View(vm);
         }
 
         public IActionResult Charge()
