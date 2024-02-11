@@ -14,68 +14,118 @@
         <div class="modal-content rounded-5 shadow">
 
             <div class="modal-body p-5 pt-0">
+                
+                @{
+                    string s = "";
+                    string type = "";
+                    string text = "";
 
-                <form asp-action="RenewalRequest">
+                    if (Model.State == 1)
+                    {
+                        type = "success";
+                        text = "درخواست تایید و اشتراک شما با موفقیت تمدید شد";
+                    }
+                    if (Model.State == 2)
+                    {
+                        type = "info";
+                        s = "disabled";
+                        text = "درحال حاضر یک درخواست درحال پردازش دارید، لطفا صبور باشید.";
+                    }
+                    if (Model.State == -1)
+                    {
+                        type = "danger";
+                        text = "درخواست شما رد شد";
+                    }
+                }
 
-                    <div class="row">
-                        <h3 class="fw-bold mb-0 fs-2">مراحل ثبت درخواست تمدید اشتراک</h3>
-                    </div>
+                <fieldset @s>
+                    
+                    @if (Model.State == 2 || Model.State == -1 || Model.State == 1)
+                    {
+                        <div class="row mt-3">
+                            <div class="alert alert-@type" role="alert">
+                                @text
+                            </div>
+                        </div>
+                    }
+                    <form asp-action="RenewalRequest">
 
-                    <div class="row mt-3">
-                        <p>
-                            • ابتدا بازه زمانی تمدید اشتراک خود را انتخاب کنید
-                            <br>
-                            <br>
-                            • سپس هزینه اعلام شده را به حساب بانکی مربوطه واریز نمائید
-                            <br>
-                            <br>
-                            • در نهایت چهار رقم آخر شماره کارتی که واریز را با آن انجام داده اید، به علاوه تاریخ و ساعت واریز و کد رهگیری (اختیاری) را درج کنید و درخواست خود را ثبت کنید
-                            <br>
-                            <br>
-                            • در اسرع وقت به درخواست شما رسیدگی خواهد شد
-                        </p>
-                    </div>
-                    <div class="row d-flex align-items-center mt-5">
-
-                        <div class="col-6">
-
-                            <label asp-for="OptionSelected">بازه زمانی تمدید</label>
-                            <select asp-for="OptionSelected" class="form-control" id="period" onchange="update()">
-                                <option value="0">یک ماهه</option>
-                                <option value="1">سه ماهه</option>
-                                <option value="2">شش ماهه</option>
-                                <option value="3">یک ساله</option>
-                            </select>
-
+                        <div class="row">
+                            <h3 class="fw-bold mb-0 fs-2">مراحل ثبت درخواست تمدید اشتراک</h3>
                         </div>
 
-                        <div class="col-3 text-center">
-                            <h5 id="price">هزینه : @Model.OneMonthPrice تومان</h5>
+                        <div class="row mt-3">
+                            <p>
+                                • ابتدا بازه زمانی تمدید اشتراک خود را انتخاب کنید
+                                <br>
+                                <br>
+                                • سپس هزینه اعلام شده را به حساب بانکی مربوطه واریز نمائید
+                                <br>
+                                <br>
+                                • در نهایت چهار رقم آخر شماره کارتی که واریز را با آن انجام داده اید، به علاوه تاریخ و ساعت واریز را درج کنید و درخواست خود را ثبت کنید
+                                <br>
+                                <br>
+                                • در اسرع وقت به درخواست شما رسیدگی خواهد شد
+                            </p>
+                        </div>
+                        <div class="row d-flex align-items-center mt-5">
+
+                            <div class="col-6">
+
+                                <label asp-for="OptionSelected"></label>
+                                <select asp-for="OptionSelected" class="form-control" id="period" onchange="update()">
+                                    <option value="0">یک ماهه</option>
+                                    <option value="1">سه ماهه</option>
+                                    <option value="2">شش ماهه</option>
+                                    <option value="3">یک ساله</option>
+                                </select>
+
+                            </div>
+
+                            <div class="col-3 text-center">
+                                <h5 id="price">هزینه : @Model.OneMonthPrice تومان</h5>
+                            </div>
+
+                            <div class="col-3 text-center">
+                                <p id="until">اعتبار تا : @Model.UntilOneMonth</p>
+                            </div>
                         </div>
 
-                        <div class="col-3 text-center">
-                            <p id="until">اعتبار تا : @Model.UntilOneMonth</p>
-                        </div>
-                    </div>
-
-                    <div class="row mt-5">
+                        <div class="row mt-5">
                         
-                        <div class="col-6 text-center">
-                            <h5>شماره کارت : 4723-9387-8311-5859</h5>
+                            <div class="col-6">
+                                <h5>شماره کارت : @Model.CardNumber</h5>
+                            </div>
+
+                            <div class="col-6">
+                                <h5>به نام @Model.CardName</h5>
+                            </div>
+                        </div>
+                    
+                        <div class="row mt-5">
+
+                            <div class="col-2">
+                                <label asp-for="CardLast4Number"></label>
+                                <input asp-for="CardLast4Number" class="form-control" maxlength="4" placeholder="XXXX"/>
+                                <span asp-validation-for="CardLast4Number" class="text text-danger"></span>
+                            </div>
+
+                            <div class="col-10">
+                                <label asp-for="Date"></label>
+                                <input asp-for="Date" class="form-control" placeholder="28 دی 1402 ساعت 20:45"/>
+                                <span asp-validation-for="Date" class="text text-danger"></span>
+                            </div>
                         </div>
 
-                        <div class="col-6 text-center">
-                            <h5>به نام فلانی</h5>
+                        <div class="row mt-5">
+                            <div class="col-12 text-center">
+                                <button class="mb-2 btn btn-lg rounded-3 btn-success form-control" type="submit">ارسال درخواست</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="row mt-5">
-                        <div class="col-12 text-center">
-                            <button class="mb-2 btn btn-lg rounded-3 btn-success form-control" type="submit">ارسال درخواست</button>
-                        </div>
-                    </div>
+                    </form>
+                </fieldset>
 
-                </form>
             </div>
         </div>
     </div>
@@ -112,4 +162,9 @@
     </script>
 
 </body>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
 </html>

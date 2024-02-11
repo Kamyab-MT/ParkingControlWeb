@@ -8,6 +8,16 @@
 
 <html>
 
+    <head>
+
+        <style>
+
+            td, th {
+                text-align: center;
+            }
+
+        </style>
+    </head>
 
 <body>
 
@@ -28,11 +38,12 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>نام</th>
+                        <th>نام درخواست دهنده</th>
+                        <th>شماره تلفن</th>
                         <th>سرویس مد نظر</th>
-                        <th>کارت بانکی</th>
-                        <th>کد پیگیری</th>
-                        <th>تصویر رسید</th>
+                        <th>4 رقم آخر کارت بانکی</th>
+                        <th>زمان واریز</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,19 +54,14 @@
                         {
                             <tr>
                                 <td>@(i+1)</td>
+                                <td>@Model[i].Name</td>
                                 <td>@Model[i].PhoneNumber</td>
                                 <td>@Model[i].Service</td>
                                 <td>@Model[i].Card</td>
-                                <td>@Model[i].TrackingCode</td>
+                                <td>@Model[i].Time</td>
                                 <td>
-                                    @if(Model[i].Pic == "None")
-                                    {
-                                        <span>-</span>
-                                    }
-                                    else
-                                    {
-                                        <img src="@Model[i].Pic" />
-                                    }
+                                    <a asp-controller="Dashboard" asp-action="AcceptRenewal" asp-route-id="@Model[i].Id" class="btn btn-success">تایید</a>
+                                    <a asp-controller="Dashboard" asp-action="RejectRenewal" asp-route-id="@Model[i].Id" class="btn btn-danger">رد کردن</a>
                                 </td>
                             </tr>
                         }

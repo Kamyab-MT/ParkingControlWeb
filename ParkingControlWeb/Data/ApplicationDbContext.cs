@@ -22,9 +22,9 @@ namespace ParkingControlWeb.Data
                         builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.SystemAdmin, NormalizedName = Role.SystemAdmin.ToUpper() });
                         builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.Expert, NormalizedName = Role.Expert.ToUpper() });
                         builder.Entity<IdentityRole>().HasData(new IdentityRole() { Id = Guid.NewGuid().ToString(), Name = Role.Driver , NormalizedName = Role.Driver.ToUpper() });
-            */
             builder.Entity<MetaData>().HasData(new MetaData() { Id = Guid.NewGuid().ToString(), Key = "RenewalCardName", Value = "کامیاب محمدی تبار" });
             builder.Entity<MetaData>().HasData(new MetaData() { Id = Guid.NewGuid().ToString(), Key = "RenewalCardNumber", Value = "585983119387" });
+            */
 
         }
 

@@ -629,6 +629,25 @@ namespace ParkingControlWeb.Controllers
             renewalViewModel.UntilSixMonth = Helper.DateShow(user.SubscriptionExpiry.AddMonths(6));
             renewalViewModel.UntilOneYear = Helper.DateShow(user.SubscriptionExpiry.AddMonths(12));
 
+            var cardName = await _context.MetaDatas.FirstOrDefaultAsync(s => s.Key == "RenewalCardName");
+            var cardNumber = await _context.MetaDatas.FirstOrDefaultAsync(s => s.Key == "RenewalCardNumber");
+
+            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.UserId == User.GetUserId());
+
+            if (req != null)
+            {
+                renewalViewModel.State = req.Status;
+
+                if (req.Status == -1 || req.Status == 1)
+                {
+                    _context.RenewalRequests.Remove(req);
+                    _context.SaveChanges();
+                }
+            }
+
+            renewalViewModel.CardName = cardName.Value.Decrypt();
+            renewalViewModel.CardNumber = cardNumber.Value.Decrypt();
+
             renewalViewModel.Id = User.GetUserId();
 
             return View(renewalViewModel);
@@ -637,14 +656,86 @@ namespace ParkingControlWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> RenewalRequest(RenewalRequestViewModel vm)
         {
-            return View(vm);
+            
+            _context.RenewalRequests.Add(new RenewalRequest()
+            {
+                Id = Guid.NewGuid().ToString(),
+                CardNumber = vm.CardLast4Number.Encrypt(),
+                Time = vm.Date,
+                ServiceIndex = int.Parse(vm.OptionSelected),
+                Status = 2,
+                UserId = User.GetUserId(),
+            });
+
+            var result = _context.SaveChanges() > 0;
+
+            if (result)
+                TempData["Success"] = "درخواست شما با موفقیت ارسال شد";
+            else
+                TempData["Error"] = "ارسال درخواست شما با خطا رو به رو شد";
+
+            return RedirectToAction("RenewalRequest", "Dashboard");
         }
 
-        public IActionResult RenewalRequests()
+        public async Task<IActionResult> RenewalRequests()
         {
             List<RenewalRequestReceivedViewModel> vm = new List<RenewalRequestReceivedViewModel>();
 
+            var pending = await _context.RenewalRequests.Where(s => s.Status == 2).ToListAsync();
+
+            string[] serviceText = { "یک ماهه", "سه ماهه", "شش ماهه", "یک ساله"};
+
+            for (int i = 0; i < pending.Count; i++)
+            {
+                AppUser user = await _userManager.FindByIdAsync(pending[i].UserId);
+                Info info = await _infoRepository.GetById(user.InfoId);
+
+                vm.Add(new RenewalRequestReceivedViewModel()
+                {
+                    Id = pending[i].Id,
+                    Card = pending[i].CardNumber.Decrypt(),
+                    Service = serviceText[pending[i].ServiceIndex],
+                    PhoneNumber = user.UserName.Decrypt(),
+                    Name = info.FullName.Decrypt(),
+                    Time = pending[i].Time,
+                });
+            }
+
             return View(vm);
+        }
+
+        public async Task<IActionResult> AcceptRenewal(string id)
+        {
+            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == id);
+            var user = await _userManager.FindByIdAsync(req.UserId);
+
+            req.Status = 1;
+
+            int[] months = { 1, 3, 6, 12 };
+
+            user.SubscriptionExpiry = user.SubscriptionExpiry.AddMonths(months[req.ServiceIndex]);
+
+            if (_context.SaveChanges() > 0)
+                TempData["Success"] = "اشتراک کاربر با موفقیت تمدید شد";
+            else
+                TempData["Error"] = "فرآیند با خطا رو به رو شد";
+
+            return RedirectToAction("RenewalRequests", "Dashboard");
+        }
+
+        public async Task<IActionResult> RejectRenewal(string id)
+        {
+
+            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == id);
+            
+            req.Status = -1;
+
+            if (_context.SaveChanges() > 0)
+                TempData["Success"] = "درخواست کاربر رد شد";
+            else
+                TempData["Error"] = "فرآیند با خطا رو به رو شد";
+
+            return RedirectToAction("RenewalRequests", "Dashboard");
         }
 
         public IActionResult Charge()
