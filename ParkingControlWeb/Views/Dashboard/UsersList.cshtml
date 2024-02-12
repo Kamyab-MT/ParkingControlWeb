@@ -11,28 +11,38 @@
             <div class="mt-5">
 
 
-                    <div class="row">
+                <div class="row">
 
-                        <div class="col-6">
-                            @if (User.IsInRole("GlobalAdmin"))
-                            {
-                                <h3>لیست صاحبین پارکینگ</h3>
-                                ViewData["Title"] = "لیست صاحبین پارکینگ";
+                    <div class="col-6 mb-2">
+                        @if (User.IsInRole("GlobalAdmin"))
+                        {
+                            <h3>لیست صاحبین پارکینگ</h3>
+                            ViewData["Title"] = "لیست صاحبین پارکینگ";
 
-                            }
-                            else
-                            {
-                                <h3>لیست کارشناس ها</h3>
-                                ViewData["Title"] = "لیست کارشناس ها";
+                        }
+                        else
+                        {
+                            <h3>لیست کارشناس ها</h3>
+                            ViewData["Title"] = "لیست کارشناس ها";
 
-                            }
-                        </div>
+                        }
+                    </div>
 
-                        <div class="col-6 text-start">
-                            <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Register">اضافه کردن <i class="bi bi-plus-circle"></i></a>
-                        </div>
+                    <div class="col-6 text-start">
+                        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Register">اضافه کردن <i class="bi bi-plus-circle"></i></a>
+                    </div>
+
+                </div>
+                
+                <div class="row mt-3">
+
+                    <div class="col-6">
+                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="جستجو">
+                    </div>
+                    <div class="col-6">
 
                     </div>
+                </div>
 
                 <table class="table table-hover">
                         <thead>
@@ -93,11 +103,25 @@
                     }
                     
                         </tbody>
-                    </table>
+                </table>
             </div>
 
         </div>
-
+        <script>
+            $(document).ready(function () {
+                $('#searchInput').on('input', function () {
+                    var searchText = $(this).val().toLowerCase();
+                    $('tbody tr').each(function () {
+                        var rowText = $(this).text().toLowerCase();
+                        if (rowText.includes(searchText)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+            });
+        </script>
 	</body>
 
 </html>
