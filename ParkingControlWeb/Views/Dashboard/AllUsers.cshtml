@@ -17,10 +17,34 @@
 
                 <div class="row">
 
-                    <div class="col-6">
+                    <div class="col-6 mb-2">
                         <h3>لیست تمامی کاربران</h3>
                     </div>
 
+                </div>
+
+                <div class="row mt-3">
+
+                    <div class="col-6">
+                        <input type="text" id="searchInput" class="form-control mb-3" placeholder="جستجو">
+                    </div>
+                    <div class="col-2">
+                        <select class="form-select" id="sortSelect">
+                            <option value="olderToNewer">قدیم به جدید</option>
+                            <option value="newerToOlder">جدید به قدیم</option>
+                        </select>
+                    </div>
+
+                    <div class="col-2">
+                        <select class="form-select" id="timePeriodSelect">
+                            <option value="last100">100 مورد اخیر</option>
+                            <option value="yesterday">دیروز</option>
+                            <option value="today">امروز</option>
+                            <option value="thisWeek">هفته گذشته</option>
+                            <option value="thisMonth">ماه گذشته</option>
+                            <option value="thisYear">سال جاری</option>
+                        </select>
+                    </div>
                 </div>
 
                 <table class="table table-hover">
@@ -40,7 +64,7 @@
                         {
                             @for (int i = 0; i < Model.Users.Count; i++)
                             {
-                                <tr>
+                                <tr  data-date="@Model.Users[i].Date">
                                     <th>@(i + 1)</th>
                                     <td>@Model.Users[i].Name</td>
                                     <td>@Model.Users[i].Parking</td>
@@ -80,6 +104,9 @@
             </div>
 
         </div>
+        
+        <script src="~/js/tableSearch.js"></script>
+        <script src="~/js/sorter.js"></script>
 
     </body>
 

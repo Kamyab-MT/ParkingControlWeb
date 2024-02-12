@@ -12,5 +12,6 @@
         public string Parking { get; set; }
         public string DateJoined { get; set; }
         public string Role { get; set; }
+        public string Date { get; set; }
     }
 }

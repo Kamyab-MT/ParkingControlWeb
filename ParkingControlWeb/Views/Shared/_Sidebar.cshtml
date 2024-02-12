@@ -41,36 +41,36 @@
             string ActiveRecords = action == "Index" ? "nav-link active disabled" : "nav-link link-dark";
             string RecordsHistory = action == "RecordsHistory" ? "nav-link active disabled" : "nav-link link-dark";
             string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-dark";
-                string RenewalRequest = action == "RenewalRequest" ? "nav-link active disabled" : "nav-link link-dark";
+            string RenewalRequest = action == "RenewalRequest" ? "nav-link active disabled" : "nav-link link-dark";
 
             if (User.IsInRole("SystemAdmin")) // System Admin
             {
                 <li class="nav-item">
                     <a class="@UsersListTxt" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                        لیست کارشناس ها
                         <i class="bi bi-people-fill"></i>
+                        لیست کارشناس ها
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="@AllUsers" aria-current="page" asp-controller="Dashboard" asp-action="AllUsers">
-                        لیست کاربران
                         <i class="bi bi-people-fill"></i>
+                        لیست کاربران
                     </a>
                 </li>
             }
 
             <li>
                 <a class="@ActiveRecords" aria-current="page" asp-controller="Records" asp-action="Index">
-                    ورود و خروج های جاری
                     <i class="bi bi-car-front-fill"></i>
+                    ورود و خروج های جاری
                 </a>
             </li>
 
             <li>
                 <a class="@RecordsHistory" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
-                    تاریخچه ورود و خروج ها
                     <i class="bi bi-calendar-week"></i>
+                    تاریخچه ورود و خروج ها
                 </a>
             </li>
 
@@ -78,15 +78,15 @@
             {
                 <li>
                     <a class="@TransactionsHistory" aria-current="page" asp-controller="Records" asp-action="TransactionsHistory">
-                        لیست تراکنش ها
                         <i class="bi bi-credit-card-2-back-fill"></i>
+                        لیست تراکنش ها
                     </a>
                 </li>
 
                 <li>
                         <a class="@RenewalRequest" aria-current="page" asp-controller="Dashboard" asp-action="RenewalRequest">
-                        درخواست تمدید اشتراک
                         <i class="bi bi-hourglass-split"></i>
+                        درخواست تمدید اشتراک
                     </a>
                 </li>
 
@@ -103,36 +103,36 @@
 
             <li class="nav-item">
                 <a class="@ParkingOwners" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
-                    لیست صاحبین پارکینگ
                     <i class="bi bi-person-fill"></i>
+                    لیست صاحبین پارکینگ
                 </a>
             </li>
 
             <li>
                 <a class="@AllUsers" aria-current="page" asp-controller="Dashboard" asp-action="AllUsers">
-                    لیست تمامی کاربران
                     <i class="bi bi-people-fill"></i>
+                    لیست تمامی کاربران
                 </a>
             </li>
 
             <li>
                 <a class="@TransactionsHistory" aria-current="page" asp-controller="Records" asp-action="TransactionsHistory">
-                    لیست تراکنش ها
                     <i class="bi bi-credit-card-2-back-fill"></i>
+                    لیست تراکنش ها
                 </a>
             </li>
 
             <li>
                 <a class="@RecordsHistory" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
-                    لیست ورود و خروج ها
                     <i class="bi bi-calendar-week"></i>
+                    لیست ورود و خروج ها
                 </a>
             </li>
 
             <li>
                     <a class="@RenewalRequests" aria-current="page" asp-controller="Dashboard" asp-action="RenewalRequests">
-                    درخواست های تمدید
                         <i class="bi bi-hourglass-bottom"></i>
+                    درخواست های تمدید
                 </a>
             </li>
         }
@@ -143,23 +143,23 @@
         string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-dark";
         <li class="nav-item">
             <a class="@Charge" aria-current="page" asp-controller="Dashboard" asp-action="Charge">
-                شارژ حساب
                 <i class="bi bi-wallet2"></i>
+                شارژ حساب
             </a>
         </li>
 
         <li>
             <a class="@TransactionsHistory" aria-current="page" asp-controller="Records" asp-action="TransactionsHistory">
-                لیست تراکنش ها
                 <i class="bi bi-credit-card-2-back-fill"></i>
+                لیست تراکنش ها
             </a>
         </li>
     }
 
     <li class="nav-item">
         <a class="nav-link link-danger" aria-current="page" asp-controller="Account" asp-action="LogOut">
-            خروج از حساب کاربری
             <i class="bi bi-box-arrow-left"></i>
+            خروج از حساب کاربری
         </a>
     </li>
     </ul>

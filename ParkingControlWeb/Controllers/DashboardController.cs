@@ -13,6 +13,7 @@ using ParkingControlWeb.ViewModels.Account;
 using ParkingControlWeb.ViewModels.Edit;
 using ParkingControlWeb.ViewModels.List;
 using ParkingControlWeb.ViewModels.Request;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -88,9 +89,9 @@ namespace ParkingControlWeb.Controllers
                             RegisterDate = Helper.DateShow((DateTime)user.RegisterDate),
                             ExpireDate = Helper.DateShow(user.SubscriptionExpiry),
                             ParkingName = _parkingRepository.GetById(user.ParkingId).GetAwaiter().GetResult().Name.Decrypt(),
-                            Username = Helper.ShowNumber(user.UserName.Decrypt())
-
-                        };
+                            Username = Helper.ShowNumber(user.UserName.Decrypt()),
+                            Date = ((DateTime)user.RegisterDate).ToString("yyyy-MM-dd"),
+                    };
 
 
                         infos.Add(infoVM);
@@ -141,13 +142,13 @@ namespace ParkingControlWeb.Controllers
                 if (User.IsInRole(Role.GlobalAdmin))
                 {
                     TempData["Error"] = "ورودی ها نامعتبر هستند";
-                    //TempData["Error"] = (ModelState.Values.SelectMany(v => v.Errors).ToList()[2].ErrorMessage);
+                    //TempData["Error"] = (ModelState.Values.SelectMany(v => v.Errors).ToList()[0].ErrorMessage);
 
                     return View(registerViewModel);
                 }
                 else // SystemAdmin
                 {
-                    if (ModelState.Values.SelectMany(v => v.Errors).ToList().Count > 7)
+                    if (ModelState.Values.SelectMany(v => v.Errors).ToList().Count > 8)
                     {
                         TempData["Error"] = "ورودی ها نامعتبر هستند";
                         return View(registerViewModel);
@@ -418,6 +419,7 @@ namespace ParkingControlWeb.Controllers
                         Parking = userParking.Name.Decrypt(),
                         PhoneNumber = Helper.ShowNumber(u.UserName.Decrypt()),
                         Role = "Driver",
+                        Date = balList[i].DateJoined.ToString("yyyy-MM-dd"),
                     });
                 }
             }
