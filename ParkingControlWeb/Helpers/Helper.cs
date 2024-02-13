@@ -17,6 +17,7 @@ namespace ParkingControlWeb.Helpers
         public static int CalculateExpense(Expense expense) => expense.Calculate();
 
         public static string DateShow(DateTime date) => localDate.ShowWeekDayAndMonth(date);
+        public static string DateShowFormal(DateTime date) => localDate.ShowFormalDateAndTime(date);
 
         public static string TimeBetween(DateTime first, DateTime second)
         {

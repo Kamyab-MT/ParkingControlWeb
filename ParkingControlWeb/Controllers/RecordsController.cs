@@ -406,6 +406,7 @@ namespace ParkingControlWeb.Controllers
                     PhoneNumber = Helper.ShowNumber(list[i].Username.Decrypt()),
                     TrackingCode = list[i].TrackingCode.Decrypt(),
                     Owner = list[i].OwnerName.Decrypt(),
+                    Date = list[i].DateCreated.ToString("yyyy-MM-dd"),
                 });
             }
 

@@ -1,10 +1,15 @@
 $(document).ready(function () {
+    // Sort rows from newer to older on page load
+    var rows = $('tbody tr');
+    sortNewerToOlder(rows);
+
     $('#dateOrderSelect').on('change', function () {
         var selectedSort = $(this).val();
+        var rows = $('tbody tr');
         if (selectedSort === 'newerToOlder') {
-            sortNewerToOlder();
+            sortNewerToOlder(rows);
         } else if (selectedSort === 'olderToNewer') {
-            sortOlderToNewer();
+            sortOlderToNewer(rows);
         }
     });
 
@@ -17,20 +22,19 @@ $(document).ready(function () {
             filterByYesterday(rows);
         } else if (selectedPeriod === 'last100') {
             filterLast100(rows);
-        } else if (selectedPeriod === 'thisYear') {
-            filterByThisYear(rows);
-        } else if (selectedPeriod === 'thisMonth') {
-            filterByThisMonth(rows);
-        } else if (selectedPeriod === 'thisWeek') {
-            filterByThisWeek(rows);
+        } else if (selectedPeriod === 'lastWeek') {
+            filterByLastWeek(rows);
+        } else if (selectedPeriod === 'lastMonth') {
+            filterByLastMonth(rows);
+        } else if (selectedPeriod === 'lastYear') {
+            filterByLastYear(rows);
         } else if (selectedPeriod === 'all') {
             showAllRows(rows);
         }
     });
 });
 
-function sortNewerToOlder() {
-    var rows = $('tbody tr');
+function sortNewerToOlder(rows) {
     rows.sort(function (a, b) {
         var dateA = new Date($(a).data('date'));
         var dateB = new Date($(b).data('date'));
@@ -39,8 +43,7 @@ function sortNewerToOlder() {
     $('tbody').empty().append(rows);
 }
 
-function sortOlderToNewer() {
-    var rows = $('tbody tr');
+function sortOlderToNewer(rows) {
     rows.sort(function (a, b) {
         var dateA = new Date($(a).data('date'));
         var dateB = new Date($(b).data('date'));
@@ -50,56 +53,43 @@ function sortOlderToNewer() {
 }
 
 function filterByToday(rows) {
-    var today = new Date();
-    var todayDate = today.toISOString().slice(0, 10);
-    rows.hide();
-    rows.filter('[data-date="' + todayDate + '"]').show();
+    var today = new Date().toLocaleDateString();
+    rows.hide().filter('[data-date="' + today + '"]').show();
 }
 
 function filterByYesterday(rows) {
-    var yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    var yesterdayDate = yesterday.toISOString().slice(0, 10);
-    rows.hide();
-    rows.filter('[data-date="' + yesterdayDate + '"]').show();
+    var yesterday = new Date(new Date() - 86400000).toLocaleDateString();
+    rows.hide().filter('[data-date="' + yesterday + '"]').show();
 }
 
 function filterLast100(rows) {
-    rows.show();
-    rows.slice(100).hide();
+    rows.show().slice(100).hide();
 }
 
-function filterByThisYear(rows) {
-    var currentYear = new Date().getFullYear();
-    rows.hide();
-    rows.filter(function () {
+function filterByLastYear(rows) {
+    var currentDate = new Date();
+    var lastYearDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate());
+    rows.hide().filter(function () {
         var rowDate = new Date($(this).data('date'));
-        return rowDate.getFullYear() === currentYear;
+        return rowDate >= lastYearDate;
     }).show();
 }
 
-function filterByThisMonth(rows) {
-    var currentYear = new Date().getFullYear();
-    var currentMonth = new Date().getMonth() + 1; // Month is zero-based
-    rows.hide();
-    rows.filter(function () {
+function filterByLastMonth(rows) {
+    var currentDate = new Date();
+    var lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
+    rows.hide().filter(function () {
         var rowDate = new Date($(this).data('date'));
-        return rowDate.getFullYear() === currentYear && rowDate.getMonth() + 1 === currentMonth;
+        return rowDate >= lastMonthDate;
     }).show();
 }
 
-function filterByThisWeek(rows) {
-    var today = new Date();
-    var currentYear = today.getFullYear();
-    var currentMonth = today.getMonth() + 1; // Month is zero-based
-    var currentDate = today.getDate();
-    var currentDayOfWeek = today.getDay();
-    var weekStartDate = new Date(currentYear, currentMonth - 1, currentDate - currentDayOfWeek);
-    var weekEndDate = new Date(currentYear, currentMonth - 1, currentDate - currentDayOfWeek + 6);
-    rows.hide();
-    rows.filter(function () {
+function filterByLastWeek(rows) {
+    var currentDate = new Date();
+    var lastWeekStartDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7);
+    rows.hide().filter(function () {
         var rowDate = new Date($(this).data('date'));
-        return rowDate >= weekStartDate && rowDate <= weekEndDate;
+        return rowDate >= lastWeekStartDate;
     }).show();
 }
 

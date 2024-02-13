@@ -26,23 +26,24 @@
                 <div class="row mt-3">
 
                     <div class="col-6">
-                        <input type="text" id="searchInput" class="form-control mb-3" placeholder="جستجو">
+                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="جستجو">
                     </div>
                     <div class="col-2">
-                        <select class="form-select" id="sortSelect">
+                        <select class="form-select" id="dateOrderSelect">
                             <option value="olderToNewer">قدیم به جدید</option>
-                            <option value="newerToOlder">جدید به قدیم</option>
+                            <option value="newerToOlder" selected>جدید به قدیم</option>
                         </select>
                     </div>
 
                     <div class="col-2">
                         <select class="form-select" id="timePeriodSelect">
-                            <option value="last100">100 مورد اخیر</option>
+                            <option value="last100" selected>100 مورد اخیر</option>
                             <option value="yesterday">دیروز</option>
                             <option value="today">امروز</option>
-                            <option value="thisWeek">هفته گذشته</option>
-                            <option value="thisMonth">ماه گذشته</option>
-                            <option value="thisYear">سال جاری</option>
+                            <option value="lastWeek">7 روز گذشته</option>
+                            <option value="lastMonth">30 روز گذشته</option>
+                            <option value="lastYear">سال گذشته</option>
+                            <option value="all">همه</option>
                         </select>
                     </div>
                 </div>

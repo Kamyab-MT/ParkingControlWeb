@@ -386,6 +386,7 @@ namespace ParkingControlWeb.Controllers
                     Role = roles[0],
                     Name = name,
                     Parking = parkingName,
+                    Date = ((DateTime)users[i].RegisterDate).ToString("yyyy-MM-dd"),
                 });
             }
 

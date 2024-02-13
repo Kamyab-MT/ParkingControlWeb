@@ -11,5 +11,6 @@ namespace ParkingControlWeb.ViewModels.List
         public string TrackingCode { get; set; }
         public string DateCreated { get; set; }
         public string Owner { get; set; }
+        public string Date { get; set; }
     }
 }
