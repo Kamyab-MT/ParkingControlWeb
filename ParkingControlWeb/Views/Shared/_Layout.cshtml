@@ -16,8 +16,8 @@
     <style>
 
         body {
-            user-select: none;
             overflow-x: hidden;
+            background-color: #FFFFFF;
         }
         ::selection
         {
@@ -34,6 +34,7 @@
             font-weight: bold;
         }
 
+
     </style>
 </head>
 <body>
@@ -41,16 +42,13 @@
     @if (!User.Identity.IsAuthenticated)
     {
         <header>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary" aria-label="Fifth navbar example">
+            <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#004887;" aria-label="Fifth navbar example">
                 <div class="container">
-                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">مدیریت پارکینگ وب</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-
                     <div id="navbarsExample05" class="collapse navbar-collapse">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-2">
-                            
                             <li class="nav-item">
                                 <a class="nav-link btn btn-success text-white" aria-current="page" asp-controller="Account" asp-action="Login">ورود به حساب کاربری</a>
                             </li>
@@ -82,18 +80,13 @@
     else
     {
         <div class="container-fluid animate__animated animate__fadeIn" style="padding:0px;">
-            <main role="main" class="pb-3">
+            <main role="main">
                 <partial name="_Notification.cshtml" />
                 @RenderBody()
             </main>
         </div>
     }
 
-    <footer class="border-top footer text-muted bg-white">
-        <div class="container bg-white">
-            &copy; 1402 - مدیریت پارکینگ وب 
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
