@@ -15,6 +15,10 @@
                 right: 0;
                 left: auto;
             }
+
+            body {
+                overflow: hidden;
+            }
         </style>
 
 
@@ -26,9 +30,9 @@
         <partial name="_ValidationScriptsPartial" />
     }
     <section class="vh-100">
-        <div class="container py-5 h-100">
+        <div class="container h-100">
             <div class="row d-flex align-items-center justify-content-center h-100">
-                <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+                <div class="col-xl-6 col-sm-10 col-md-10">
                     <form asp-action="Login">
                         <div class="form-floating mb-3 justify-content-star3t">
                             <input asp-for="UserName" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com">
@@ -43,7 +47,7 @@
                         <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">ورود</button>
                     </form>
                 </div>
-                <div class="col-md-8 col-lg-7 col-xl-6">
+                <div class="col-xl-5 d-none d-xl-block d-md-none d-sm-none d-xs-none">
                     <img src="https://cdni.iconscout.com/illustration/premium/thumb/man-holding-key-and-unlocking-safe-5753796-4823076.png?f=webp"
                          class="img-fluid" alt="Phone image">
                 </div>
