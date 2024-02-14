@@ -36,32 +36,48 @@
         <div class="container-fluid">
             <div class="mt-5">
 
-                <div class="row">
+                <div class="row mb-2">
 
                     <div class="col-6">
                         <h3>ورود و خروج های جاری</h3>
                     </div>
                 </div>
-                
-                <div class="row">
 
+                <div class="row mt-3">
 
-                </div>
-                
-                <div class="row">
+                    <div class="col-6">
+                        <input type="text" id="searchInput" class="form-control mb-3" placeholder="جستجو">
+                    </div>
+                    <div class="col-2">
+                        <select class="form-select" id="dateOrderSelect">
+                            <option value="olderToNewer">قدیم به جدید</option>
+                            <option value="newerToOlder" selected>جدید به قدیم</option>
+                        </select>
+                    </div>
 
+                    <div class="col-2">
+                        <select class="form-select" id="timePeriodSelect">
+                            <option value="last100" selected>100 مورد اخیر</option>
+                            <option value="yesterday">دیروز</option>
+                            <option value="today">امروز</option>
+                            <option value="lastWeek">7 روز گذشته</option>
+                            <option value="lastMonth">30 روز گذشته</option>
+                            <option value="lastYear">سال گذشته</option>
+                            <option value="all">همه</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="overflow-scroll" style="max-height:60vh;">
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>شماره همراه</th>
-                                <th>شماره پلاک</th>
-                                <th>زمان ورود</th>
-                                <th>زمان خروج</th>
-                                <th></th>
+                                <th class="bg-white border-bottom">#</th>
+                                <th class="bg-white border-bottom">شماره همراه</th>
+                                <th class="bg-white border-bottom">شماره پلاک</th>
+                                <th class="bg-white border-bottom">زمان ورود</th>
+                                <th class="bg-white border-bottom">زمان خروج</th>
+                                <th class="bg-white border-bottom"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -72,7 +88,7 @@
 
                             @foreach (var item in @Model.ActiveRecordsList.ActiveRecords)
                             {
-                            <tr>
+                            <tr data-date="@item.Date">
                                     <td>@i</td>
                                     <td>@item.PhoneNumber</td>
                                     <td>@item.PlateNumber</td>
@@ -216,6 +232,9 @@
             return doc.innerHTML;
         }
     </script>
+
+    <script src="~/js/tableSearch.js"></script>
+    <script src="~/js/sorter.js"></script>
 
     </body>
 

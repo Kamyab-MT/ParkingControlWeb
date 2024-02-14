@@ -90,7 +90,7 @@ namespace ParkingControlWeb.Controllers
                             ExpireDate = Helper.DateShow(user.SubscriptionExpiry),
                             ParkingName = _parkingRepository.GetById(user.ParkingId).GetAwaiter().GetResult().Name.Decrypt(),
                             Username = Helper.ShowNumber(user.UserName.Decrypt()),
-                            Date = ((DateTime)user.RegisterDate).ToString("yyyy-MM-dd"),
+                            Date = ((DateTime)user.RegisterDate).ToString("yyyy-MM-ddTHH:mm:ss"),
                     };
 
 
@@ -386,7 +386,7 @@ namespace ParkingControlWeb.Controllers
                     Role = roles[0],
                     Name = name,
                     Parking = parkingName,
-                    Date = ((DateTime)users[i].RegisterDate).ToString("yyyy-MM-dd"),
+                    Date = ((DateTime)users[i].RegisterDate).ToString("yyyy-MM-ddTHH:mm:ss"),
                 });
             }
 

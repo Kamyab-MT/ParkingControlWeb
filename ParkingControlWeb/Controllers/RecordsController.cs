@@ -76,6 +76,7 @@ namespace ParkingControlWeb.Controllers
                     PassedTime = Helper.TimeBetween(DateTime.Now, recordsList[i].EntranceTime),
                     PhoneNumber = Helper.ShowNumber(currentUser.UserName.Decrypt()),
                     PlateNumber = recordsList[i].PlateNumber.Decrypt(),
+                    Date = recordsList[i].EntranceTime.ToString("yyyy-MM-ddTHH:mm:ss"),
                 };
 
                 Ballance ballance = await _ballanceRepository.Get(recordsList[i].ParkingId, currentUser.Id);
@@ -304,6 +305,7 @@ namespace ParkingControlWeb.Controllers
                     PassedTime = Helper.TimeBetween(recordsList[i].ExitTime, recordsList[i].EntranceTime),
                     Price = Helper.DottedPriceShow(Helper.CalculateExpense(expense)),
                     Parking = parking.Name.Decrypt(),
+                    Date = recordsList[i].ExitTime.ToString("yyyy-MM-ddTHH:mm:ss"),
                 });
             }
 
@@ -406,7 +408,7 @@ namespace ParkingControlWeb.Controllers
                     PhoneNumber = Helper.ShowNumber(list[i].Username.Decrypt()),
                     TrackingCode = list[i].TrackingCode.Decrypt(),
                     Owner = list[i].OwnerName.Decrypt(),
-                    Date = list[i].DateCreated.ToString("yyyy-MM-dd"),
+                    Date = list[i].DateCreated.ToString("yyyy-MM-ddTHH:mm:ss"),
                 });
             }
 

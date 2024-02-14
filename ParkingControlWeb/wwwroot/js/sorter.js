@@ -36,18 +36,28 @@ $(document).ready(function () {
 
 function sortNewerToOlder(rows) {
     rows.sort(function (a, b) {
-        var dateA = new Date($(a).data('date'));
-        var dateB = new Date($(b).data('date'));
-        return dateB - dateA;
+        var datetimeA = $(a).data('date').split('T');
+        var datetimeB = $(b).data('date').split('T');
+        var dateA = new Date(datetimeA[0]);
+        var timeA = new Date('1970-01-01T' + datetimeA[1]);
+        var dateB = new Date(datetimeB[0]);
+        var timeB = new Date('1970-01-01T' + datetimeB[1]);
+
+        return dateB - dateA || timeB - timeA; // If dates are equal, compare times
     });
     $('tbody').empty().append(rows);
 }
 
 function sortOlderToNewer(rows) {
     rows.sort(function (a, b) {
-        var dateA = new Date($(a).data('date'));
-        var dateB = new Date($(b).data('date'));
-        return dateA - dateB;
+        var datetimeA = $(a).data('date').split('T');
+        var datetimeB = $(b).data('date').split('T');
+        var dateA = new Date(datetimeA[0]);
+        var timeA = new Date('1970-01-01T' + datetimeA[1]);
+        var dateB = new Date(datetimeB[0]);
+        var timeB = new Date('1970-01-01T' + datetimeB[1]);
+
+        return dateA - dateB || timeA - timeB; // If dates are equal, compare times
     });
     $('tbody').empty().append(rows);
 }
@@ -66,30 +76,33 @@ function filterLast100(rows) {
     rows.show().slice(100).hide();
 }
 
-function filterByLastYear(rows) {
-    var currentDate = new Date();
-    var lastYearDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate());
+function filterByLastWeek(rows) {
+    var today = new Date();
+    var weekStartDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6);
+    var weekEndDate = new Date();
     rows.hide().filter(function () {
-        var rowDate = new Date($(this).data('date'));
-        return rowDate >= lastYearDate;
+        var rowDate = new Date($(this).data('date').split('T')[0]);
+        return rowDate >= weekStartDate && rowDate <= weekEndDate;
     }).show();
 }
 
 function filterByLastMonth(rows) {
-    var currentDate = new Date();
-    var lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
+    var today = new Date();
+    var monthStartDate = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+    var monthEndDate = new Date();
     rows.hide().filter(function () {
-        var rowDate = new Date($(this).data('date'));
-        return rowDate >= lastMonthDate;
+        var rowDate = new Date($(this).data('date').split('T')[0]);
+        return rowDate >= monthStartDate && rowDate <= monthEndDate;
     }).show();
 }
 
-function filterByLastWeek(rows) {
-    var currentDate = new Date();
-    var lastWeekStartDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7);
+function filterByLastYear(rows) {
+    var today = new Date();
+    var yearStartDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+    var yearEndDate = new Date();
     rows.hide().filter(function () {
-        var rowDate = new Date($(this).data('date'));
-        return rowDate >= lastWeekStartDate;
+        var rowDate = new Date($(this).data('date').split('T')[0]);
+        return rowDate >= yearStartDate && rowDate <= yearEndDate;
     }).show();
 }
 

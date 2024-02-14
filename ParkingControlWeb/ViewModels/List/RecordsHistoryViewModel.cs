@@ -10,5 +10,6 @@
         public string ExitTime { get; set; }
         public string Price { get; set; }
         public string Parking { get; set; }
+        public string Date { get; set; }
     }
 }

@@ -18,5 +18,6 @@
         public string Price { get; set; }
         public string Diffrence { get; set; }
         public bool IsMoneyEnough { get; set; }
+        public string Date { get; set; }
     }
 }

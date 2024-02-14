@@ -23,14 +23,40 @@
     </head>
 
     <body>
+
         <div class="container-fluid">
 
             <div class="mt-5">
 
-                <div class="row">
+                <div class="row mb-2">
 
                     <div class="col-6">
                         <h3>تاریخچه ورود و خروج ها</h3>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+
+                    <div class="col-6">
+                        <input type="text" id="searchInput" class="form-control mb-3" placeholder="جستجو">
+                    </div>
+                    <div class="col-2">
+                        <select class="form-select" id="dateOrderSelect">
+                            <option value="olderToNewer">قدیم به جدید</option>
+                            <option value="newerToOlder" selected>جدید به قدیم</option>
+                        </select>
+                    </div>
+
+                    <div class="col-2">
+                        <select class="form-select" id="timePeriodSelect">
+                            <option value="last100" selected>100 مورد اخیر</option>
+                            <option value="yesterday">دیروز</option>
+                            <option value="today">امروز</option>
+                            <option value="lastWeek">7 روز گذشته</option>
+                            <option value="lastMonth">30 روز گذشته</option>
+                            <option value="lastYear">سال گذشته</option>
+                            <option value="all">همه</option>
+                        </select>
                     </div>
                 </div>
 
@@ -38,11 +64,11 @@
                 <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th  class="bg-white border-bottom">#</th>
-                                <th  class="bg-white border-bottom">شماره همراه</th>
-                                <th  class="bg-white border-bottom">شماره پلاک</th>
-                                <th  class="bg-white border-bottom">زمان ورود</th>
-                                <th  class="bg-white border-bottom">زمان خروج</th>
+                                <th class="bg-white border-bottom">#</th>
+                                <th class="bg-white border-bottom">شماره همراه</th>
+                                <th class="bg-white border-bottom">شماره پلاک</th>
+                                <th class="bg-white border-bottom">زمان ورود</th>
+                                <th class="bg-white border-bottom">زمان خروج</th>
                                 @if (User.IsInRole("GlobalAdmin"))
                                 {
                                     <th class="bg-white border-bottom">پارکینگ</th>
@@ -56,7 +82,7 @@
                         <tbody>
                             @for (int i = 0; i < Model.Count; i++)
                             {
-                                <tr>
+                                <tr data-date="@Model[i].Date">
                                     <td>@(i+1)</td>
                                     <td>@Model[i].PhoneNumber</td>
                                     <td>@Model[i].PlateNumber</td>
@@ -70,11 +96,11 @@
                                     {
                                         <td>@Model[i].Parking</td>
                                     }
-                                else
+                                    else
                                     {
                                         <td>@Model[i].Price تومان</td>
                                     }
-                            </tr>
+                                </tr>
                             }
                         </tbody>
                     </table>
@@ -83,7 +109,11 @@
                 <hr />
 
             </div>
-            </div>
+        </div>
+
+    <script src="~/js/tableSearch.js"></script>
+    <script src="~/js/sorter.js"></script>
+
     </body>
 
 </html>
