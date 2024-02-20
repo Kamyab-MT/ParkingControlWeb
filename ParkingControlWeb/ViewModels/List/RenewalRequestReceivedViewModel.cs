@@ -8,5 +8,6 @@
         public string Service { get; set; }
         public string Card { get; set; }
         public string Time { get; set; }
+        public string Description { get; set; }
     }
 }

@@ -9,7 +9,9 @@ namespace ParkingControlWeb.ViewModels.Request
         public string CardName;
         public string CardNumber;
 
-        public int State; //0_Nothing // 1_done // 2_Proccess // -1_Failed
+        public bool Pending;
+
+        public List<RenewalVM> renewalVMs;
 
         public string OneMonthPrice;
         public string ThreeMonthPrice;
@@ -29,5 +31,13 @@ namespace ParkingControlWeb.ViewModels.Request
         [Display(Name = "زمان واریز")]
         [Required(ErrorMessage = "وارد کنید")]
         public string Date { get; set; }
+    }
+
+    public class RenewalVM
+    {
+        public string Date;
+        public string Service;
+        public string Status; //0_Nothing // 1_done // 2_Proccess // -1_Failed
+        public string Desc = "-";
     }
 }

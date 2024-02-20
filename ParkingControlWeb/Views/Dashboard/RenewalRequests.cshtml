@@ -60,8 +60,11 @@
                                 <td>@Model[i].Card</td>
                                 <td>@Model[i].Time</td>
                                 <td>
-                                    <a asp-controller="Dashboard" asp-action="AcceptRenewal" asp-route-id="@Model[i].Id" class="btn btn-success">تایید</a>
-                                    <a asp-controller="Dashboard" asp-action="RejectRenewal" asp-route-id="@Model[i].Id" class="btn btn-danger">رد کردن</a>
+                                    <a asp-controller="Dashboard" asp-action="AcceptRenewal" asp-route-id="@Model[i].Id|@Model[i].Description" class="btn btn-success">تایید</a>
+                                    <a asp-controller="Dashboard" asp-action="RejectRenewal" asp-route-id="@Model[i].Id|@Model[i].Description" class="btn btn-danger">رد کردن</a>
+                                    <br />
+                                    <br />
+                                    <textarea asp-for="@Model[i].Description"></textarea>
                                 </td>
                             </tr>
                         }

@@ -16,7 +16,6 @@ namespace ParkingControlWeb.Controllers
     public class RecordsController : Controller
     {
 
-        //readonly ApplicationDbContext _dbContext;
         readonly UserManager<AppUser> _userManager;
         readonly SignInManager<AppUser> _signInManager;
         readonly IRecord _recordRepository;
@@ -52,11 +51,13 @@ namespace ParkingControlWeb.Controllers
 
             var records = await _recordRepository.GetAllPendingFromParking(parking);
             List<Record> recordsList;
-
+/*
             if (User.IsInRole("SystemAdmin"))
                 recordsList = records.ToList();
             else
-                recordsList = records.Where(s => s.Creator == User.GetUserId()).ToList();
+                recordsList = records.Where(s => s.Creator == User.GetUserId()).ToList();*/
+
+            recordsList = records.ToList();
 
             List<ActiveRecordViewModel> vmRecords = new List<ActiveRecordViewModel>();
 

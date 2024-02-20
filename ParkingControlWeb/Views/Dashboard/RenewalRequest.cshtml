@@ -11,40 +11,28 @@
 <body>
 
     <div class="container-fluid mt-5">
+        
         <div class="modal-content rounded-5 shadow">
 
             <div class="modal-body p-5 pt-0">
                 
                 @{
                     string s = "";
-                    string type = "";
                     string text = "";
 
-                    if (Model.State == 1)
+                    if (Model.Pending)
                     {
-                        type = "success";
-                        text = "درخواست تایید و اشتراک شما با موفقیت تمدید شد";
-                    }
-                    if (Model.State == 2)
-                    {
-                        type = "info";
                         s = "disabled";
-                        text = "درحال حاضر یک درخواست درحال پردازش دارید، لطفا صبور باشید.";
-                    }
-                    if (Model.State == -1)
-                    {
-                        type = "danger";
-                        text = "درخواست شما رد شد";
                     }
                 }
 
                 <fieldset @s>
                     
-                    @if (Model.State == 2 || Model.State == -1 || Model.State == 1)
+                    @if (Model.Pending)
                     {
                         <div class="row mt-3">
-                            <div class="alert alert-@type" role="alert">
-                                @text
+                            <div class="alert alert-info" role="alert">
+                                درحال حاضر یک درخواست درحال پردازش دارید، لطفا صبور باشید.
                             </div>
                         </div>
                     }
@@ -128,6 +116,42 @@
 
             </div>
         </div>
+        
+        <br />
+        <hr />
+        <br />
+
+        <h2>تاریخچه درخواست ها</h2>
+        <table class="table table-hover">
+
+            <tr>
+                <th>تاریخ</th>
+                <th>سرویس مورد نظر</th>
+                <th>وضعیت</th>
+                <th>توضیحات</th>
+            </tr>
+
+            @for(int i = 0; i < Model.renewalVMs.Count; i++)
+            {
+                <tr>
+                    <td>@Model.renewalVMs[i].Date</td>
+                    <td>@Model.renewalVMs[i].Service</td>
+
+                    @{
+                        string type = "info";
+
+                        if (Model.renewalVMs[i].Status == "موفق")
+                            type = "success";
+                        else if (Model.renewalVMs[i].Status == "ناموفق")
+                            type = "danger";
+                    }
+                    <td class="text-@type">@Model.renewalVMs[i].Status</td>
+                    <td>@Model.renewalVMs[i].Desc</td>
+
+                </tr>
+            }
+
+        </table>
     </div>
 
     <script>

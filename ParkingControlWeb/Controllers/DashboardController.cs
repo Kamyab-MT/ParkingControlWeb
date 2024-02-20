@@ -436,7 +436,8 @@ namespace ParkingControlWeb.Controllers
 
             return View(VM);
         }
-
+        
+        [Authorize(Roles = "GlobalAdmin")]
         public async Task<IActionResult> Active(string id)
         {
 
@@ -502,6 +503,7 @@ namespace ParkingControlWeb.Controllers
             return RedirectToAction("UsersList", "Dashboard");
         }
 
+        [Authorize(Roles = "GlobalAdmin")]
         public async Task<IActionResult> Renewal(string id)
         {
 
@@ -635,17 +637,35 @@ namespace ParkingControlWeb.Controllers
             var cardName = await _context.MetaDatas.FirstOrDefaultAsync(s => s.Key == "RenewalCardName");
             var cardNumber = await _context.MetaDatas.FirstOrDefaultAsync(s => s.Key == "RenewalCardNumber");
 
-            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.UserId == User.GetUserId());
-
-            if (req != null)
+            var reqs = _context.RenewalRequests.Where(s => s.UserId == User.GetUserId()).ToList();
+            
+            for (int i = 0; i < reqs.Count; i++)
             {
-                renewalViewModel.State = req.Status;
+                if (reqs[i].Status == 2)
+                    renewalViewModel.Pending = true;
+            }
 
-                if (req.Status == -1 || req.Status == 1)
+            renewalViewModel.renewalVMs = new List<RenewalVM>();
+
+            string[] serviceTexts = { "یک ماهه", "سه ماهه", "شش ماهه", "یک ساله" };
+
+            for (int i = 0; i < reqs.Count; i++)
+            {
+                string statusText = "";
+                
+                if (reqs[i].Status == 1)
+                    statusText = "موفق";
+                else if (reqs[i].Status == -1)
+                    statusText = "ناموفق";
+                else if (reqs[i].Status == 2)
+                    statusText = "درحال پردازش";
+
+                renewalViewModel.renewalVMs.Add(new RenewalVM()
                 {
-                    _context.RenewalRequests.Remove(req);
-                    _context.SaveChanges();
-                }
+                    Date = reqs[i].Time,
+                    Service = serviceTexts[i],
+                    Status = statusText
+                });
             }
 
             renewalViewModel.CardName = cardName.Value.Decrypt();
@@ -668,6 +688,7 @@ namespace ParkingControlWeb.Controllers
                 ServiceIndex = int.Parse(vm.OptionSelected),
                 Status = 2,
                 UserId = User.GetUserId(),
+                Description = "-"
             });
 
             var result = _context.SaveChanges() > 0;
@@ -684,7 +705,7 @@ namespace ParkingControlWeb.Controllers
         {
             List<RenewalRequestReceivedViewModel> vm = new List<RenewalRequestReceivedViewModel>();
 
-            var pending = await _context.RenewalRequests.Where(s => s.Status == 2).ToListAsync();
+            var pending = await _context.RenewalRequests.Where(s=> s.Status == 2).ToListAsync();
 
             string[] serviceText = { "یک ماهه", "سه ماهه", "شش ماهه", "یک ساله"};
 
@@ -701,6 +722,7 @@ namespace ParkingControlWeb.Controllers
                     PhoneNumber = user.UserName.Decrypt(),
                     Name = info.FullName.Decrypt(),
                     Time = pending[i].Time,
+                    Description = pending[i].Description
                 });
             }
 
@@ -709,9 +731,14 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> AcceptRenewal(string id)
         {
-            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == id);
+
+            string idText = id.Substring(0,id.IndexOf('|'));
+            string descText = id.Substring(id.IndexOf('|')+1);
+
+            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == idText);
             var user = await _userManager.FindByIdAsync(req.UserId);
 
+            req.Description = descText;
             req.Status = 1;
 
             int[] months = { 1, 3, 6, 12 };
@@ -729,8 +756,12 @@ namespace ParkingControlWeb.Controllers
         public async Task<IActionResult> RejectRenewal(string id)
         {
 
-            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == id);
-            
+            string idText = id.Substring(0, id.IndexOf('|'));
+            string descText = id.Substring(id.IndexOf('|') + 1);
+
+            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == idText);
+
+            req.Description = descText;
             req.Status = -1;
 
             if (_context.SaveChanges() > 0)
