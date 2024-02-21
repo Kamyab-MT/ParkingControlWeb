@@ -705,24 +705,25 @@ namespace ParkingControlWeb.Controllers
         {
             List<RenewalRequestReceivedViewModel> vm = new List<RenewalRequestReceivedViewModel>();
 
-            var pending = await _context.RenewalRequests.Where(s=> s.Status == 2).ToListAsync();
+            var reqs = await _context.RenewalRequests.ToListAsync();
 
             string[] serviceText = { "یک ماهه", "سه ماهه", "شش ماهه", "یک ساله"};
 
-            for (int i = 0; i < pending.Count; i++)
+            for (int i = 0; i < reqs.Count; i++)
             {
-                AppUser user = await _userManager.FindByIdAsync(pending[i].UserId);
+                AppUser user = await _userManager.FindByIdAsync(reqs[i].UserId);
                 Info info = await _infoRepository.GetById(user.InfoId);
 
                 vm.Add(new RenewalRequestReceivedViewModel()
                 {
-                    Id = pending[i].Id,
-                    Card = pending[i].CardNumber.Decrypt(),
-                    Service = serviceText[pending[i].ServiceIndex],
+                    Id = reqs[i].Id,
+                    Card = reqs[i].CardNumber.Decrypt(),
+                    Service = serviceText[reqs[i].ServiceIndex],
                     PhoneNumber = user.UserName.Decrypt(),
                     Name = info.FullName.Decrypt(),
-                    Time = pending[i].Time,
-                    Description = pending[i].Description
+                    Time = reqs[i].Time,
+                    Description = reqs[i].Description,
+                    Status = reqs[i].Status,
                 });
             }
 
@@ -732,13 +733,10 @@ namespace ParkingControlWeb.Controllers
         public async Task<IActionResult> AcceptRenewal(string id)
         {
 
-            string idText = id.Substring(0,id.IndexOf('|'));
-            string descText = id.Substring(id.IndexOf('|')+1);
-
-            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == idText);
+            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == id);
             var user = await _userManager.FindByIdAsync(req.UserId);
 
-            req.Description = descText;
+            req.Description = "-";
             req.Status = 1;
 
             int[] months = { 1, 3, 6, 12 };
@@ -753,15 +751,12 @@ namespace ParkingControlWeb.Controllers
             return RedirectToAction("RenewalRequests", "Dashboard");
         }
 
-        public async Task<IActionResult> RejectRenewal(string id)
+        public async Task<IActionResult> RejectRenewal(RenewalRequestReceivedViewModel vm)
         {
 
-            string idText = id.Substring(0, id.IndexOf('|'));
-            string descText = id.Substring(id.IndexOf('|') + 1);
+            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == vm.Id);
 
-            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == idText);
-
-            req.Description = descText;
+            req.Description = vm.Description;
             req.Status = -1;
 
             if (_context.SaveChanges() > 0)
@@ -770,6 +765,11 @@ namespace ParkingControlWeb.Controllers
                 TempData["Error"] = "فرآیند با خطا رو به رو شد";
 
             return RedirectToAction("RenewalRequests", "Dashboard");
+        }
+
+        public IActionResult RenewalModal()
+        {
+            return PartialView("_RenewalPopup");
         }
 
         public IActionResult Charge()

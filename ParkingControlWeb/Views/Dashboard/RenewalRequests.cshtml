@@ -52,21 +52,96 @@
                     {
                         @for (int i = 0; i < Model.Count; i++)
                         {
-                            <tr>
-                                <td>@(i+1)</td>
-                                <td>@Model[i].Name</td>
-                                <td>@Model[i].PhoneNumber</td>
-                                <td>@Model[i].Service</td>
-                                <td>@Model[i].Card</td>
-                                <td>@Model[i].Time</td>
-                                <td>
-                                    <a asp-controller="Dashboard" asp-action="AcceptRenewal" asp-route-id="@Model[i].Id|@Model[i].Description" class="btn btn-success">تایید</a>
-                                    <a asp-controller="Dashboard" asp-action="RejectRenewal" asp-route-id="@Model[i].Id|@Model[i].Description" class="btn btn-danger">رد کردن</a>
-                                    <br />
-                                    <br />
-                                    <textarea asp-for="@Model[i].Description"></textarea>
-                                </td>
-                            </tr>
+                            @if(Model[i].Status == 2)
+                            {
+                                <tr>
+                                    <td>@(i+1)</td>
+                                    <td>@Model[i].Name</td>
+                                    <td>@Model[i].PhoneNumber</td>
+                                    <td>@Model[i].Service</td>
+                                    <td>@Model[i].Card</td>
+                                    <td>@Model[i].Time</td>
+                                    <td>
+                                        
+                                        <button id="openModalButton" type="button" class="btn btn-info">عملیات</button>
+@* 
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <a asp-controller="Dashboard" asp-action="AcceptRenewal" asp-route-id="@Model[i].Id|@Model[i].Description" class="btn btn-success">تایید</a>
+                                            </div>
+                                            <div class="col-6">
+                                                <form action="RejectRenewal">
+
+                                                    <input type="hidden" asp-for=@Model[i].Id />
+
+                                                    <button type="submit" class="btn btn-danger">رد کردن</button>
+
+                                                    <br />
+                                                    <br />
+                                                    <textarea style="resize:none;" asp-for="@Model[i].Description" placeholder="دلیل رد کردن" ></textarea>
+                                                </form>
+                                            </div>
+                                        </div>
+ *@                                    
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    }
+
+                </tbody>
+            </table>
+
+            <hr class="mt-5 mb-5"/>
+
+            <div class="row">
+
+                <div class="col-6">
+                    <h3>تاریخچه درخواست ها</h3>
+                </div>
+
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>نام درخواست دهنده</th>
+                        <th>شماره تلفن</th>
+                        <th>سرویس مد نظر</th>
+                        <th>4 رقم آخر کارت بانکی</th>
+                        <th>زمان واریز</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (Model != null)
+                    {
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            @if (Model[i].Status != 2)
+                            {
+                                
+                                <tr>
+                                    <td>@(i + 1)</td>
+                                    <td>@Model[i].Name</td>
+                                    <td>@Model[i].PhoneNumber</td>
+                                    <td>@Model[i].Service</td>
+                                    <td>@Model[i].Card</td>
+                                    <td>@Model[i].Time</td>
+                                    <td>
+                                        @if(Model[i].Status == 1)
+                                        {
+                                            <span class="text text-success">موفق</span>
+                                        }
+                                        @if (Model[i].Status == -1)
+                                        {
+                                            <span class="text text-danger">رد شده</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
                         }
 
                     }
@@ -76,6 +151,30 @@
         </div>
 
     </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body-content">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#openModalButton').click(function () {
+                $('#modal-body-content').load('/Dashboard/RenewalModal');
+                $('#myModal').modal('show');
+            });
+        });
+    </script>
 
 </body>
 
