@@ -16,5 +16,6 @@ namespace ParkingControlWeb.Models
         public string Time { get; set; }
         public int Status { get; set; }
         public string Description { get; set; }
+        public DateTime DateCreated { get; set; }
     }
 }

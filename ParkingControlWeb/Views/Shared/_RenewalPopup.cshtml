@@ -1,5 +1,65 @@
-﻿@using ParkingControlWeb.ViewModels.Request
+﻿
+<style>
 
-@model RenewalRequest
+    .form-check-input[type="radio"] {
+        width: 20px;
+        height: 20px;
+    }
 
-<h2>Modal Content</h2>
+    #flexRadioDefault1:checked {
+        background-color: #009f19d4;
+        border-color : #009f19d4;
+    }
+
+    #flexRadioDefault2:checked {
+        background-color: red;
+        border-color: red;
+    }
+</style>
+
+<div class="container">
+    <h3 class="text-end mt-2 mb-5">تایید / رد کردن درخواست تمدید</h3>
+
+    <div class="row justify-content-center">
+        <form asp-controller="Dashboard" asp-action="RenewalAction" method="post">
+
+            <div class="col-md-12 mb-3">
+
+                <input type="hidden" name="Id" id="requestIdInput"/>
+
+                <div class="mb-3">
+                    <textarea class="form-control" rows="4" style="resize:none;" name="Description" placeholder="توضیحات"></textarea>
+                </div>
+
+                <div class="row text-center">
+                    <div class="col">
+
+                        <input name="Accepted" class="form-check-input" type="radio" value="1" id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            تایید
+                        </label>
+                    </div>
+                    <div class="col">
+
+                        <input name="Accepted" class="form-check-input" type="radio" value="-1" id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            رد
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+
+                <div class="row">
+
+                    <div class="text-center col">
+                        <button type="submit" class="btn btn-success form-control">ارسال</button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</div>

@@ -31,6 +31,7 @@ namespace ParkingControlWeb.ViewModels.Request
         [Display(Name = "زمان واریز")]
         [Required(ErrorMessage = "وارد کنید")]
         public string Date { get; set; }
+
     }
 
     public class RenewalVM
@@ -38,6 +39,7 @@ namespace ParkingControlWeb.ViewModels.Request
         public string Date;
         public string Service;
         public string Status; //0_Nothing // 1_done // 2_Proccess // -1_Failed
-        public string Desc = "-";
+        public string Desc;
+        public DateTime DateCreated;
     }
 }

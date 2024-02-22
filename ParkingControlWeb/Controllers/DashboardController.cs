@@ -638,7 +638,7 @@ namespace ParkingControlWeb.Controllers
             var cardNumber = await _context.MetaDatas.FirstOrDefaultAsync(s => s.Key == "RenewalCardNumber");
 
             var reqs = _context.RenewalRequests.Where(s => s.UserId == User.GetUserId()).ToList();
-            
+
             for (int i = 0; i < reqs.Count; i++)
             {
                 if (reqs[i].Status == 2)
@@ -664,8 +664,23 @@ namespace ParkingControlWeb.Controllers
                 {
                     Date = reqs[i].Time,
                     Service = serviceTexts[i],
-                    Status = statusText
+                    Status = statusText,
+                    Desc = reqs[i].Description,
+                    DateCreated = reqs[i].DateCreated,
                 });
+            }
+
+            for (int i = 0; i < renewalViewModel.renewalVMs.Count; i++)
+            {
+                for (int j = i + 1; j < renewalViewModel.renewalVMs.Count; j++)
+                {
+                    if (renewalViewModel.renewalVMs[i].DateCreated < renewalViewModel.renewalVMs[j].DateCreated)
+                    {
+                        var temp = renewalViewModel.renewalVMs[j];
+                        renewalViewModel.renewalVMs[j] = renewalViewModel.renewalVMs[i];
+                        renewalViewModel.renewalVMs[i] = temp;
+                    }
+                }
             }
 
             renewalViewModel.CardName = cardName.Value.Decrypt();
@@ -688,7 +703,8 @@ namespace ParkingControlWeb.Controllers
                 ServiceIndex = int.Parse(vm.OptionSelected),
                 Status = 2,
                 UserId = User.GetUserId(),
-                Description = "-"
+                Description = "-",
+                DateCreated = DateTime.Now
             });
 
             var result = _context.SaveChanges() > 0;
@@ -730,37 +746,25 @@ namespace ParkingControlWeb.Controllers
             return View(vm);
         }
 
-        public async Task<IActionResult> AcceptRenewal(string id)
-        {
-
-            var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == id);
-            var user = await _userManager.FindByIdAsync(req.UserId);
-
-            req.Description = "-";
-            req.Status = 1;
-
-            int[] months = { 1, 3, 6, 12 };
-
-            user.SubscriptionExpiry = user.SubscriptionExpiry.AddMonths(months[req.ServiceIndex]);
-
-            if (_context.SaveChanges() > 0)
-                TempData["Success"] = "اشتراک کاربر با موفقیت تمدید شد";
-            else
-                TempData["Error"] = "فرآیند با خطا رو به رو شد";
-
-            return RedirectToAction("RenewalRequests", "Dashboard");
-        }
-
-        public async Task<IActionResult> RejectRenewal(RenewalRequestReceivedViewModel vm)
+        [HttpPost]
+        public async Task<IActionResult> RenewalAction(RenewalActionViewModel vm)
         {
 
             var req = await _context.RenewalRequests.FirstOrDefaultAsync(s => s.Id == vm.Id);
+            var user = await _userManager.FindByIdAsync(req.UserId);
 
             req.Description = vm.Description;
-            req.Status = -1;
+            req.Status = vm.Accepted;
+
+            if(vm.Accepted == 1)
+            {
+                int[] months = { 1, 3, 6, 12 };
+
+                user.SubscriptionExpiry = user.SubscriptionExpiry.AddMonths(months[req.ServiceIndex]);
+            }
 
             if (_context.SaveChanges() > 0)
-                TempData["Success"] = "درخواست کاربر رد شد";
+                TempData["Success"] = "عملیات با موفقیت انجام شد";
             else
                 TempData["Error"] = "فرآیند با خطا رو به رو شد";
 
