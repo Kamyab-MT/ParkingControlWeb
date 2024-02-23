@@ -171,12 +171,9 @@ namespace ParkingControlWeb.Controllers
             return RedirectToAction("Index", "Records");
         }
 
-        public IActionResult ChargeDriver(string id)
+        public IActionResult ChargeDriverModal()
         {
-            ChargeDriverViewModel vm = new ChargeDriverViewModel();
-            vm.Amount = id.Substring(id.IndexOf('|')+1);
-            vm.DriverId = id.Substring(0, id.IndexOf('|'));
-            return View(vm);
+            return PartialView("_ChargeDriver");
         }
 
         [HttpPost]
@@ -323,28 +320,21 @@ namespace ParkingControlWeb.Controllers
 
                 string parkingId = ParkingId;
                 string sup = User.IsInRole("SystemAdmin") ? UserId : SuperiorId;
-                AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
 
-                AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username.Encrypt(), PhoneNumber = Username.Encrypt(), SuperiorUserId = sup, Active = 1, SubscriptionExpiry = user.SubscriptionExpiry, RegisterDate = DateTime.Now };
-
-                var conflict = await _ballanceRepository.Get(response.ParkingId, response.Id);
-
-                if (conflict == null)
-                {
-
-                    Ballance ballance = new Ballance()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        ParkingId = parkingId,
-                        UserId = newUser.Id,
-                        Amount = 0,
-                        DateJoined = DateTime.Now,
-                    };
-
-                    _ballanceRepository.Add(ballance);
-                }
+                AppUser newUser = new AppUser() { Id = Guid.NewGuid().ToString(), UserName = Username.Encrypt(), PhoneNumber = Username.Encrypt(), SuperiorUserId = sup, Active = 1, RegisterDate = DateTime.Now };
 
                 var result = await _userManager.CreateAsync(newUser);
+
+                Ballance ballance = new Ballance()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ParkingId = parkingId,
+                    UserId = newUser.Id,
+                    Amount = 0,
+                    DateJoined = DateTime.Now,
+                };
+
+                _ballanceRepository.Add(ballance);
 
                 if (result.Succeeded) // user created successfully
                 {
@@ -430,6 +420,8 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> ActivityCheck()
         {
+            if (User.IsInRole(Role.GlobalAdmin) || User.IsInRole(Role.Driver)) return null;
+
             var user = await _userManager.GetUserAsync(User);
             if (user.Active == 0)
             {
@@ -442,7 +434,7 @@ namespace ParkingControlWeb.Controllers
 
         public async Task<IActionResult> SubscriptionCheck()
         {
-            if (User.IsInRole(Role.GlobalAdmin)) return null;
+            if (User.IsInRole(Role.GlobalAdmin) || User.IsInRole(Role.Driver)) return null;
 
             var user = await _userManager.GetUserAsync(User);
 

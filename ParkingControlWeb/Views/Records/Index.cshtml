@@ -88,86 +88,86 @@
 
                             @foreach (var item in @Model.ActiveRecordsList.ActiveRecords)
                             {
-                            <tr data-date="@item.Date">
-                                    <td>@i</td>
-                                    <td>@item.PhoneNumber</td>
-                                    <td>@item.PlateNumber</td>
-                                    <td>@item.EntranceTime</td>
-                                    <td>
-                                        <p tabindex="1" data-toggle="tooltip" data-placement="top" title=@item.PassedTime>
-                                            @item.ExitTime
-                                        </p>
-                                    </td>
-                                    <td>
-                                        @if (item.Status == 0)
-                                        {
-                                            <a class="btn btn-warning w-75" asp-controller="Records" asp-action="StopARecord" asp-route-id="@item.Id">توقف</a>
-                                        }
-                                        else
-                                        {
-                                        <a class="btn btn-info w-50" data-toggle="collapse" href=".multi-collapse_@i" aria-expanded="false" aria-controls="ballance_@i charge_@i dif_@i">جزئیات</a>
-
-
-                                            if (!item.IsMoneyEnough)
+                                <tr data-date="@item.Date">
+                                        <td>@i</td>
+                                        <td>@item.PhoneNumber</td>
+                                        <td>@item.PlateNumber</td>
+                                        <td>@item.EntranceTime</td>
+                                        <td>
+                                            <p tabindex="1" data-toggle="tooltip" data-placement="top" title=@item.PassedTime>
+                                                @item.ExitTime
+                                            </p>
+                                        </td>
+                                        <td>
+                                            @if (item.Status == 0)
                                             {
-                                                <span tabindex="0" data-toggle="tooltip" data-placement="top" title="موجودی کاربر کافی نمی‌باشد">
-                                                    <a class="btn btn-danger disabled w-25">خروج</a>
-                                                </span>
+                                                <a class="btn btn-warning w-75" asp-controller="Records" asp-action="StopARecord" asp-route-id="@item.Id">توقف</a>
                                             }
                                             else
                                             {
-                                                <a class="btn btn-danger w-25" asp-controller="Records" asp-action="FinalizeARecord" asp-route-id="@item.Id">خروج</a>
-                                            }
-                                        }
+                                            <a class="btn btn-info w-50" data-toggle="collapse" href=".multi-collapse_@i" aria-expanded="false" aria-controls="ballance_@i charge_@i dif_@i">جزئیات</a>
 
 
-                                    </td>
-                            </tr>
-                            if(item.Status == -1)
-                            {
-                                <tr>
-                                    <td></td>
-                                    <td>
-                                        <div id="ballance_@i" class="collapse multi-collapse_@i">
-                                            <span class="text text-success">موجودی کاربر : @item.Ballance تومان</span>
-                                        </div>
-                                    </td>
+                                                if (!item.IsMoneyEnough)
+                                                {
+                                                    <span tabindex="0" data-toggle="tooltip" data-placement="top" title="موجودی کاربر کافی نمی‌باشد">
+                                                        <a class="btn btn-danger disabled w-25">خروج</a>
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <a class="btn btn-danger w-25" asp-controller="Records" asp-action="FinalizeARecord" asp-route-id="@item.Id">خروج</a>
+                                                }
+                                            }
 
-                                    <td>
-                                        <div id="ballance_@i" class="collapse multi-collapse_@i">
-                                            <span class="text text-danger">هزینه خروج : @item.Price تومان</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div id="dif_@i" class="collapse multi-collapse_@i">
-                                            @if (item.IsMoneyEnough)
-                                            {
-                                                <span class="text text-success">باقی : @item.Diffrence+ تومان</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="text text-danger">باقی : @item.Diffrence- تومان</span>
-                                            }
-                                        </div>
-                                    </td>
+
+                                        </td>
+                                </tr>
+                                if(item.Status == -1)
+                                {
+                                    <tr data-date="@item.Date">
+                                        <td></td>
+                                        <td>
+                                            <div id="ballance_@i" class="collapse multi-collapse_@i">
+                                                <span class="text text-success">موجودی کاربر : @item.Ballance تومان</span>
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div id="ballance_@i" class="collapse multi-collapse_@i">
+                                                <span class="text text-danger">هزینه خروج : @item.Price تومان</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div id="dif_@i" class="collapse multi-collapse_@i">
+                                                @if (item.IsMoneyEnough)
+                                                {
+                                                    <span class="text text-success">باقی : @item.Diffrence+ تومان</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text text-danger">باقی : @item.Diffrence- تومان</span>
+                                                }
+                                            </div>
+                                        </td>
                                     
-                                    <td colspan="3">
-                                        <div id="charge_@i" class="collapse multi-collapse_@i">
-                                            <div class="row">
-                                                <div class="col-8">
-                                                    <a  class="form-control btn btn-success" asp-controller="Records" asp-action="ChargeDriver" asp-route-id="@item.Id|@item.Diffrence">شارژ کردن</a>
+                                        <td colspan="3">
+                                            <div id="charge_@i" class="collapse multi-collapse_@i">
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                    <button class="openModalButton form-control btn btn-success" id="ch_btn_@i" data-request-id="@item.Id" data-request-diff="@item.Diffrence" onclick="openModal(ch_btn_@i)">شارژ کردن</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </td>
+                                        </td>
 
-                                </tr>
+                                    </tr>
 
-                            }
+                                }
 
-                            i = i + 1;
+                                i = i + 1;
                             
-                        }
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -224,6 +224,20 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script>
 
+        function openModal(name) {
+
+            $('#modal-body-content-bg').load('/Records/ChargeDriverModal');
+            $('#myModalBg').modal('show');
+
+            setTimeout(function () {
+                var requestId = $(name).data('request-id');
+                var requestDiff = $(name).data('request-diff');
+
+                $('#requestIdInput').val(requestId);
+                $('#floatingInput12').val(requestDiff);
+            }, 100); // Adjust the delay time as needed
+        }
+
         function getVal(ref) {
 
             var doc = document.getElementById(ref);
@@ -231,6 +245,7 @@
             alert(doc.innerHTML);
             return doc.innerHTML;
         }
+
     </script>
 
     <script src="~/js/tableSearch.js"></script>

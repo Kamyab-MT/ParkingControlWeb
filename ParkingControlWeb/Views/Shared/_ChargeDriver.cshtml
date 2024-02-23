@@ -1,6 +1,4 @@
-﻿@using ParkingControlWeb.ViewModels.Add;
-
-@model ChargeDriverViewModel
+﻿@* @model ChargeDriverViewModel *@
 
 @{
     ViewData["Title"] = "شارژ کردن حساب راننده";
@@ -27,87 +25,65 @@
 
     <body>
 
-    <div class="container-fluid mt-5">
-        <div class="modal-content rounded-5 shadow">
-            <div class="modal-header p-5 pb-4 border-bottom-0">
+    <div class="container-fluid p-5">
 
-                <h1 class="fw-bold mb-0 fs-2">
-                    شارژ حساب راننده
-                </h1>
-            </div>
-            <hr />
+        <h1 class="fw-bold mb-0">
+            شارژ حساب راننده
+        </h1>
 
-            <div class="modal-body p-5 pt-0">
-                
+        <div class="row mt-5">
+
+            <form asp-action="ChargeDriver">
+
+                <input type="hidden" name="DriverId" id="requestIdInput" />
                 <div class="row">
+                    <div class="col-8 d-flex align-items-center">
 
-                    <form asp-action="ChargeDriver">
-
-                        <input type="hidden" asp-for="DriverId"/>
-                        <div class="row">
-                            <div class="col-4 d-flex align-items-center">
-
-                                <div class="form-floating mb-3 justify-content-star3t form-group w-100">
-                                    <input asp-for="Amount" dir="ltr" class="form-control rounded-3" id="floatingInput12" placeholder="1000">
-                                    <label asp-for="Amount" for="floatingInput12" class="ms-0"></label>
-                                </div>
-                            </div>
-
-                            <div class="col-3 d-flex align-items-center">
-                                <span class="">تومان</span>
-                            </div>
-
-                            <div class="col-5 d-flex align-items-center">
-                                <p class="text text-info">*مبلغ وارد شده باید بین 10 هزار تومان تا 10 میلیون تومان باشد</p>
-                            </div>
+                        <div class="form-floating mb-3 justify-content-star3t form-group w-100">
+                            <input name="Amount" dir="ltr" class="form-control rounded-3" id="floatingInput12" placeholder="1000">
+                            <label for="floatingInput12" class="ms-0">مبلغ</label>
                         </div>
-                        <span asp-validation-for="Amount" class="text-danger"></span>
-                        <br />
-                        <br />
-                        <div class="row">
-                            <div class="col-6">
+                    </div>
 
-                                <div class="form-floating mb-3 justify-content-star3t form-group">
-                                    <input asp-for="CardNumber" type="text" class="form-control rounded-3" id="floatingInput8" placeholder="XXXX-XXXX-XXXX-XXXX">
-                                    <label asp-for="CardNumber" for="floatingInput8" class="ms-0"></label>
-                                    <span asp-validation-for="CardNumber" class="text-danger"></span>
-                                </div>
-                            </div>
-                        <div>
+                    <div class="col-4 d-flex align-items-center">
+                        <span class="">تومان</span>
+                    </div>
 
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-floating mb-3 justify-content-star3t form-group">
-                                    <input asp-for="OwnerName" type="text" class="form-control rounded-3" id="floatingInput9" placeholder="نام صاحب کارت">
-                                    <label asp-for="OwnerName" for="floatingInput9" class="ms-0"></label>
-                                    <span asp-validation-for="OwnerName" class="text-danger"></span>
-                                </div>
-                            </div>
-                        <div>
-
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-floating mb-3 justify-content-star3t form-group">
-                                        <input asp-for="TrackingCode" type="text" class="form-control rounded-3" id="floatingInput11" placeholder="کد رهگیری">
-                                        <label asp-for="TrackingCode" for="floatingInput11" class="ms-0"></label>
-                                        <span asp-validation-for="TrackingCode" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6">
-                                <button class="btn btn-lg btn-success mt-5 form-control rounded-3" type="submit">شارژ و ثبت تراکنش</button>
-                            </div>
-                            <div class="col-6">
-                                <a class="btn btn-lg btn-secondary mt-5 form-control rounded-3" asp-controller="Records" asp-action="Index">بازگشت</a>
-                            </div>
-                        </div>
-                    </form>
-
+                    <div class="col-12 d-flex align-items-center">
+                        <p class="text text-info">*مبلغ وارد شده باید بین 10 هزار تومان تا 10 میلیون تومان باشد</p>
+                    </div>
+                </div>
+                <span class="text-danger"></span>
+                <div class="row mt-2">
+                    <div class="form-floating mb-3 justify-content-star3t form-group">
+                        <input name="CardNumber" type="text" class="form-control rounded-3" id="floatingInput8" placeholder="XXXX-XXXX-XXXX-XXXX">
+                        <label for="floatingInput8" class="ms-0">شماره کارت</label>
+                        <span class="text-danger"></span>
+                    </div>
                 </div>
 
-            </div>
+                <div class="row">
+                    <div class="form-floating mb-3 justify-content-star3t form-group">
+                        <input name="OwnerName" type="text" class="form-control rounded-3" id="floatingInput9" placeholder="نام صاحب کارت">
+                        <label for="floatingInput9" class="ms-0">نام صاحب کارت</label>
+                        <span class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-floating mb-3 justify-content-star3t form-group">
+                        <input name="TrackingCode" type="text" class="form-control rounded-3" id="floatingInput11" placeholder="کد رهگیری" value="-">
+                        <label for="floatingInput11" class="ms-0">کد پیگیری</label>
+                        <span class="text-info">در صورت نداشتن کد پیگیری - بذارید</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <button class="btn btn-lg btn-success mt-5 form-control rounded-3" type="submit">شارژ و ثبت تراکنش</button>
+                </div>
+
+            </form>
+
         </div>
     </div>
 

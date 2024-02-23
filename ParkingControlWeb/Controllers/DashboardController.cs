@@ -112,7 +112,7 @@ namespace ParkingControlWeb.Controllers
             return View(null);
         }
 
-        [Authorize()]
+        [Authorize(Roles = "GlobalAdmin,SystemAdmin")]
         public async Task<IActionResult> Register()
         {
 
@@ -124,9 +124,6 @@ namespace ParkingControlWeb.Controllers
 
             var Subscription = await SubscriptionCheck();
             if (Subscription != null) return Subscription;
-
-            if (User.IsInRole(Role.Driver) || User.IsInRole(Role.Expert))
-                return RedirectToAction("Index", "Home");
 
             RegisterViewModel model = new RegisterViewModel();
             return View(model);
