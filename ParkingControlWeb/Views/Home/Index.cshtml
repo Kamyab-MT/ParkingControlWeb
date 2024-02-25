@@ -1,12 +1,20 @@
 ﻿
 @{
-    ViewData["Title"] = "سانیار آنلاین";
+    ViewData["Title"] = "سون پارک - سامانه آنلاین اتوماسیون پارکینگ";
 }
 
 <head>
     <style>
         html {
             scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #221c5a;
+            background-image: url(../img/parking.jpg);
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: cover;
         }
 
         #box {
@@ -31,77 +39,36 @@
     </style>
 </head>
 <body>
-
-@*     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#004887;" aria-label="Fifth navbar example">
-            <div class="container">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div id="navbarsExample05" class="collapse navbar-collapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-2">
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header> *@
-
-    <section class="py-5 mb-5">
-        <div class="container px-5 pt-5">
-            <div class="row align-items-center">
-
-                <div class="col-lg-6 order-lg-1 mt-5 mt-lg-0 animate__animated animate__lightSpeedInRight">
-                    <div class="d-flex justify-content-center justify-content-lg-end">
-                        <div class="profile bg-gradient-primary-to-secondary">
-                            <img class="img-fluid" src="~/Images/Landing.png" alt="...">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 order-lg-2">
-                    <div class="text-center text-lg-end">
-                        <div class="fs-3 fw-light text-muted animate__animated animate__lightSpeedInRight">سامانه مدیریت پارکینگ آنلاین</div>
-                        <h1 class="display-1 fw-bolder mb-5 text-center animate__animated animate__lightSpeedInLeft"><span class="text-gradient d-inline" style="color:#287bb5;">سانیار</span></h1>
-                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-lg-center mb-3">
-@*                             <a class="btn btn-info round-5 btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder animate__animated animate__lightSpeedInRight rounded-pill" href="#s">ما که هستیم؟</a> *@
-                            <a class="btn btn-success btn-lg px-5 py-3 fs-6 fw-bolder animate__animated animate__lightSpeedInLeft rounded-pill" asp-controller="Account" asp-action="Login">ورود به حساب کاربری</a>
-                        </div>
+    <div class="container">
+        <div class="row justify-content-center align-items-center py-5 py-sm-0" style="min-height: 100vh;">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="text-center">
+                    <h1 class="example display-1 text-white ">سِــــوِن پـــــارک</h1>
+                    <div class="my-2 wow animate__animated animate__fadeInUp" data-wow-duration="2s" data-wow-delay="1.5s">
+                        <a asp-controller="Account" asp-action="Login" class="d-inline-block px-4 py-2 rounded bg-white text-dark mx-1">ورود به حساب کاربری</a>
+                        <a href="#" class="my-2 d-inline-block px-4 py-2 rounded text-white  bg-ae mx-1">ویژگی های سامانه</a>
+                        <a href="#" class="my-2 d-inline-block px-4 py-2 rounded text-white  bg-ae mx-1">تماس با ما</a>
+                        <h2 class="text-white opacity-75 my-4 wow animate__animated animate__fadeInUp" data-wow-duration="2s" data-wow-delay="1.5s">دستیار شخصی پارکینگ شما</h2>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <section class="py-5 mt-5">
-        <div class="container-fluid">
-            <div class="row p-5 bg-light animate__animated animate__slideInRight">
-
-                <div class="col-6">
-                    <p style="text-align:justify;" class="1h-lg" id="s">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
-                </div>
-
-                <div class="col-6 animate__animated animate__slideInLeft">
-                </div>
-            </div>
-
-            <div class="row p-5 bg-dark animate__animated animate__slideInLeft">
-                
-                <div class="col-6 animate__animated animate__slideInLeft">
-
-                </div>
-
-                <div class="col-6">
-                    <p style="text-align:justify;" class="1h-lg text-white" id="s">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
-                </div>
-            </div>
-        </div>
-        
-    </section>
-
-
-    <footer class="border-top footer">
-        <div class="container">
-            &copy; 1402 - سامانه مدیریت پارکینگ سانیار
-        </div>
-    </footer>
-
+    </div>
+    <script src="../js/wow.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            jQuery('.example').liveType({
+                typeSpeed: 85,
+                pauseEvery: 40,
+                pauseTime: 1500,
+                pauseOnPunctuation: true,
+                punctuationChars: ['.', '.', '?', '!', ':', ';'],
+                cursorEffect: true,
+                cursorSpeed: 1000,
+                cursor: '',
+                cursorClass: 'cursor'
+            });
+        })
+        new WOW().init();
+    </script>
 </body>

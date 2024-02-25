@@ -202,7 +202,9 @@ namespace ParkingControlWeb.Controllers
                             DailyRate = registerViewModel.DailyRate,
                             EntranceRate = registerViewModel.EntranceRate,
                             HourlyRate = registerViewModel.HourlyRate,
-                            OwnerId = newUser.Id
+                            Capacity = registerViewModel.Capacity,
+                            OwnerId = newUser.Id,
+                            PlaceTaken = 0,
                         };
 
                         _parkingRepository.Add(parking);

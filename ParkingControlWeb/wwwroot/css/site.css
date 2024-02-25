@@ -1,5 +1,7 @@
-html {
-  font-size: 14px;
+* {
+    margin: 0;
+    padding: 0;
+    outline: 0;
 }
 
 .form-all {
@@ -21,7 +23,52 @@ html {
   min-height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
-  font-family: 'Yekan Bakh FaNum'
+body,
+html {
+    font-family: 'Yekan Bakh FaNum';
+    font-size: 14px;
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+}
+
+.fs-12 {
+    font-size: 12px;
+}
+
+.fs-13 {
+    font-size: 13px;
+}
+
+.fs-14 {
+    font-size: 14px;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.bg-ae {
+    background-color: #ffffff59;
+}
+
+a.read-more::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    right: -12px;
+    width: 5px;
+    height: 5px;
+    background-color: #faf4f4;
+    border-radius: 50%;
+    box-shadow: 0 0 0 5px #ffffff61;
 }

@@ -3,9 +3,10 @@
     public class ActiveRecordsListViewModel
     {
         public List<ActiveRecordViewModel> ActiveRecords { get; set; }
-    }
+		public string RemToCap { get; set; }
+	}
 
-    public class ActiveRecordViewModel
+	public class ActiveRecordViewModel
     {
         public string Id { get; set; }
         public string PhoneNumber { get; set; }

@@ -17,5 +17,7 @@ namespace ParkingControlWeb.Models
         public int EntranceRate { get; set; }
         public int HourlyRate { get; set; }
         public int DailyRate { get; set; }
+        public int Capacity { get; set; }
+        public int PlaceTaken { get; set; }
     }
 }

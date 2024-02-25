@@ -79,6 +79,12 @@ namespace ParkingControlWeb.ViewModels.Account
         [Required(ErrorMessage = "نرخ روزانه را وارد کنید")]
         public int DailyRate { get; set; }
 
+        [DataType(DataType.PhoneNumber)]
+        [Display(Name = "ظرفیت پارکینگ")]
+        [Range(minimum: 1, maximum: 1000000, ErrorMessage = "رقم وارد شده باید بین 1 تومان الی 1 میلیون تومان باشد")]
+        [Required(ErrorMessage = "ظرفیت پارکینگ را وارد کنید")]
+        public int Capacity { get; set; }
+
         [Display(Name = "تمدید اولیه")]
         public string RenewalIndex { get; set; }
 

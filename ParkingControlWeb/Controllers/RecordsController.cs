@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ParkingControlWeb.Data;
 using ParkingControlWeb.Data.Enum;
 using ParkingControlWeb.Data.Extensions;
 using ParkingControlWeb.Data.Interface;
@@ -10,6 +9,7 @@ using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
 using ParkingControlWeb.ViewModels.Wrappers;
+using Python.Runtime;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -100,7 +100,11 @@ namespace ParkingControlWeb.Controllers
 
             ActiveRecordsViewModel activeRecordsViewModel = new ActiveRecordsViewModel()
             {
-                ActiveRecordsList = new ActiveRecordsListViewModel() { ActiveRecords = vmRecords }
+                ActiveRecordsList = new ActiveRecordsListViewModel() 
+                { 
+                    ActiveRecords = vmRecords,
+                    RemToCap = parking.Capacity + " / " + parking.PlaceTaken,
+                }
             };
 
             return View(activeRecordsViewModel);
@@ -114,12 +118,18 @@ namespace ParkingControlWeb.Controllers
                 if(ModelState.Values.SelectMany(v => v.Errors).ToList().Count != 1)
                 {
                     TempData["Error"] = "ورودی ها نامعتبر هستند";
-                    return RedirectToAction("Index", "Records");
+                    //TempData["Error"] = (ModelState.Values.SelectMany(v => v.Errors).ToList()[0].ErrorMessage.ToString());
+					return RedirectToAction("Index", "Records");
                 }
             }
 
             AppUser user = await _userManager.FindByIdAsync(User.GetUserId());
             Parking parking = await _parkingRepository.GetById(user.ParkingId);
+
+            bool additive = false;
+
+            if (parking.PlaceTaken >= parking.Capacity)
+                additive = true;
 
             string PlateNumber = recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
 
@@ -145,9 +155,14 @@ namespace ParkingControlWeb.Controllers
                 record.Creator = User.GetUserId();
                 record.Username = newUser.UserName;
 
+                parking.PlaceTaken++;
+
                 _recordRepository.Add(record);
 
-                TempData["Success"] = "ورود ماشین با موفقیت ثبت شد";
+                if(!additive)
+                    TempData["Success"] = "ورود ماشین با موفقیت ثبت شد";
+                else
+                    TempData["Info"] = "ورود ماشین مازاد بر ظرفیت پارکینگ با موفقیت ثبت شد";
 
                 return RedirectToAction("Index", "Records");
             }
@@ -162,6 +177,9 @@ namespace ParkingControlWeb.Controllers
         {
 
             Record record = await _recordRepository.GetAsync(id);
+            Parking parking = await _parkingRepository.GetById(record.ParkingId);
+
+            parking.PlaceTaken--;
 
             record.ExitTime = DateTime.Now;
             record.Status = -1;
@@ -250,6 +268,16 @@ namespace ParkingControlWeb.Controllers
                 TempData["Error"] = "موجودی کاربر کافی نمی‌باشد.";
 
             return RedirectToAction("Index", "Records");
+        }
+
+        public void RecognizePlateNumber()
+        {
+            using (Py.GIL())
+            {
+                PythonEngine.Initialize();
+                PythonEngine.Exec("print('Hello, Python!')");
+                PythonEngine.Shutdown();
+            }
         }
 
         public async Task<IActionResult> RecordsHistory()
