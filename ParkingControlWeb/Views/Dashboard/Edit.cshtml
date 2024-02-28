@@ -26,7 +26,7 @@
 
 <body>
 
-    <div class="container-fluid mt-5">
+    <div class="container-fluid mt-3">
         <div class="modal-content rounded-5 shadow">
             <div class="modal-header p-5 pb-4 border-bottom-0">
 
@@ -48,7 +48,7 @@
                         @{
                             int colSize = User.IsInRole("GlobalAdmin") ? 4 : 6;
                         }
-                        <div class="col-@colSize">
+                        <div class="col-xl-@colSize col-sm-12 mt-4">
 
                             <h3 class="text-dark mb-3">مشخصات حساب</h3>
                             @if (User.IsInRole("GlobalAdmin"))
@@ -67,7 +67,7 @@
 
                         </div>
 
-                        <div class="col-@colSize">
+                        <div class="col-xl-@colSize col-sm-12 mt-4">
 
                             <h3 class="text-dark mb-3">مشخصات شخصی</h3>
                             <div class="form-floating mb-3 justify-content-star3t form-group">
@@ -98,7 +98,7 @@
 
                         @if (User.IsInRole("GlobalAdmin"))
                         {
-                            <div class="col-@colSize">
+                            <div class="col-xl-@colSize col-sm-12 mt-4">
 
                                 <h3 class="text-dark mb-3">مشخصات پارکینگ</h3>
                                 <div class="form-floating mb-3 justify-content-star3t form-group">
@@ -149,11 +149,11 @@
 
                         <div class="row">
 
-                            <div class="col-6">
+                            <div class="col-xl-6 col-sm-12">
                                 <button class="mb-2 btn btn-lg rounded-3 btn-primary form-control" type="submit">ویرایش</button>
                             </div>
 
-                            <div class="col-6">
+                            <div class="col-xl-6 col-sm-12">
                                 <a asp-controller="Dashboard" asp-action="UsersList" class="mb-2 btn btn-lg rounded-3 btn-secondary form-control">بازگشت به داشبورد</a>
                             </div>
                         </div>

@@ -9,7 +9,12 @@
         displayTxt = "راننده";
 }
 
-<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width : 15vw; max-width: 15vw; height: 100vh; position:fixed;">
+<head>
+    <link rel="stylesheet" href="~/css/StyleSheet.css" />
+</head>
+
+
+<div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-light" style="width : 15vw; max-width: 15vw; height: 100vh; position:fixed;">
     <a class="d-flex align-items-center link-dark text-decoration-none" style="user-select: none;">
         <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
         <h3 class="fs-4 me-0">
@@ -25,12 +30,6 @@
             var controller = ViewContext.RouteData.Values["Controller"].ToString();
     }
 
-@*     <p>@User.Identity.Name</p>
-    <p>Global Admin : @User.IsInRole("GlobalAdmin")</p>
-    <p>System Admin : @User.IsInRole("SystemAdmin")</p>
-    <p>Expert : @User.IsInRole("Expert")</p>
-    <p>Driver : @User.IsInRole("Driver")</p>
-    <p>@controller/@action</p> *@
     @if (!User.IsInRole("Driver"))
     {
         if (!User.IsInRole("GlobalAdmin"))
@@ -156,12 +155,12 @@
         </li>
     }
 
-    <li class="nav-item">
-        <a class="nav-link link-danger" aria-current="page" asp-controller="Account" asp-action="LogOut">
-            <i class="bi bi-box-arrow-left"></i>
-            خروج از حساب کاربری
-        </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link link-danger" aria-current="page" asp-controller="Account" asp-action="LogOut">
+                <i class="bi bi-box-arrow-left"></i>
+                خروج از حساب کاربری
+            </a>
+        </li>
     </ul>
 
 

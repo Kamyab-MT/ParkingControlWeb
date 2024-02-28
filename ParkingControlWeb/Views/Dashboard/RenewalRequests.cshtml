@@ -27,10 +27,7 @@
 
 
             <div class="row">
-
-                <div class="col-6">
-                    <h3>درخواست های تمدید</h3>
-                </div>
+                <h3>درخواست های تمدید</h3>
 
             </div>
 
@@ -55,12 +52,12 @@
                             @if(Model[i].Status == 2)
                             {
                                 <tr>
-                                    <td>@(i+1)</td>
-                                    <td>@Model[i].Name</td>
-                                    <td>@Model[i].PhoneNumber</td>
-                                    <td>@Model[i].Service</td>
-                                    <td>@Model[i].Card</td>
-                                    <td>@Model[i].Time</td>
+                                    <th>@(i+1)</th>
+                                    <td data-label="نام">@Model[i].Name</td>
+                                    <td data-label="شماره همراه">@Model[i].PhoneNumber</td>
+                                    <td data-label="سرویس مد نظر">@Model[i].Service</td>
+                                    <td data-label="4 رقم آخر کارت بانکی">@Model[i].Card</td>
+                                    <td data-label="زمان واریز">@Model[i].Time</td>
                                     <td>
                                         <button class="openModalButton btn btn-info" data-request-id="@Model[i].Id">عملیات</button>
                                     </td>
@@ -76,10 +73,7 @@
             <hr class="mt-5 mb-5"/>
 
             <div class="row">
-
-                <div class="col-6">
-                    <h3>تاریخچه درخواست ها</h3>
-                </div>
+                <h3>تاریخچه درخواست ها</h3>
 
             </div>
             <table class="table table-hover">
@@ -104,12 +98,12 @@
                             {
                                 
                                 <tr>
-                                    <td>@(i + 1)</td>
-                                    <td>@Model[i].Name</td>
-                                    <td>@Model[i].PhoneNumber</td>
-                                    <td>@Model[i].Service</td>
-                                    <td>@Model[i].Card</td>
-                                    <td>@Model[i].Time</td>
+                                    <th>@(i + 1)</th>
+                                    <td data-label="نام">@Model[i].Name</td>
+                                    <td data-label="شماره همراه">@Model[i].PhoneNumber</td>
+                                    <td data-label="سرویس مد نظر">@Model[i].Service</td>
+                                    <td data-label="4 رقم آخر کارت بانکی">@Model[i].Card</td>
+                                    <td data-label="زمان واریز">@Model[i].Time</td>
                                     <td>
                                         @if(Model[i].Status == 1)
                                         {

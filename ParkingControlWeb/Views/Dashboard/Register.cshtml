@@ -57,7 +57,7 @@
                         @{
                             int colSize = User.IsInRole("GlobalAdmin") ? 4 : 6;
                         }
-                            <div class="col-@colSize">
+                            <div class="col-lg-@colSize col-sm-12 mt-4">
 
                                 <h3 class="text-dark mb-3">مشخصات حساب</h3>
                                 <div class="form-floating mb-3 justify-content-star3t form-group">
@@ -91,7 +91,7 @@
 
                             </div>
 
-                            <div class="col-@colSize">
+                        <div class="col-lg-@colSize col-sm-12 mt-4">
 
                                 <h3 class="text-dark mb-3">مشخصات شخصی</h3>
                                 <div class="form-floating mb-3 justify-content-star3t form-group">
@@ -122,7 +122,7 @@
 
                         @if (User.IsInRole("GlobalAdmin"))
                         {
-                            <div class="col-@colSize">
+                            <div class="col-lg-@colSize col-sm-12 mt-4">
 
                                 <h3 class="text-dark mb-3">مشخصات پارکینگ</h3>
                                 <div class="form-floating mb-3 justify-content-star3t form-group">
@@ -175,15 +175,15 @@
 
                             </div>
                         }
-
+                        </div>
 
                         <div class="row">
 
-                            <div class="col-6">
+                            <div class="col-lg-6 col-sm-12">
                                 <button class="mb-2 btn btn-lg rounded-3 btn-primary form-control" type="submit">ثبت نام</button>
                             </div>
 
-                            <div class="col-6">
+                            <div class="col-lg-6 col-sm-12">
                                 <a asp-asp-controller="Dashboard" asp-action="UsersList" class="mb-2 btn btn-lg rounded-3 btn-secondary form-control">بازگشت به داشبورد</a>
                             </div>
                         </div>

@@ -28,7 +28,7 @@
 
                 <div class="row">
 
-                    <div class="col-6 mb-2">
+                    <div class="col-9 mb-2">
                         @if (User.IsInRole("GlobalAdmin"))
                         {
                             <h3>لیست صاحبین پارکینگ</h3>
@@ -43,25 +43,25 @@
                         }
                     </div>
 
-                    <div class="col-6 text-start">
-                        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Register">اضافه کردن <i class="bi bi-plus-circle"></i></a>
+                    <div class="col-3 text-start">
+                        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Register"><i class="bi bi-plus-circle"></i></a>
                     </div>
 
                 </div>
                 
                 <div class="row mt-3">
 
-                    <div class="col-6">
+                    <div class="col-lg-6 col-sm-12 mt-2">
                     <input type="text" id="searchInput" class="form-control mb-3" placeholder="جستجو">
                     </div>
-                    <div class="col-2">
+                    <div class="col-lg-2 col-sm-12 mt-2">
                         <select class="form-select" id="dateOrderSelect">
                             <option value="olderToNewer">قدیم به جدید</option>
                             <option value="newerToOlder" selected>جدید به قدیم</option>
                         </select>
                     </div>
 
-                    <div class="col-2">
+                <div class="col-lg-2 col-sm-12 mt-2">
                         <select class="form-select" id="timePeriodSelect">
                             <option value="last100" selected>100 مورد اخیر</option>
                             <option value="yesterday">دیروز</option>
@@ -94,34 +94,34 @@
                         {
                             <tr data-date="@Model.Infos[i].Date">
                                 <th>@(i + 1)</th>
-                                <td>@Model.Infos[i].FullName</td>
-                                <td>@Model.Infos[i].ParkingName</td>
-                                <td>@Model.Infos[i].RegisterDate</td>
-                                <td>@Model.Infos[i].ExpireDate</td>
-                                <td>@Model.Infos[i].Username</td>
+                                <td data-label="نام">@Model.Infos[i].FullName</td>
+                                <td data-label="پارکینگ">@Model.Infos[i].ParkingName</td>
+                                <td data-label="تاریخ ثبت نام">@Model.Infos[i].RegisterDate</td>
+                                <td data-label="تاریخ اتمام اشتراک">@Model.Infos[i].ExpireDate</td>
+                                <td data-label="شماره همراه">@Model.Infos[i].Username</td>
                                 <td>
                                     <div class="row">
 
-                                        <div class="col-6 mt-1">
+                                        <div class="col-xl-6 col-sm-12 mt-1">
                                             <a class="btn btn-primary form-control asp-controller="Dashboard" asp-action="Edit" asp-route-id="@Model.Users[i].Id">ویرایش اطلاعات</a>
                                         </div>
 
                                         @if (User.IsInRole("GlobalAdmin"))
                                         {
-                                            <div class="col-6 mt-1">
+                                            <div class="col-xl-6 col-sm-12 mt-1">
                                                 <a class="btn btn-success form-control asp-controller="Dashboard" asp-action="Renewal" asp-route-id="@Model.Users[i].Id">تمدید اشتراک</a>
                                             </div>
                                         }
 
                                         @if (Model.Users[i].Active == 1)
                                         {
-                                            <div class="col-6 mt-1">
+                                            <div class="col-xl-12 col-sm-12 mt-1">
                                                 <a class="btn btn-danger form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id">غیر فعال کردن حساب</a>
                                             </div>
                                         }
                                         else
                                         {
-                                            <div class="col-6 mt-1">
+                                            <div class="col-xl-12 col-sm-12 mt-1">
                                                 <a class="btn btn-success form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id">فعال کردن حساب</a>
                                             </div>
                                         }

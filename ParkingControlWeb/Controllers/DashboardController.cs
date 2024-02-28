@@ -514,6 +514,7 @@ namespace ParkingControlWeb.Controllers
 
             var Subscription = await SubscriptionCheck();
             if (Subscription != null) return Subscription;
+
             RenewalViewModel renewalViewModel = new RenewalViewModel();
 
             var firstPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneMonth");

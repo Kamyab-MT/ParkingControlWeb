@@ -34,6 +34,7 @@
             font-weight: bold;
         }
 
+        
 
     </style>
 </head>
@@ -42,19 +43,21 @@
     @if (User.Identity.IsAuthenticated)
     {
         <div class="row">
-            <div class="col-2">
-                @if (User.Identity.IsAuthenticated)
-                {
+            <div class="col-xl-2" id="sidebar">
+                <div>
                     <partial name="_Sidebar.cshtml" />
-                }
+                </div>
             </div>
-            <div class="col-10 animate__animated animate__fadeIn">
+            <div class="col-xl-10 col-sm-12 animate__animated animate__fadeIn">
                 <div class="container-fluid">
                     <main role="main" class="pb-3">
                         <partial name="_Notification.cshtml" />
                         @RenderBody()
                     </main>
                 </div>
+
+                <partial name="_BottomMenu.cshtml" />
+
             </div>
         </div>
     }
@@ -106,8 +109,9 @@
         </div>
     </div>
 
+    <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/jquery/dist/jquery..js"></script>
+    <script src="~/lib/jquery/dist/jquery.liveType.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

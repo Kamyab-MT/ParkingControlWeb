@@ -58,7 +58,7 @@
                         </div>
                         <div class="row d-flex align-items-center mt-5">
 
-                            <div class="col-6">
+                            <div class="col-xl-6 col-sm-12">
 
                                 <label asp-for="OptionSelected"></label>
                                 <select asp-for="OptionSelected" class="form-control" id="period" onchange="update()">
@@ -70,35 +70,35 @@
 
                             </div>
 
-                            <div class="col-3 text-center">
+                            <div class="col-xl-3 col-sm-12 text-center">
                                 <h5 id="price">هزینه : @Model.OneMonthPrice تومان</h5>
                             </div>
 
-                            <div class="col-3 text-center">
+                            <div class="col-xl-3 col-sm-12 text-center">
                                 <p id="until">اعتبار تا : @Model.UntilOneMonth</p>
                             </div>
                         </div>
 
                         <div class="row mt-5">
                         
-                            <div class="col-6">
+                            <div class="col-xl-6 col-sm-12">
                                 <h5>شماره کارت : @Model.CardNumber</h5>
                             </div>
 
-                            <div class="col-6">
+                            <div class="col-xl-6 col-sm-12">
                                 <h5>به نام @Model.CardName</h5>
                             </div>
                         </div>
                     
                         <div class="row mt-5">
 
-                            <div class="col-2">
+                            <div class="col-xl-2 col-sm-12">
                                 <label asp-for="CardLast4Number"></label>
                                 <input asp-for="CardLast4Number" class="form-control" maxlength="4" placeholder="XXXX"/>
                                 <span asp-validation-for="CardLast4Number" class="text text-danger"></span>
                             </div>
 
-                            <div class="col-10">
+                            <div class="col-xl-10 col-sm-12 mt-3">
                                 <label asp-for="Date"></label>
                                 <input asp-for="Date" class="form-control" placeholder="28 دی 1402 ساعت 20:45"/>
                                 <span asp-validation-for="Date" class="text text-danger"></span>
@@ -134,8 +134,9 @@
             @for(int i = 0; i < Model.renewalVMs.Count; i++)
             {
                 <tr data-date="">
-                    <td>@Model.renewalVMs[i].Date</td>
-                    <td>@Model.renewalVMs[i].Service</td>
+                    <th>@(i+1)</th>
+                    <td data-label="تاریخ">@Model.renewalVMs[i].Date</td>
+                    <td data-label="سرویس مدنظر">@Model.renewalVMs[i].Service</td>
 
                     @{
                         string type = "info";
@@ -145,8 +146,8 @@
                         else if (Model.renewalVMs[i].Status == "ناموفق")
                             type = "danger";
                     }
-                    <td class="text-@type">@Model.renewalVMs[i].Status</td>
-                    <td>@Model.renewalVMs[i].Desc</td>
+                    <td data-label="وضعیت" class="text-@type">@Model.renewalVMs[i].Status</td>
+                    <td data-label="توضیحات">@Model.renewalVMs[i].Desc</td>
 
                 </tr>
             }

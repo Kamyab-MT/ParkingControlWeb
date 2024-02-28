@@ -1,0 +1,148 @@
+﻿
+@{
+    var action = ViewContext.RouteData.Values["Action"].ToString();
+    var controller = ViewContext.RouteData.Values["Controller"].ToString();
+}
+
+<link rel="stylesheet" href="~/css/StyleSheet.css" />
+
+<nav class="bottom-menu">
+    <div class="container-fluid p-0 bg-dark">
+        <ul class="nav justify-content-around">
+
+
+            @if (!User.IsInRole("Driver"))
+            {
+                if (!User.IsInRole("GlobalAdmin"))
+                {
+
+                    string UsersListTxt = action == "UsersList" ? "nav-link active disabled" : "nav-link link-white";
+                    string AllUsers = action == "AllUsers" ? "nav-link active disabled" : "nav-link link-white";
+                    string ActiveRecords = action == "Index" ? "nav-link active disabled" : "nav-link link-white";
+                    string RecordsHistory = action == "RecordsHistory" ? "nav-link active disabled" : "nav-link link-white";
+                    string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-white";
+                    string RenewalRequest = action == "RenewalRequest" ? "nav-link active disabled" : "nav-link link-white";
+
+                    if (User.IsInRole("SystemAdmin")) // System Admin
+                    {
+                        <li class="nav-item">
+                            <a class="@UsersListTxt" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
+                                <i class="bi bi-people-fill"></i>
+                                
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="@AllUsers" aria-current="page" asp-controller="Dashboard" asp-action="AllUsers">
+                                <i class="bi bi-people-fill"></i>
+                                
+                            </a>
+                        </li>
+                    }
+
+                    <li>
+                        <a class="@ActiveRecords" aria-current="page" asp-controller="Records" asp-action="Index">
+                            <i class="bi bi-car-front-fill"></i>
+                            
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="@RecordsHistory" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
+                            <i class="bi bi-calendar-week"></i>
+                            
+                        </a>
+                    </li>
+
+                    @if (User.IsInRole("SystemAdmin"))
+                    {
+                        <li>
+                            <a class="@TransactionsHistory" aria-current="page" asp-controller="Records" asp-action="TransactionsHistory">
+                                <i class="bi bi-credit-card-2-back-fill"></i>
+                                
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="@RenewalRequest" aria-current="page" asp-controller="Dashboard" asp-action="RenewalRequest">
+                                <i class="bi bi-hourglass-split"></i>
+                                
+                            </a>
+                        </li>
+
+                    }
+
+                }
+                else // Global Admin
+                {
+                    string ParkingOwners = action == "UsersList" ? "nav-link active disabled" : "nav-link link-white";
+                    string AllUsers = action == "AllUsers" ? "nav-link active disabled" : "nav-link link-white";
+                    string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-white";
+                    string RecordsHistory = action == "RecordsHistory" ? "nav-link active disabled" : "nav-link link-white";
+                    string RenewalRequests = action == "RenewalRequests" ? "nav-link active disabled" : "nav-link link-white";
+
+                    <li class="nav-item">
+                        <a class="@ParkingOwners" aria-current="page" asp-controller="Dashboard" asp-action="UsersList">
+                            <i class="bi bi-person-fill"></i>
+                            
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="@AllUsers" aria-current="page" asp-controller="Dashboard" asp-action="AllUsers">
+                            <i class="bi bi-people-fill"></i>
+                            
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="@TransactionsHistory" aria-current="page" asp-controller="Records" asp-action="TransactionsHistory">
+                            <i class="bi bi-credit-card-2-back-fill"></i>
+                            
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="@RecordsHistory" aria-current="page" asp-controller="Records" asp-action="RecordsHistory">
+                            <i class="bi bi-calendar-week"></i>
+                            
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="@RenewalRequests" aria-current="page" asp-controller="Dashboard" asp-action="RenewalRequests">
+                            <i class="bi bi-hourglass-bottom"></i>
+                            
+                        </a>
+                    </li>
+                }
+            }
+            else // Driver
+            {
+                string Charge = action == "Charge" ? "nav-link active disabled" : "nav-link link-white";
+                string TransactionsHistory = action == "TransactionsHistory" ? "nav-link active disabled" : "nav-link link-white";
+                <li class="nav-item">
+                    <a class="@Charge" aria-current="page" asp-controller="Dashboard" asp-action="Charge">
+                        <i class="bi bi-wallet2"></i>
+                        
+                    </a>
+                </li>
+
+                <li>
+                    <a class="@TransactionsHistory" aria-current="page" asp-controller="Records" asp-action="TransactionsHistory">
+                        <i class="bi bi-credit-card-2-back-fill"></i>
+                        
+                    </a>
+                </li>
+            }
+
+            <li class="nav-item">
+                <a class="nav-link link-danger" aria-current="page" asp-controller="Account" asp-action="LogOut">
+                    <i class="bi bi-box-arrow-left"></i>
+                    
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</nav>

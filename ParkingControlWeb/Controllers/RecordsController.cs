@@ -422,11 +422,11 @@ namespace ParkingControlWeb.Controllers
                 vm.Add(new TransactionViewModel()
                 {
                     Amount = Helper.DottedPriceShow(list[i].Amount) + " تومان",
-                    CardNumber = Helper.ShowCardNumber(list[i].CardNumber.Decrypt()),
+                    CardNumber = list[i].CardNumber.Decrypt() == "-" ? "-" : Helper.ShowCardNumber(list[i].CardNumber.Decrypt()),
                     DateCreated = Helper.DateShow(list[i].DateCreated),
                     PhoneNumber = Helper.ShowNumber(list[i].Username.Decrypt()),
                     TrackingCode = list[i].TrackingCode.Decrypt(),
-                    Owner = list[i].OwnerName.Decrypt(),
+                    Owner = list[i].OwnerName.Decrypt() == "-" ? "-" : list[i].OwnerName.Decrypt(),
                     Date = list[i].DateCreated.ToString("yyyy-MM-ddTHH:mm:ss"),
                 });
             }
