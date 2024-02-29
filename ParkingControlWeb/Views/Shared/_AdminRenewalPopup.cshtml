@@ -1,0 +1,40 @@
+﻿
+<html>
+
+    <body>
+
+        <div class="container-fluid">
+
+            <h1 class="fw-bold mb-0 fs-2">
+                تمدید حساب کاربری
+            </h1>
+            
+            <form asp-action="Renewal">
+
+                <div class="row d-flex align-items-center">
+
+                    <div class="col-12 mt-3">
+
+                        <input type="hidden" name="Id" id="requestIdInput"/>
+
+                        <label>بازه زمانی تمدید</label>
+						<select name="OptionSelected" class="form-control" id="period">
+                            <option value="0">یک ماهه</option>
+                            <option value="1">سه ماهه</option>
+                            <option value="2">شش ماهه</option>
+                            <option value="3">یک ساله</option>
+                        </select>
+
+                    </div>
+
+                    <div class="col-12 mt-5">
+                        <button class="mb-2 btn btn-lg rounded-3 btn-success form-control" type="submit">تمدید</button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+    </body>
+
+</html>

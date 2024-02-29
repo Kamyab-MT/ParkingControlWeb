@@ -8,8 +8,6 @@ using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
-using ParkingControlWeb.ViewModels.Wrappers;
-using Python.Runtime;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -98,20 +96,22 @@ namespace ParkingControlWeb.Controllers
                 vmRecords.Add(vm);
             }
 
-            ActiveRecordsViewModel activeRecordsViewModel = new ActiveRecordsViewModel()
+            ActiveRecordsListViewModel activeRecordsViewModel = new ActiveRecordsListViewModel()
             {
-                ActiveRecordsList = new ActiveRecordsListViewModel() 
-                { 
-                    ActiveRecords = vmRecords,
-                    RemToCap = parking.Capacity + " / " + parking.PlaceTaken,
-                }
+                ActiveRecords = vmRecords,
+                RemToCap = parking.Capacity + " / " + parking.PlaceTaken,
             };
 
             return View(activeRecordsViewModel);
         }
 
+        public IActionResult AddRecordModal()
+        {
+            return PartialView("_AddRecordModal");
+        }
+
         [HttpPost]
-        public async Task<IActionResult> AddNewRecord(ActiveRecordsViewModel recordViewModel)
+        public async Task<IActionResult> AddNewRecord(AddRecordViewModel recordViewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -131,7 +131,7 @@ namespace ParkingControlWeb.Controllers
             if (parking.PlaceTaken >= parking.Capacity)
                 additive = true;
 
-            string PlateNumber = recordViewModel.AddRecord.PlateNumber2 + recordViewModel.AddRecord.PlateNumber1 + recordViewModel.AddRecord.PlateNumber3 + recordViewModel.AddRecord.PlateNumber4;
+            string PlateNumber = recordViewModel.PlateNumber2 + recordViewModel.PlateNumber1 + recordViewModel.PlateNumber3 + recordViewModel.PlateNumber4;
 
             var rec = await _recordRepository.GetAllActiveFromParking(parking);
             var plate = rec.FirstOrDefault(s=> s.PlateNumber == PlateNumber.Encrypt());
@@ -148,7 +148,7 @@ namespace ParkingControlWeb.Controllers
 
                 record.PlateNumber = PlateNumber.Encrypt();
                 
-                var newUser = await RegisterOrGetDriverUser(recordViewModel.AddRecord.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
+                var newUser = await RegisterOrGetDriverUser(recordViewModel.PhoneNumber, record.ParkingId, user.Id, user.SuperiorUserId);
 
                 record.UserId = newUser.Id;
 
@@ -272,12 +272,7 @@ namespace ParkingControlWeb.Controllers
 
         public void RecognizePlateNumber()
         {
-            using (Py.GIL())
-            {
-                PythonEngine.Initialize();
-                PythonEngine.Exec("print('Hello, Python!')");
-                PythonEngine.Shutdown();
-            }
+
         }
 
         public async Task<IActionResult> RecordsHistory()

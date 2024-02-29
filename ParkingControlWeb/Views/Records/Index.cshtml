@@ -1,6 +1,6 @@
-﻿@using ParkingControlWeb.ViewModels.Wrappers;
+﻿@using ParkingControlWeb.ViewModels.List;
 
-@model ActiveRecordsViewModel
+@model ActiveRecordsListViewModel
 
 @{
     ViewData["Title"] = "ورود و خروج های فعال";
@@ -38,16 +38,17 @@
 
                 <div class="row mb-2">
 
-                    <div class="col-6">
+                    <div class="col-10">
                         <h3>ورود و خروج های جاری</h3>
+                        <h5>@Model.RemToCap</h5>
                     </div>
 
-                    <div class="col-6 text-start">
-                        <h3>@Model.ActiveRecordsList.RemToCap</h3>
+                    <div class="col-2 text-start">
+                        <a class="btn btn-primary" onclick="openRecordModal()"><i class="bi bi-plus-circle"></i></a>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3 mb-4">
 
                     <div class="col-lg-6 col-sm-12 mt-2">
                     <input type="text" id="searchInput" class="form-control mb-3" placeholder="جستجو">
@@ -90,7 +91,7 @@
                                 int i = 1;
                             }
 
-                            @foreach (var item in @Model.ActiveRecordsList.ActiveRecords)
+                            @foreach (var item in @Model.ActiveRecords)
                             {
                                 <tr data-date="@item.Date">
                                         <th>@i</th>
@@ -191,47 +192,6 @@
 
             </div>
 
-            <div class="mt-5">
-                <form asp-action="AddNewRecord">
-
-                    <div class="row">
-                        <div class="col-3">
-                            <div class="form-floating form-group">
-                            <input asp-for="AddRecord.PhoneNumber" type="text" maxlength="11" class="form-control rounded-3" id="floatingInput" placeholder="09101234567">
-                                <label asp-for="AddRecord.PhoneNumber" for="floatingInput" class="ms-0"></label>
-                                <span asp-validation-for="AddRecord.PhoneNumber" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-floating form-group">
-                                <div class="row">
-                                    <label>پلاک</label>
-                                    <div class="col-2">
-                                        <input asp-for="AddRecord.PlateNumber1" type="text" class="form-control rounded-3" id="floatingInput" placeholder="11">
-                                        <span asp-validation-for="AddRecord.PlateNumber1" class="text-danger"></span>
-                                    </div>
-                                    <div class="col-3">
-                                        <input asp-for="AddRecord.PlateNumber2" type="text" class="form-control rounded-3" id="floatingInput" placeholder="365">
-                                        <span asp-validation-for="AddRecord.PlateNumber2" class="text-danger"></span>
-                                    </div>
-                                    <div class="col-2">
-                                        <input asp-for="AddRecord.PlateNumber3" type="text" class="form-control rounded-3" id="floatingInput" placeholder="الف">
-                                        <span asp-validation-for="AddRecord.PlateNumber3" class="text-danger"></span>
-                                    </div>
-                                    <div class="col-2">
-                                        <input asp-for="AddRecord.PlateNumber4" type="text" class="form-control rounded-3" id="floatingInput" placeholder="12">
-                                        <span asp-validation-for="AddRecord.PlateNumber4" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <button class="btn btn-success form-control" type="submit">ثبت ورود</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
         </div>
 
 
@@ -243,6 +203,20 @@
 
             $('#modal-body-content-bg').load('/Records/ChargeDriverModal');
             $('#myModalBg').modal('show');
+
+            setTimeout(function () {
+                var requestId = $(name).data('request-id');
+                var requestDiff = $(name).data('request-diff');
+
+                $('#requestIdInput').val(requestId);
+                $('#floatingInput12').val(requestDiff);
+            }, 100); // Adjust the delay time as needed
+        }
+
+        function openRecordModal() {
+
+            $('#modal-body-content').load('/Records/AddRecordModal');
+            $('#myModal').modal('show');
 
             setTimeout(function () {
                 var requestId = $(name).data('request-id');

@@ -100,7 +100,7 @@ namespace ParkingControlWeb.Controllers
                     UsersListViewModel usersListView = new UsersListViewModel()
                     {
                         Users = limitedList.ToList(),
-                        Infos = infos
+                        Infos = infos,
                     };
 
                     return View(usersListView);
@@ -502,39 +502,16 @@ namespace ParkingControlWeb.Controllers
             return RedirectToAction("UsersList", "Dashboard");
         }
 
-        [Authorize(Roles = "GlobalAdmin")]
-        public async Task<IActionResult> Renewal(string id)
+        public IActionResult AdminRenewalModal()
         {
-
-            var Session = await SessionCheck();
-            if (Session != null) return Session;
-
-            var Activity = await ActivityCheck();
-            if (Activity != null) return Activity;
-
-            var Subscription = await SubscriptionCheck();
-            if (Subscription != null) return Subscription;
-
-            RenewalViewModel renewalViewModel = new RenewalViewModel();
-
-            var firstPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneMonth");
-            var secondPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "ThreeMonth");
-            var thirdPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "SixMonth");
-            var fourthPrice = await _context.Pricings.FirstOrDefaultAsync(s => s.Title == "OneYear");
-
-            renewalViewModel.OneMonth = firstPrice.Price;
-            renewalViewModel.ThreeMonth = secondPrice.Price;
-            renewalViewModel.SixMonth = thirdPrice.Price;
-            renewalViewModel.OneYear = fourthPrice.Price;
-
-            renewalViewModel.Id = id;
-
-            return View(renewalViewModel);
+            return PartialView("_AdminRenewalPopup");
         }
 
+        [Authorize(Roles = "GlobalAdmin")]
         [HttpPost]
         public async Task<IActionResult> Renewal(RenewalViewModel renewalViewModel)
         {
+
             int[] values = [1, 3, 6, 12];
             int index = int.Parse(renewalViewModel.OptionSelected);
 

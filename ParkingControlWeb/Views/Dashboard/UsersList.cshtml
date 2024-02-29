@@ -49,7 +49,7 @@
 
                 </div>
                 
-                <div class="row mt-3">
+                <div class="row mt-3 mb-4">
 
                     <div class="col-lg-6 col-sm-12 mt-2">
                     <input type="text" id="searchInput" class="form-control mb-3" placeholder="جستجو">
@@ -109,7 +109,7 @@
                                         @if (User.IsInRole("GlobalAdmin"))
                                         {
                                             <div class="col-xl-6 col-sm-12 mt-1">
-                                                <a class="btn btn-success form-control asp-controller="Dashboard" asp-action="Renewal" asp-route-id="@Model.Users[i].Id">تمدید اشتراک</a>
+                                                <a class="btn btn-success form-control" id="userId" data-request-id="@Model.Users[i].Id" onclick="openModal()">تمدید اشتراک</a>
                                             </div>
                                         }
 
@@ -140,6 +140,20 @@
 
         <script src="~/js/tableSearch.js"></script>
         <script src="~/js/sorter.js"></script>
+        <script>
+
+            function openModal() {
+
+                $('#modal-body-content').load('/Dashboard/AdminRenewalModal');
+                $('#myModal').modal('show');
+
+                setTimeout(function () {
+                    var requestId = $(userId).data('request-id');
+                    $('#requestIdInput').val(requestId);
+                }, 100); // Adjust the delay time as needed
+            }
+
+        </script>
 
 	</body>
 
