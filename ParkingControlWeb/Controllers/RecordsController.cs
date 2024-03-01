@@ -8,6 +8,10 @@ using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
+using Microsoft.Scripting.Hosting;
+using IronPython.Hosting;
+using System.IO;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -20,8 +24,9 @@ namespace ParkingControlWeb.Controllers
         readonly IParking _parkingRepository;
         readonly ITransaction _transactionRepository;
         readonly IBallance _ballanceRepository;
+        readonly IWebHostEnvironment _env;
 
-        public RecordsController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, IParking parkingRepository, ITransaction transactionRepository, IBallance ballanceRepository)
+        public RecordsController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IRecord recordRepository, IParking parkingRepository, ITransaction transactionRepository, IBallance ballanceRepository, IWebHostEnvironment env)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -29,11 +34,13 @@ namespace ParkingControlWeb.Controllers
             _parkingRepository = parkingRepository;
             _transactionRepository = transactionRepository;
             _ballanceRepository = ballanceRepository;
+            _env = env;
         }
 
         [Authorize(Roles = "SystemAdmin,Expert")]
         public async Task<IActionResult> Index()
         {
+            RecognizePlateNumber();
 
             var Session = await SessionCheck();
             if (Session != null) return Session;
@@ -49,11 +56,6 @@ namespace ParkingControlWeb.Controllers
 
             var records = await _recordRepository.GetAllPendingFromParking(parking);
             List<Record> recordsList;
-/*
-            if (User.IsInRole("SystemAdmin"))
-                recordsList = records.ToList();
-            else
-                recordsList = records.Where(s => s.Creator == User.GetUserId()).ToList();*/
 
             recordsList = records.ToList();
 
@@ -272,7 +274,25 @@ namespace ParkingControlWeb.Controllers
 
         public void RecognizePlateNumber()
         {
+            var pythonScriptPath = Path.Combine(_env.ContentRootPath, "OCR\\ocr.py");
+            var engine = Python.CreateEngine();
+            var scope = engine.CreateScope();
+            Console.WriteLine("Helloooo 1 : \t" + pythonScriptPath);
 
+            string pythonCode = System.IO.File.ReadAllText(pythonScriptPath);
+            Console.WriteLine("Helloooo 2 : \t" + pythonCode);
+
+            engine.Execute(pythonCode, scope);
+
+            Console.WriteLine("Helloooo 3 : \t" + "Heyyyyyyyyyyyy");
+
+            dynamic myFunction = scope.GetVariable("extract"); // Replace "my_function_name" with the actual function name
+
+            Console.WriteLine("Helloooo 4 : \t" + "Heyyyyyyyyyyyy");
+
+            var str = myFunction();
+            
+            System.IO.File.WriteAllText("D://filee.txt", str.ToString());
         }
 
         public async Task<IActionResult> RecordsHistory()
