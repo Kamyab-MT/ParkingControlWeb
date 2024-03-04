@@ -436,7 +436,6 @@ namespace ParkingControlWeb.Controllers
             return View(VM);
         }
         
-        [Authorize(Roles = "GlobalAdmin")]
         public async Task<IActionResult> Active(string id)
         {
 

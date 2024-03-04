@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Aspose.OCR;
+using Aspose.OCR.Models.PreprocessingFilters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ParkingControlWeb.Data.Enum;
@@ -8,10 +10,6 @@ using ParkingControlWeb.Helpers;
 using ParkingControlWeb.Models;
 using ParkingControlWeb.ViewModels.Add;
 using ParkingControlWeb.ViewModels.List;
-using Microsoft.Scripting.Hosting;
-using IronPython.Hosting;
-using System.IO;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace ParkingControlWeb.Controllers
 {
@@ -40,6 +38,7 @@ namespace ParkingControlWeb.Controllers
         [Authorize(Roles = "SystemAdmin,Expert")]
         public async Task<IActionResult> Index()
         {
+
             RecognizePlateNumber();
 
             var Session = await SessionCheck();
@@ -274,25 +273,7 @@ namespace ParkingControlWeb.Controllers
 
         public void RecognizePlateNumber()
         {
-            var pythonScriptPath = Path.Combine(_env.ContentRootPath, "OCR\\ocr.py");
-            var engine = Python.CreateEngine();
-            var scope = engine.CreateScope();
-            Console.WriteLine("Helloooo 1 : \t" + pythonScriptPath);
 
-            string pythonCode = System.IO.File.ReadAllText(pythonScriptPath);
-            Console.WriteLine("Helloooo 2 : \t" + pythonCode);
-
-            engine.Execute(pythonCode, scope);
-
-            Console.WriteLine("Helloooo 3 : \t" + "Heyyyyyyyyyyyy");
-
-            dynamic myFunction = scope.GetVariable("extract"); // Replace "my_function_name" with the actual function name
-
-            Console.WriteLine("Helloooo 4 : \t" + "Heyyyyyyyyyyyy");
-
-            var str = myFunction();
-            
-            System.IO.File.WriteAllText("D://filee.txt", str.ToString());
         }
 
         public async Task<IActionResult> RecordsHistory()
