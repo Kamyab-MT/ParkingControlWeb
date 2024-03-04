@@ -24,10 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="OCR\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Aspose.OCR">
       <HintPath>D:\Package\OCR\lib\netstandard2.0\Aspose.OCR.dll</HintPath>
     </Reference>
