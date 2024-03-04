@@ -81,7 +81,7 @@ namespace ParkingControlWeb.ViewModels.Account
 
         [DataType(DataType.PhoneNumber)]
         [Display(Name = "ظرفیت پارکینگ")]
-        [Range(minimum: 1, maximum: 1000000, ErrorMessage = "رقم وارد شده باید بین 1 تومان الی 1 میلیون تومان باشد")]
+        [Range(minimum: 1, maximum: 1000000, ErrorMessage = "رقم وارد شده باید بین 1 الی 1 میلیون باشد")]
         [Required(ErrorMessage = "ظرفیت پارکینگ را وارد کنید")]
         public int Capacity { get; set; }
 

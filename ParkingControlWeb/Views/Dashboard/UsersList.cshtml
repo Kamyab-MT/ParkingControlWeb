@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="col-3 text-start">
-                        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Register"><i class="bi bi-plus-circle"></i></a>
+                        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Register"><i class="bi bi-person-plus-fill"></i></a>
                     </div>
 
                 </div>
@@ -102,27 +102,27 @@
                                 <td>
                                     <div class="row">
 
-                                        <div class="col-xl-6 col-sm-12 mt-1">
-                                            <a class="btn btn-primary form-control asp-controller="Dashboard" asp-action="Edit" asp-route-id="@Model.Users[i].Id">ویرایش اطلاعات</a>
+                                        <div class="col-xl-4 col-sm-3 mt-1">
+                                            <a class="btn btn-primary form-control asp-controller="Dashboard" asp-action="Edit" asp-route-id="@Model.Users[i].Id"><i class="bi bi-pencil-square"></i></a>
                                         </div>
 
                                         @if (User.IsInRole("GlobalAdmin"))
                                         {
-                                            <div class="col-xl-6 col-sm-12 mt-1">
-                                                <a class="btn btn-success form-control" id="userId" data-request-id="@Model.Users[i].Id" onclick="openModal()">تمدید اشتراک</a>
+                                            <div class="col-xl-4 col-sm-3 mt-1">
+                                                <a class="btn btn-success form-control" id="userId" data-request-id="@Model.Users[i].Id" onclick="openModal()"><i class="bi bi-chevron-double-up"></i></a>
                                             </div>
                                         }
 
                                         @if (Model.Users[i].Active == 1)
                                         {
-                                            <div class="col-xl-12 col-sm-12 mt-1">
-                                                <a class="btn btn-danger form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id">غیر فعال کردن حساب</a>
+                                            <div class="col-xl-4 col-sm-3 mt-1">
+                                                <a class="btn btn-danger form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id"><i class="bi bi-person-fill-lock"></i></a>
                                             </div>
                                         }
                                         else
                                         {
-                                            <div class="col-xl-12 col-sm-12 mt-1">
-                                                <a class="btn btn-success form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id">فعال کردن حساب</a>
+                                            <div class="col-xl-4 col-sm-3 mt-1">
+                                                <a class="btn btn-success form-control" asp-controller="Dashboard" asp-action="Active" asp-route-id="@Model.Users[i].Id"><i class="bi bi-person-fill-check"></i></a>
                                             </div>
                                         }
                                     </div>

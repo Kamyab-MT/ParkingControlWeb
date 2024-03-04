@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="col-2 text-start">
-                        <a class="btn btn-primary" onclick="openRecordModal()"><i class="bi bi-plus-circle"></i></a>
+                    <a class="btn btn-primary" onclick="openRecordModal()"><i class="bi bi-car-front-fill"></i></a>
                     </div>
                 </div>
 
@@ -108,28 +108,28 @@
 
                                                 @if (item.Status == 0)
                                                 {
-                                                    <div class="col-12">
-                                                        <a class="btn btn-warning form-control" asp-controller="Records" asp-action="StopARecord" asp-route-id="@item.Id">توقف</a>
+                                                    <div class="col-6">
+                                                <a class="btn btn-primary form-control" asp-controller="Records" asp-action="StopARecord" asp-route-id="@item.Id"><i class="bi bi-pause-btn-fill"></i></a>
                                                     </div>
                                                 }
                                                 else
                                                 {
-                                                    <div class="col-xl-6 col-sm-12">
-                                                        <a class="btn btn-info form-control mt-1" data-toggle="collapse" href=".multi-collapse_@i" aria-expanded="false" aria-controls="ballance_@i charge_@i dif_@i">جزئیات</a>
+                                                    <div class="col-xl-4 col-sm-12">
+                                                <a class="btn btn-info form-control mt-1" data-toggle="collapse" href=".multi-collapse_@i" aria-expanded="false" aria-controls="ballance_@i charge_@i dif_@i"><i class="bi bi-arrow-down-square-fill"></i></a>
                                                     </div>
                                                     
-                                                    <div class="col-xl-6 col-sm-12">
+                                                    <div class="col-xl-4 col-sm-12">
 
                                                         @if (!item.IsMoneyEnough)
                                                         {
-                                                            <a class="btn btn-danger disabled form-control mt-1">خروج</a>
+                                                    <a class="btn btn-success disabled form-control mt-1"><i class="bi bi-check-square-fill"></i></a>
 
                                                             <span tabindex="0" data-toggle="tooltip" data-placement="top" title="موجودی کاربر کافی نمی‌باشد">
                                                             </span>
                                                         }
                                                         else
                                                         {
-                                                            <a class="btn btn-danger form-control mt-1" asp-controller="Records" asp-action="FinalizeARecord" asp-route-id="@item.Id">خروج</a>
+                                                    <a class="btn btn-success form-control mt-1" asp-controller="Records" asp-action="FinalizeARecord" asp-route-id="@item.Id"><i class="bi bi-check-square-fill"></i></a>
                                                         }
 
                                                     </div>

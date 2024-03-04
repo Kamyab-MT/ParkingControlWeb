@@ -145,7 +145,7 @@ namespace ParkingControlWeb.Controllers
                 }
                 else // SystemAdmin
                 {
-                    if (ModelState.Values.SelectMany(v => v.Errors).ToList().Count > 8)
+                    if (ModelState.Values.SelectMany(v => v.Errors).ToList().Count > 9)
                     {
                         TempData["Error"] = "ورودی ها نامعتبر هستند";
                         return View(registerViewModel);

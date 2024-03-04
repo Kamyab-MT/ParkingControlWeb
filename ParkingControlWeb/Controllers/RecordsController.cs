@@ -1,6 +1,4 @@
-﻿using Aspose.OCR;
-using Aspose.OCR.Models.PreprocessingFilters;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ParkingControlWeb.Data.Enum;
@@ -158,6 +156,7 @@ namespace ParkingControlWeb.Controllers
 
                 parking.PlaceTaken++;
 
+                _parkingRepository.Update(parking);
                 _recordRepository.Add(record);
 
                 if(!additive)
@@ -185,6 +184,7 @@ namespace ParkingControlWeb.Controllers
             record.ExitTime = DateTime.Now;
             record.Status = -1;
 
+            _parkingRepository.Update(parking);
             _recordRepository.Save();
 
             return RedirectToAction("Index", "Records");
