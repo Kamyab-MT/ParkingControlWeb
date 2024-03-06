@@ -59,7 +59,7 @@
                                     <td data-label="4 رقم آخر کارت بانکی">@Model[i].Card</td>
                                     <td data-label="زمان واریز">@Model[i].Time</td>
                                     <td>
-                                        <button class="openModalButton btn btn-info" data-request-id="@Model[i].Id"><i class="bi bi-gear-fill"></i></button>
+                                        <button class="openModalButton btn btn-info" id="ch_btn_@i" data-request-id="@Model[i].Id" onclick="cl(ch_btn_@i)"><i class="bi bi-gear-fill"></i></button>
                                     </td>
                                 </tr>
                             }
@@ -127,14 +127,18 @@
     </div>
 
     <script>
-        $(document).ready(function () {
-            $('.openModalButton').click(function () {
-                $('#modal-body-content').load('/Dashboard/RenewalModal');
-                $('#myModal').modal('show');
-                var requestId = $(this).data('request-id');
+
+        function cl(name) {
+            $('#modal-body-content').load('/Dashboard/RenewalModal');
+            $('#myModal').modal('show');
+
+            setTimeout(function () {
+
+                var requestId = $(name).data('request-id');
                 $('#requestIdInput').val(requestId);
-            });
-        });
+
+            }, 100); // Adjust the delay time as needed
+        }
     </script>
 
 
